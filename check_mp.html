@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель мониторинга сервисов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Цветовая палитра */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-placeholder: #64748b;
+            --border-color: #334155;
+            --border-focus: #475569;
+
+            /* Градиенты для кнопок */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+
+            /* Тени */
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+            /* Размеры */
+            --border-radius: 12px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+
+            /* Анимации */
+            --transition-fast: 0.3s;
+            --transition-normal: 0.4s;
+            --transition-slow: 0.5s;
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            padding: var(--spacing-md);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        .description {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: var(--spacing-sm);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-icon i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-title {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .buttons-grid {
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .page-btn-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            flex: 1;
+        }
+
+        .copy-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .page-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .page-btn:hover::after {
+            left: 100%;
+        }
+
+        .page-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .page-btn:active {
+            transform: translateY(0);
+        }
+
+        .page-btn i {
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        /* Цвета для категорий */
+        .auth .category-icon {
+            background: var(--gradient-info);
+        }
+
+        .auth .page-btn {
+            background: var(--gradient-info);
+        }
+
+        .auth .page-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+        }
+
+        .residence .category-icon {
+            background: var(--gradient-success);
+        }
+
+        .residence .page-btn {
+            background: var(--gradient-success);
+        }
+
+        .residence .page-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .geo .category-icon {
+            background: var(--gradient-warning);
+        }
+
+        .geo .page-btn {
+            background: var(--gradient-warning);
+        }
+
+        .geo .page-btn:hover {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+        }
+
+        .phone .category-icon {
+            background: var(--gradient-purple);
+        }
+
+        .phone .page-btn {
+            background: var(--gradient-purple);
+        }
+
+        .phone .page-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+        }
+
+        .push .category-icon {
+            background: var(--gradient-pink);
+        }
+
+        .push .page-btn {
+            background: var(--gradient-pink);
+        }
+
+        .push .page-btn:hover {
+            background: linear-gradient(135deg, #db2777 0%, #ec4899 100%);
+        }
+
+        .photo .category-icon {
+            background: var(--gradient-cyan);
+        }
+
+        .photo .page-btn {
+            background: var(--gradient-cyan);
+        }
+
+        .photo .page-btn:hover {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+        }
+
+        .documents .category-icon {
+            background: var(--gradient-orange);
+        }
+
+        .documents .page-btn {
+            background: var(--gradient-orange);
+        }
+
+        .documents .page-btn:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            min-width: 300px;
+            box-shadow: var(--shadow-md);
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-card {
+                padding: var(--spacing-md);
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: var(--spacing-sm);
+            }
+
+            .category-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .category-icon {
+                margin-right: 0;
+                margin-bottom: var(--spacing-sm);
+            }
+
+            .page-btn-container {
+                flex-direction: column;
+            }
+
+            .copy-btn {
+                width: 100%;
+            }
+        }
+
+        /* Улучшения доступности */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Панель мониторинга сервисов</h1>
+            <p class="description">Быстрый доступ к логам и метрикам сервисов</p>
+        </header>
+
+        <div class="categories-grid" id="categoriesGrid">
+            <!-- Категории будут добавлены через JavaScript -->
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Данные категорий
+            const categories = [{
+                    category: 'Авторизация и регистрация',
+                    class: 'auth',
+                    icon: 'fas fa-user-shield',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:errcode,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(errcode:'200')),(match_phrase:(errcode:'204'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов на регистрацию',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах на регистрацию',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов на авторизацию',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах на авторизацию',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы ММЦ адаптера',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Profile%20sending%20OK','Profile%20sending%20error','Profile%20seems%20not%20exists'),type:phrases,value:'Profile%20sending%20OK,%20Profile%20sending%20error,%20Profile%20seems%20not%20exists'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Profile%20sending%20OK')),(match_phrase:(message:'Profile%20sending%20error')),(match_phrase:(message:'Profile%20seems%20not%20exists'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в ММЦ адаптере',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Profile%20sending%20error','Profile%20seems%20not%20exists'),type:phrases,value:'Profile%20sending%20error,%20Profile%20seems%20not%20exists'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Profile%20sending%20error')),(match_phrase:(message:'Profile%20seems%20not%20exists'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Постановка на учет и установка МСО',
+                    class: 'residence',
+                    icon: 'fas fa-home',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:!(residence-mobile,residence-engine),type:phrases,value:'residence-mobile,%20residence-engine'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:residence-mobile)),(match_phrase:(app:residence-engine)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:errcode,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(errcode:'200')),(match_phrase:(errcode:'204'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:!(residence-mobile,residence-engine),type:phrases,value:'residence-mobile,%20residence-engine'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:residence-mobile)),(match_phrase:(app:residence-engine)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!t,params:!('Failed%20to%20send%20request%20to%20GAR'),type:phrases,value:'Failed%20to%20send%20request%20to%20GAR'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Failed%20to%20send%20request%20to%20GAR'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,request_body,x_signature,http.request.uri,response_status,x_clientId,http.request.body,properties.UserId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросасх',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,request_body,x_signature,http.request.uri,response_status,x_clientId,http.request.body,properties.UserId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы ММЦ адаптера',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Residence%20sending%20OK'),type:phrases,value:'Residence%20sending%20OK'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Residence%20sending%20OK'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в ММЦ адаптере',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Residence%20sending%20error'),type:phrases,value:'Residence%20sending%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Residence%20sending%20error'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Передача геолокации',
+                    class: 'geo',
+                    icon: 'fas fa-globe',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:messages),type:phrase),query:(match_phrase:(app:messages))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:errcode,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(errcode:'200')),(match_phrase:(errcode:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:messages-flow),type:phrase),query:(match_phrase:(app:messages-flow)))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:messages),type:phrase),query:(match_phrase:(app:messages))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:messages-flow),type:phrase),query:(match_phrase:(app:messages-flow))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,http.request.body,request_body,x_signature,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request_body,negate:!f,params:(query:coords),type:phrase),query:(match_phrase:(request_body:coords)))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,http.request.body,request_body,x_signature,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request_body,negate:!f,params:(query:coords),type:phrase),query:(match_phrase:(request_body:coords)))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы ММЦ адаптера',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-track),type:phrase),query:(match_phrase:(app:mmc-track))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Track%20sent%20to%20MMC%20OK','Track%20has%20no%20geo%20points'),type:phrases,value:'Track%20sent%20to%20MMC%20OK,%20Track%20has%20no%20geo%20points'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Track%20sent%20to%20MMC%20OK')),(match_phrase:(message:'Track%20has%20no%20geo%20points'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в ММЦ адаптере',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-track),type:phrase),query:(match_phrase:(app:mmc-track))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Track%20sending%20error','Cannot%20save%20mmc%20adapter%20track%20send%20status%20in%20db'),type:phrases,value:'Track%20sending%20error,%20Cannot%20save%20mmc%20adapter%20track%20send%20status%20in%20db'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Track%20sending%20error')),(match_phrase:(message:'Cannot%20save%20mmc%20adapter%20track%20send%20status%20in%20db'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Подтверждение номера телефона',
+                    class: 'phone',
+                    icon: 'fas fa-phone',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification),type:phrase),query:(match_phrase:(app:phone-verification))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:errcode,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(errcode:'200')),(match_phrase:(errcode:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow)))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification),type:phrase),query:(match_phrase:(app:phone-verification))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов на отправку',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:!('POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1','POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1'),type:phrases,value:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1,%20POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1')),(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах на отправку',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:!('POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1','POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1'),type:phrases,value:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1,%20POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1')),(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов на ответ',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,http.request.body,properties.UserId,x_signature,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах на ответ',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,http.request.body,properties.UserId,x_signature,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Пуш-уведомления',
+                    class: 'push',
+                    icon: 'fas fa-bell',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-dispatcher),type:phrase),query:(match_phrase:(app:push-dispatcher))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:errcode,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(errcode:'200')),(match_phrase:(errcode:'204'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-dispatcher),type:phrase),query:(match_phrase:(app:push-dispatcher))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы запросов',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,request_body,http.request.uri,x_signature,response_status,x_clientId,http.request.body,properties.UserId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,request_body,http.request.uri,x_signature,response_status,x_clientId,http.request.body,properties.UserId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Аутентификация и идентификация',
+                    class: 'photo',
+                    icon: 'fas fa-camera',
+                    pages: [{
+                            name: 'Проверка работы сервиса',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!t,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса ECHD',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-integration),type:phrase),query:(match_phrase:(app:echd-integration))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!t,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка работы сервиса на наличие ошибок ECHD',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-integration),type:phrase),query:(match_phrase:(app:echd-integration))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(error,fatal),type:phrases,value:'error,%20fatal'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:error)),(match_phrase:(level:fatal))))))),query:(language:kuery,query:''))`
+                        },{
+                            name: 'Проверка работы ММЦ адаптера',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Incoming%20photo%20message','Photo%20success%20loaded%20by%20link','Start%20process%20identification%20message'),type:phrases,value:'Incoming%20photo%20message,%20Photo%20success%20loaded%20by%20link,%20Start%20process%20identification%20message'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Incoming%20photo%20message')),(match_phrase:(message:'Photo%20success%20loaded%20by%20link')),(match_phrase:(message:'Start%20process%20identification%20message'))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в ММЦ адаптере',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Error%20on%20get%20photo%20by%20link','Error%20while%20validating%20photo%20in%20ECHD','Error%20in%20identification%20message'),type:phrases,value:'Error%20on%20get%20photo%20by%20link,%20Error%20while%20validating%20photo%20in%20ECHD,%20Error%20in%20identification%20message'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Error%20on%20get%20photo%20by%20link')),(match_phrase:(message:'Error%20while%20validating%20photo%20in%20ECHD')),(match_phrase:(message:'Error%20in%20identification%20message'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Документы',
+                    class: 'documents',
+                    icon: 'fas fa-file',
+                    pages: [{
+                            name: 'Проверка работы запросов',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!f,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Проверка ошибок в запросах',
+                            url: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_clientId,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                }
+            ];
+
+            // DOM элементы
+            const elements = {
+                categoriesGrid: document.getElementById('categoriesGrid'),
+                notification: document.getElementById('notification')
+            };
+
+            // Состояние приложения
+            const state = {
+                messageTimeout: null
+            };
+
+            // Утилиты
+            const ui = {
+                // Показать уведомление
+                showNotification: (text, isError = false) => {
+                    if (state.messageTimeout) {
+                        clearTimeout(state.messageTimeout);
+                        state.messageTimeout = null;
+                    }
+
+                    elements.notification.textContent = text;
+                    elements.notification.className = `notification ${isError ? 'error' : 'success'}`;
+                    elements.notification.style.display = 'block';
+
+                    state.messageTimeout = setTimeout(() => {
+                        elements.notification.style.display = 'none';
+                    }, 3000);
+                },
+
+                // Копирование текста в буфер обмена
+                copyToClipboard: (text) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        ui.showNotification('Ссылка скопирована в буфер обмена!');
+                    }).catch(err => {
+                        console.error('Ошибка копирования: ', err);
+                        ui.showNotification('Ошибка копирования!', true);
+                    });
+                }
+            };
+
+            // Создание интерфейса категорий
+            function createCategories() {
+                categories.forEach(category => {
+                    const categoryCard = document.createElement('div');
+                    categoryCard.className = `category-card ${category.class}`;
+
+                    // Заголовок категории
+                    const categoryHeader = document.createElement('div');
+                    categoryHeader.className = 'category-header';
+
+                    const categoryIcon = document.createElement('div');
+                    categoryIcon.className = 'category-icon';
+                    categoryIcon.innerHTML = `<i class="${category.icon}"></i>`;
+
+                    const categoryTitle = document.createElement('h2');
+                    categoryTitle.className = 'category-title';
+                    categoryTitle.textContent = category.category;
+
+                    categoryHeader.appendChild(categoryIcon);
+                    categoryHeader.appendChild(categoryTitle);
+
+                    // Кнопки страниц
+                    const buttonsGrid = document.createElement('div');
+                    buttonsGrid.className = 'buttons-grid';
+
+                    category.pages.forEach(page => {
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.className = 'page-btn-container';
+
+                        const pageButton = document.createElement('button');
+                        pageButton.className = 'page-btn';
+                        pageButton.innerHTML = `<i class="fas fa-external-link-alt"></i> ${page.name}`;
+
+                        const copyButton = document.createElement('button');
+                        copyButton.className = 'copy-btn';
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyButton.title = 'Копировать ссылку';
+
+                        pageButton.addEventListener('click', () => {
+                            window.open(page.url, '_blank');
+                            ui.showNotification(`Открыта страница: ${page.name}`);
+                        });
+
+                        copyButton.addEventListener('click', () => {
+                            ui.copyToClipboard(page.url);
+                        });
+
+                        buttonContainer.appendChild(pageButton);
+                        buttonContainer.appendChild(copyButton);
+                        buttonsGrid.appendChild(buttonContainer);
+                    });
+
+                    categoryCard.appendChild(categoryHeader);
+                    categoryCard.appendChild(buttonsGrid);
+
+                    elements.categoriesGrid.appendChild(categoryCard);
+                });
+            }
+
+            // Инициализация приложения
+            function init() {
+                createCategories();
+                ui.showNotification('Панель мониторинга загружена!');
+            }
+
+            // Запуск приложения
+            init();
+        });
+    </script>
+</body>
+
+</html>

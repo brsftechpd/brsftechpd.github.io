@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ таблицы заявок</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Цветовая палитра темной темы */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-placeholder: #64748b;
+            --border-color: #334155;
+            --border-focus: #475569;
+            
+            /* Градиенты */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            
+            /* Тени */
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            
+            /* Размеры */
+            --border-radius: 12px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            
+            /* Анимации */
+            --transition-fast: 0.3s;
+            --transition-normal: 0.4s;
+            --transition-slow: 0.5s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            max-width: 1200px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        /* Стили для загрузки файла */
+        .upload-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .upload-section:hover {
+            border-color: var(--border-focus);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Стили для статистики */
+        .statistics {
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 15px;
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-item:nth-child(1)::before {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .stat-item:nth-child(2)::before {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .stat-item:nth-child(3)::before {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .stat-item:nth-child(4)::before {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Стили для вкладок */
+        .tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            padding: 4px;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            border: 1px solid var(--border-focus);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-slow);
+            border-radius: 8px;
+            z-index: 1;
+            position: relative;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.875rem;
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+        }
+
+        .tab-slider {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 4px;
+            width: calc(33.33% - 4px);
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            transition: all var(--transition-slow);
+            box-shadow: var(--shadow-sm);
+            z-index: 0;
+        }
+
+        .tab:nth-child(2).active ~ .tab-slider {
+            transform: translateX(100%);
+        }
+
+        .tab:nth-child(3).active ~ .tab-slider {
+            transform: translateX(200%);
+        }
+
+        /* Стили для таблицы */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .table-container:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Фиксированные ширины колонок для всех таблиц */
+        table {
+            table-layout: fixed;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--bg-tertiary);
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 12%;
+            min-width: 80px;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 20%;
+            min-width: 120px;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 58%;
+            min-width: 180px;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 20%;
+            min-width: 80px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            transition: all var(--transition-fast);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid var(--border-focus);
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        /* Специфичные стили для ячеек с ID */
+        td:first-child {
+            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Специфичные стили для ячеек с инициаторами */
+        td:nth-child(2) {
+            font-weight: 500;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr {
+            transition: all var(--transition-fast);
+        }
+
+        .group-header {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+            border-top: 2px solid var(--border-focus);
+        }
+
+        .group-header td {
+            padding: 16px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        /* Стили для уведомлений */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification {
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-md);
+            animation: slideInRight 0.3s ease-out;
+            max-width: 100%;
+        }
+
+        @keyframes slideInRight {
+            from {
+                right: -100%;
+                opacity: 0;
+            }
+            to {
+                right: 20px;
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        input[type="text"]::placeholder, input[type="date"]::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        /* Стили для фильтров и экспорта */
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .export-btn {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Стили для кнопок ID и инициатора */
+        .id-button, .initiator-button {
+            background: var(--gradient-info);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+            font-size: 0.875rem;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .id-button:hover, .initiator-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .initiator-button {
+            background: var(--gradient-purple);
+        }
+
+        /* Стили для кнопки удаления */
+        .delete-btn {
+            background: var(--gradient-danger);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+            font-size: 0.875rem;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-lg);
+            }
+            
+            .statistics {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+                font-size: 0.875rem;
+            }
+            
+            .tab {
+                font-size: 0.8125rem;
+                padding: 10px 12px;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                min-width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .export-btn {
+                align-self: flex-end;
+            }
+            
+            /* Адаптивные ширины колонок для мобильных */
+            th:nth-child(1),
+            td:nth-child(1) {
+                width: 15%;
+                min-width: 70px;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 25%;
+                min-width: 100px;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                width: 45%;
+                min-width: 130px;
+            }
+
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 15%;
+                min-width: 70px;
+            }
+            
+            tr:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .tab-slider {
+                display: none;
+            }
+            
+            .tab.active {
+                background: var(--gradient-primary);
+                color: white;
+            }
+            
+            /* Еще более компактные ширины для очень маленьких экранов */
+            th:nth-child(1),
+            td:nth-child(1) {
+                width: 20%;
+                min-width: 60px;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 30%;
+                min-width: 80px;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                width: 35%;
+                min-width: 100px;
+            }
+
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 15%;
+                min-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Анализ таблицы заявок</h1>
+        <p class="description">Анализ и форматирование данных из таблицы заявок</p>
+        
+        <!-- Секция загрузки файла -->
+        <div class="upload-section">
+            <h3>Загрузите файл Excel для анализа</h3>
+            <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
+            <button class="upload-btn" id="uploadBtn">
+                <i class="fas fa-file-upload"></i> Выбрать файл
+            </button>
+            <span id="fileName" style="margin-left: 10px; color: var(--text-muted);">Файл не выбран</span>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="statistics" id="statistics" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Записей всего</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="duplicateCount">0</div>
+                <div class="stat-label">Записей с дублированием</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="nonStandardCount">0</div>
+                <div class="stat-label">Не соответствуют формату</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="uniqueCount">0</div>
+                <div class="stat-label">Уникальных верных</div>
+            </div>
+        </div>
+        
+        <!-- Вкладки -->
+        <div class="tabs">
+            <div class="tab active" data-tab="duplicates">
+                <i class="fas fa-copy"></i> Дублирующиеся инициаторы
+            </div>
+            <div class="tab" data-tab="nonStandard">
+                <i class="fas fa-exclamation-triangle"></i> Не соответствующие формату
+            </div>
+            <div class="tab" data-tab="unique">
+                <i class="fas fa-check-circle"></i> Уникальные верные
+            </div>
+            <div class="tab-slider"></div>
+        </div>
+        
+        <!-- Панель управления для дублирующихся инициаторов -->
+        <div class="table-controls" id="duplicatesControls">
+            <div class="search-container">
+                <input type="text" id="duplicatesSearch" placeholder="Поиск в дублирующихся..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button class="export-btn" id="exportDuplicates">
+                <i class="fas fa-download"></i> Экспорт в Excel
+            </button>
+        </div>
+        
+        <!-- Таблица дублирующихся инициаторов -->
+        <div class="table-container" id="duplicatesTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Инициатор запроса</th>
+                        <th>Тема</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="duplicatesBody">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Панель управления для несоответствующих формату -->
+        <div class="table-controls" id="nonStandardControls" style="display: none;">
+            <div class="search-container">
+                <input type="text" id="nonStandardSearch" placeholder="Поиск в несоответствующих..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button class="export-btn" id="exportNonStandard">
+                <i class="fas fa-download"></i> Экспорт в Excel
+            </button>
+        </div>
+        
+        <!-- Таблица несоответствующих формату -->
+        <div class="table-container" id="nonStandardTable" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Инициатор запроса</th>
+                        <th>Тема</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="nonStandardBody">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Панель управления для уникальных верных -->
+        <div class="table-controls" id="uniqueControls" style="display: none;">
+            <div class="search-container">
+                <input type="text" id="uniqueSearch" placeholder="Поиск в уникальных..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <button class="export-btn" id="exportUnique">
+                <i class="fas fa-download"></i> Экспорт в Excel
+            </button>
+        </div>
+        
+        <!-- Таблица уникальных верных -->
+        <div class="table-container" id="uniqueTable" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Инициатор запроса</th>
+                        <th>Тема</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="uniqueBody">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
+    <div class="notification-container">
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <!-- Подключаем библиотеку для работы с Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM элементы
+            const elements = {
+                fileInput: document.getElementById('fileInput'),
+                uploadBtn: document.getElementById('uploadBtn'),
+                fileName: document.getElementById('fileName'),
+                statistics: document.getElementById('statistics'),
+                totalCount: document.getElementById('totalCount'),
+                duplicateCount: document.getElementById('duplicateCount'),
+                nonStandardCount: document.getElementById('nonStandardCount'),
+                uniqueCount: document.getElementById('uniqueCount'),
+                tabs: document.querySelectorAll('.tab'),
+                duplicatesControls: document.getElementById('duplicatesControls'),
+                nonStandardControls: document.getElementById('nonStandardControls'),
+                uniqueControls: document.getElementById('uniqueControls'),
+                duplicatesTable: document.getElementById('duplicatesTable'),
+                nonStandardTable: document.getElementById('nonStandardTable'),
+                uniqueTable: document.getElementById('uniqueTable'),
+                duplicatesBody: document.getElementById('duplicatesBody'),
+                nonStandardBody: document.getElementById('nonStandardBody'),
+                uniqueBody: document.getElementById('uniqueBody'),
+                notification: document.getElementById('notification'),
+                duplicatesSearch: document.getElementById('duplicatesSearch'),
+                nonStandardSearch: document.getElementById('nonStandardSearch'),
+                uniqueSearch: document.getElementById('uniqueSearch'),
+                exportDuplicates: document.getElementById('exportDuplicates'),
+                exportNonStandard: document.getElementById('exportNonStandard'),
+                exportUnique: document.getElementById('exportUnique')
+            };
+
+            // Состояние приложения
+            const state = {
+                duplicates: {},
+                nonStandard: [],
+                unique: [],
+                allData: [],
+                messageTimeout: null
+            };
+
+            // Утилиты
+            const utils = {
+                // Показать уведомление
+                showNotification: (text, isError = false) => {
+                    if (state.messageTimeout) {
+                        clearTimeout(state.messageTimeout);
+                        state.messageTimeout = null;
+                    }
+                    
+                    elements.notification.textContent = text;
+                    elements.notification.className = `notification ${isError ? 'error' : 'success'}`;
+                    elements.notification.style.display = 'block';
+                    
+                    state.messageTimeout = setTimeout(() => {
+                        elements.notification.style.display = 'none';
+                    }, 3000);
+                },
+
+                // Нормализация инициатора запроса
+                normalizeInitiator: (initiator) => {
+                    if (!initiator) return null;
+                    
+                    // Удаляем текст " - ИНОСТРАННЫЕ ГРАЖДАНЕ" и " - Граждане"
+                    let cleaned = initiator
+                        .replace(/\s*-\s*ИНОСТРАННЫЕ\s*ГРАЖДАНЕ/gi, '')
+                        .replace(/\s*-\s*Граждане/gi, '')
+                        .trim();
+                    
+                    // Расширенное регулярное выражение для поиска паттерна
+                    const pattern = /^([aа])\s*([aаbбв])\s*(\d{7})\s*(.*)?$/i;
+                    const match = cleaned.match(pattern);
+                    
+                    if (match) {
+                        const firstChar = match[1].toUpperCase() === 'А' ? 'A' : match[1].toUpperCase();
+                        let secondChar = match[2].toUpperCase();
+                        
+                        // Преобразуем кириллические символы в латинские
+                        const cyrToLat = {
+                            'А': 'A',
+                            'Б': 'B', 
+                            'В': 'B'
+                        };
+                        
+                        secondChar = cyrToLat[secondChar] || secondChar;
+                        
+                        const digits = match[3];
+                        
+                        return firstChar + secondChar + digits;
+                    }
+                    
+                    // Дополнительная попытка найти паттерн без учета пробелов и текста
+                    const loosePattern = /([aа])\s*([aаbбв])\s*(\d{7})/i;
+                    const looseMatch = cleaned.match(loosePattern);
+                    
+                    if (looseMatch) {
+                        const firstChar = looseMatch[1].toUpperCase() === 'А' ? 'A' : looseMatch[1].toUpperCase();
+                        let secondChar = looseMatch[2].toUpperCase();
+                        
+                        // Преобразуем кириллические символы в латинские
+                        const cyrToLat = {
+                            'А': 'A',
+                            'Б': 'B', 
+                            'В': 'B'
+                        };
+                        
+                        secondChar = cyrToLat[secondChar] || secondChar;
+                        
+                        const digits = looseMatch[3];
+                        
+                        return firstChar + secondChar + digits;
+                    }
+                    
+                    return null;
+                },
+                
+                // Очистка инициатора от лишнего текста для отображения
+                cleanInitiatorForDisplay: (initiator) => {
+                    if (!initiator) return '';
+                    
+                    // Удаляем текст " - ИНОСТРАННЫЕ ГРАЖДАНЕ" и " - Граждане"
+                    let cleaned = initiator
+                        .replace(/\s*-\s*ИНОСТРАННЫЕ\s*ГРАЖДАНЕ/gi, '')
+                        .replace(/\s*-\s*Граждане/gi, '')
+                        .trim();
+                    
+                    // Расширенное регулярное выражение для поиска паттерна
+                    const pattern = /^([aа])\s*([aаbбв])\s*(\d{7})\s*(.*)?$/i;
+                    const match = cleaned.match(pattern);
+                    
+                    if (match) {
+                        const firstChar = match[1].toUpperCase() === 'А' ? 'A' : match[1].toUpperCase();
+                        let secondChar = match[2].toUpperCase();
+                        
+                        // Преобразуем кириллические символы в латинские
+                        const cyrToLat = {
+                            'А': 'A',
+                            'Б': 'B', 
+                            'В': 'B'
+                        };
+                        
+                        secondChar = cyrToLat[secondChar] || secondChar;
+                        const digits = match[3];
+                        
+                        // Форматируем для отображения: A B 1234567
+                        return `${firstChar}${secondChar}${digits}`;
+                    }
+                    
+                    // Дополнительная попытка найти паттерн без учета пробелов и текста
+                    const loosePattern = /([aа])\s*([aаbбв])\s*(\d{7})/i;
+                    const looseMatch = cleaned.match(loosePattern);
+                    
+                    if (looseMatch) {
+                        const firstChar = looseMatch[1].toUpperCase() === 'А' ? 'A' : looseMatch[1].toUpperCase();
+                        let secondChar = looseMatch[2].toUpperCase();
+                        
+                        // Преобразуем кириллические символы в латинские
+                        const cyrToLat = {
+                            'А': 'A',
+                            'Б': 'B', 
+                            'В': 'B'
+                        };
+                        
+                        secondChar = cyrToLat[secondChar] || secondChar;
+                        const digits = looseMatch[3];
+                        
+                        // Форматируем для отображения: A B 1234567
+                        return `${firstChar}${secondChar}${digits}`;
+                    }
+                    
+                    // Если паттерн не найден, возвращаем очищенную строку
+                    return cleaned;
+                },
+                
+                // Поиск по таблице
+                searchTable: (searchInputId, tableBodyId) => {
+                    const searchTerm = document.getElementById(searchInputId).value.toLowerCase();
+                    const rows = document.getElementById(tableBodyId).getElementsByTagName('tr');
+                    
+                    for (let row of rows) {
+                        let rowText = '';
+                        const cells = row.getElementsByTagName('td');
+                        
+                        for (let cell of cells) {
+                            rowText += cell.textContent.toLowerCase() + ' ';
+                        }
+                        
+                        if (rowText.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                },
+                
+                // Экспорт таблицы в Excel (без столбца "Действия")
+                exportTableToExcel: (tableId, filename) => {
+                    const table = document.getElementById(tableId);
+                    
+                    // Создаем копию таблицы без столбца "Действия"
+                    const clonedTable = table.cloneNode(true);
+                    const rows = clonedTable.getElementsByTagName('tr');
+                    
+                    // Удаляем столбец "Действия" (последний столбец) из каждой строки
+                    for (let i = 0; i < rows.length; i++) {
+                        const cells = rows[i].cells;
+                        if (cells.length > 0) {
+                            rows[i].deleteCell(cells.length - 1);
+                        }
+                    }
+                    
+                    // Экспортируем клонированную таблицу
+                    const wb = XLSX.utils.table_to_book(clonedTable, {sheet: "Sheet1"});
+                    XLSX.writeFile(wb, filename);
+                },
+                
+                // Копирование текста в буфер обмена
+                copyToClipboard: (text) => {
+                    return navigator.clipboard.writeText(text);
+                },
+                
+                // Функция для удаления записи
+                removeRecord: (id, tableType) => {
+                    // Удаляем запись из соответствующих данных
+                    if (tableType === 'duplicates') {
+                        for (const initiator in state.duplicates) {
+                            state.duplicates[initiator] = state.duplicates[initiator].filter(item => item.id !== id);
+                            if (state.duplicates[initiator].length === 0) {
+                                delete state.duplicates[initiator];
+                            }
+                        }
+                    } else if (tableType === 'nonStandard') {
+                        state.nonStandard = state.nonStandard.filter(item => item.id !== id);
+                    } else if (tableType === 'unique') {
+                        state.unique = state.unique.filter(item => item.id !== id);
+                    }
+
+                    // Удаляем запись из всех данных
+                    state.allData = state.allData.filter(item => item.id !== id);
+
+                    // Обновляем отображение
+                    displayDuplicates(state.duplicates);
+                    displayNonStandard(state.nonStandard);
+                    displayUnique(state.unique);
+
+                    // Обновляем статистику
+                    updateStatisticsAfterDeletion();
+                },
+
+                // Обновление статистики после удаления
+                updateStatisticsAfterDeletion: () => {
+                    const total = state.allData.length;
+                    let duplicateCount = 0;
+                    
+                    Object.values(state.duplicates).forEach(group => {
+                        duplicateCount += group.length;
+                    });
+                    
+                    elements.totalCount.textContent = total;
+                    elements.duplicateCount.textContent = duplicateCount;
+                    elements.nonStandardCount.textContent = state.nonStandard.length;
+                    elements.uniqueCount.textContent = state.unique.length;
+                    
+                    // Если все записи удалены, скрываем статистику
+                    if (total === 0) {
+                        elements.statistics.style.display = 'none';
+                    }
+                }
+            };
+
+            // Обработка данных
+            const dataProcessor = {
+                // Обработка данных из Excel
+                processData: (data) => {
+                    // Пропускаем заголовок
+                    const rows = data.slice(1);
+                    
+                    // Собираем нужные столбцы: ID (B), Инициатор запроса (C), Тема (D)
+                    const requests = [];
+                    
+                    rows.forEach(row => {
+                        if (row.length >= 4) {
+                            requests.push({
+                                id: row[1], // Столбец B
+                                initiator: row[2], // Столбец C
+                                topic: row[3] // Столбец D
+                            });
+                        }
+                    });
+                    
+                    // Сохраняем все данные
+                    state.allData = requests;
+                    
+                    // Нормализуем инициаторов и группируем
+                    const normalizedRequests = requests.map(req => {
+                        return {
+                            ...req,
+                            normalizedInitiator: utils.normalizeInitiator(req.initiator),
+                            cleanInitiator: utils.cleanInitiatorForDisplay(req.initiator)
+                        };
+                    });
+                    
+                    // Группируем по нормализованным инициаторам
+                    const grouped = {};
+                    const nonStandard = [];
+                    
+                    normalizedRequests.forEach(req => {
+                        if (req.normalizedInitiator) {
+                            if (!grouped[req.normalizedInitiator]) {
+                                grouped[req.normalizedInitiator] = [];
+                            }
+                            grouped[req.normalizedInitiator].push(req);
+                        } else {
+                            nonStandard.push(req);
+                        }
+                    });
+                    
+                    // Отделяем дублирующиеся и уникальные
+                    const duplicates = {};
+                    const unique = [];
+                    
+                    Object.keys(grouped).forEach(key => {
+                        if (grouped[key].length > 1) {
+                            duplicates[key] = grouped[key];
+                        } else {
+                            unique.push(grouped[key][0]);
+                        }
+                    });
+                    
+                    // Сохраняем состояние
+                    state.duplicates = duplicates;
+                    state.nonStandard = nonStandard;
+                    state.unique = unique;
+                    
+                    // Обновляем статистику
+                    updateStatistics();
+                    
+                    // Отображаем данные
+                    displayDuplicates(duplicates);
+                    displayNonStandard(nonStandard);
+                    displayUnique(unique);
+                }
+            };
+
+            // Обновление статистики
+            const updateStatistics = () => {
+                const total = state.allData.length;
+                let duplicateCount = 0;
+                
+                Object.values(state.duplicates).forEach(group => {
+                    duplicateCount += group.length;
+                });
+                
+                elements.totalCount.textContent = total;
+                elements.duplicateCount.textContent = duplicateCount;
+                elements.nonStandardCount.textContent = state.nonStandard.length;
+                elements.uniqueCount.textContent = state.unique.length;
+                
+                elements.statistics.style.display = 'grid';
+            };
+
+            // Обновление статистики после удаления
+            const updateStatisticsAfterDeletion = () => {
+                updateStatistics();
+            };
+
+            // Отображение дублирующихся записей
+            const displayDuplicates = (duplicates) => {
+                elements.duplicatesBody.innerHTML = '';
+                
+                if (Object.keys(duplicates).length === 0) {
+                    elements.duplicatesBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                Дублирующихся записей не найдено
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    Object.keys(duplicates).forEach(initiator => {
+                        // Добавляем заголовок группы
+                        const groupHeader = document.createElement('tr');
+                        groupHeader.className = 'group-header';
+                        groupHeader.innerHTML = `
+                            <td colspan="4">
+                                <i class="fas fa-users" style="margin-right: 8px;"></i>
+                                Инициатор: ${initiator} (${duplicates[initiator].length} записи)
+                            </td>
+                        `;
+                        elements.duplicatesBody.appendChild(groupHeader);
+                        
+                        // Добавляем записи группы
+                        duplicates[initiator].forEach(request => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>
+                                    <button class="id-button" data-id="${request.id}">${request.id}</button>
+                                </td>
+                                <td>
+                                    <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
+                                </td>
+                                <td>${request.topic}</td>
+                                <td>
+                                    <button class="delete-btn" data-id="${request.id}" data-table="duplicates">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </td>
+                            `;
+                            elements.duplicatesBody.appendChild(row);
+                        });
+                    });
+                }
+            };
+
+            // Отображение несоответствующих формату записей
+            const displayNonStandard = (nonStandard) => {
+                elements.nonStandardBody.innerHTML = '';
+                
+                if (nonStandard.length === 0) {
+                    elements.nonStandardBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                Нет записей, не соответствующих формату
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    nonStandard.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>
+                                <button class="id-button" data-id="${request.id}">${request.id}</button>
+                            </td>
+                            <td>
+                                <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
+                            </td>
+                            <td>${request.topic}</td>
+                            <td>
+                                <button class="delete-btn" data-id="${request.id}" data-table="nonStandard">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </td>
+                        `;
+                        elements.nonStandardBody.appendChild(row);
+                    });
+                }
+            };
+
+            // Отображение уникальных верных записей
+            const displayUnique = (unique) => {
+                elements.uniqueBody.innerHTML = '';
+                
+                if (unique.length === 0) {
+                    elements.uniqueBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                Уникальных верных записей не найдено
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    unique.forEach(request => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>
+                                <button class="id-button" data-id="${request.id}">${request.id}</button>
+                            </td>
+                            <td>
+                                <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
+                            </td>
+                            <td>${request.topic}</td>
+                            <td>
+                                <button class="delete-btn" data-id="${request.id}" data-table="unique">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </td>
+                        `;
+                        elements.uniqueBody.appendChild(row);
+                    });
+                }
+            };
+
+            // Обработчики событий
+            const setupEventListeners = () => {
+                // Загрузка файла
+                elements.uploadBtn.addEventListener('click', () => {
+                    elements.fileInput.click();
+                });
+                
+                elements.fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        elements.fileName.textContent = this.files[0].name;
+                        
+                        const file = this.files[0];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            try {
+                                const data = new Uint8Array(e.target.result);
+                                const workbook = XLSX.read(data, {type: 'array'});
+                                
+                                // Предполагаем, что данные находятся на первом листе
+                                const firstSheetName = workbook.SheetNames[0];
+                                const worksheet = workbook.Sheets[firstSheetName];
+                                
+                                // Преобразуем лист в JSON
+                                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                                
+                                // Обрабатываем данные
+                                dataProcessor.processData(jsonData);
+                                utils.showNotification('Файл успешно загружен и обработан');
+                            } catch (error) {
+                                console.error('Ошибка при обработке файла:', error);
+                                utils.showNotification('Произошла ошибка при обработке файла: ' + error.message, true);
+                            }
+                        };
+                        
+                        reader.readAsArrayBuffer(file);
+                    }
+                });
+                
+                // Переключение вкладок
+                elements.tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        if (this.classList.contains('active')) return;
+                        
+                        elements.tabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const tabName = this.getAttribute('data-tab');
+                        
+                        // Скрываем все таблицы и панели управления
+                        elements.duplicatesControls.style.display = 'none';
+                        elements.nonStandardControls.style.display = 'none';
+                        elements.uniqueControls.style.display = 'none';
+                        elements.duplicatesTable.style.display = 'none';
+                        elements.nonStandardTable.style.display = 'none';
+                        elements.uniqueTable.style.display = 'none';
+                        
+                        // Показываем соответствующие таблицу и панель управления
+                        if (tabName === 'duplicates') {
+                            elements.duplicatesControls.style.display = 'flex';
+                            elements.duplicatesTable.style.display = 'block';
+                        } else if (tabName === 'nonStandard') {
+                            elements.nonStandardControls.style.display = 'flex';
+                            elements.nonStandardTable.style.display = 'block';
+                        } else if (tabName === 'unique') {
+                            elements.uniqueControls.style.display = 'flex';
+                            elements.uniqueTable.style.display = 'block';
+                        }
+                    });
+                });
+                
+                // Поиск в таблицах
+                elements.duplicatesSearch.addEventListener('input', () => {
+                    utils.searchTable('duplicatesSearch', 'duplicatesBody');
+                });
+                
+                elements.nonStandardSearch.addEventListener('input', () => {
+                    utils.searchTable('nonStandardSearch', 'nonStandardBody');
+                });
+                
+                elements.uniqueSearch.addEventListener('input', () => {
+                    utils.searchTable('uniqueSearch', 'uniqueBody');
+                });
+                
+                // Экспорт таблиц (без столбца "Действия")
+                elements.exportDuplicates.addEventListener('click', () => {
+                    utils.exportTableToExcel('duplicatesTable', 'Дублирующиеся_записи.xlsx');
+                });
+                
+                elements.exportNonStandard.addEventListener('click', () => {
+                    utils.exportTableToExcel('nonStandardTable', 'Несоответствующие_формату.xlsx');
+                });
+                
+                elements.exportUnique.addEventListener('click', () => {
+                    utils.exportTableToExcel('uniqueTable', 'Уникальные_верные.xlsx');
+                });
+                
+                // Обработка кликов по кнопкам ID, инициатора и удаления
+                document.addEventListener('click', function(e) {
+                    // Обработка клика по кнопке ID
+                    if (e.target.classList.contains('id-button')) {
+                        const id = e.target.getAttribute('data-id');
+                        if (id) {
+                            window.open(`https://sc-tech-solutions.itsm.mos.ru/requests/${id}`, '_blank');
+                        }
+                    }
+                    
+                    // Обработка клика по кнопке инициатора
+                    if (e.target.classList.contains('initiator-button')) {
+                        const initiator = e.target.getAttribute('data-initiator');
+                        utils.copyToClipboard(initiator)
+                            .then(() => {
+                                utils.showNotification('Инициатор запроса скопирован в буфер обмена');
+                            })
+                            .catch(err => {
+                                console.error('Ошибка копирования: ', err);
+                                utils.showNotification('Не удалось скопировать инициатора запроса', true);
+                            });
+                    }
+                    
+                    // Обработка клика по кнопке удаления
+                    if (e.target.closest('.delete-btn')) {
+                        const button = e.target.closest('.delete-btn');
+                        const id = button.getAttribute('data-id');
+                        const tableType = button.getAttribute('data-table');
+                        
+                        if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+                            utils.removeRecord(id, tableType);
+                            utils.showNotification('Запись успешно удалена');
+                        }
+                    }
+                });
+            };
+
+            // Инициализация приложения
+            const init = () => {
+                setupEventListeners();
+            };
+
+            // Запуск приложения
+            init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID Formatter & UTC Time</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-white: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-placeholder: #64748b;
+            --border-color: #334155;
+            --border-focus: #475569;
+            
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --gradient-indigo: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-amber: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-violet: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            
+            --border-radius: 12px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            
+            --transition-fast: 0.3s;
+            --transition-normal: 0.4s;
+            --transition-slow: 0.5s;
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .main-container {
+            display: flex;
+            gap: var(--spacing-lg);
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            position: relative;
+            flex: 1;
+        }
+
+        .history-container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            width: 395px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-title {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0 10px 0 0;
+            overflow-y: auto;
+            margin-bottom: var(--spacing-md);
+            flex: 1;
+            min-height: 250px;
+            max-height: 1030px;
+            
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-hover) var(--bg-tertiary);
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: var(--border-focus);
+        }
+
+        .history-item {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-focus);
+        }
+
+        .history-number {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            word-break: break-all;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .history-item:hover .history-actions {
+            opacity: 1;
+        }
+
+        .history-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all var(--transition-fast);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-action-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .clear-history-btn {
+            background: var(--gradient-danger);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .clear-history-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .history-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: var(--spacing-lg);
+            font-style: italic;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification {
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-md);
+            animation: slideInRight 0.3s ease-out;
+            max-width: 100%;
+        }
+
+        @keyframes slideInRight {
+            from {
+                right: -100%;
+                opacity: 0;
+            }
+            to {
+                right: 20px;
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .toggle-container {
+            display: flex;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            padding: 3px;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            border: 1px solid var(--border-focus);
+            overflow: hidden;
+        }
+
+        .toggle-option {
+            flex: 1;
+            padding: 10px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-slow) var(--ease-bounce);
+            border-radius: 8px;
+            z-index: 1;
+            position: relative;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.875rem;
+        }
+
+        .toggle-option.active {
+            color: var(--text-white);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            bottom: 3px;
+            left: 3px;
+            width: calc(50% - 3px);
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            transition: all var(--transition-slow) var(--ease-bounce);
+            box-shadow: 
+                var(--shadow-sm),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            z-index: 0;
+        }
+
+        .toggle-option:nth-child(2).active ~ .toggle-slider {
+            transform: translateX(100%);
+        }
+
+        .toggle-option.active .toggle-icon {
+            animation: iconPulse 0.6s ease-out;
+        }
+
+        @keyframes iconPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .toggle-option.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0.1) 100%);
+            animation: glow 2s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        .toggle-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .toggle-container.animate::after {
+            animation: particleExplosion 0.6s ease-out;
+        }
+
+        @keyframes particleExplosion {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+        }
+
+        .toggle-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            transition: transform var(--transition-fast) ease;
+        }
+
+        .input-with-button {
+            display: flex;
+            gap: 10px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-placeholder);
+            font-size: 16px;
+            transition: color var(--transition-fast);
+        }
+
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 14px 16px 14px 42px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            outline: none;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            height: 52px;
+        }
+
+        input[type="text"]::placeholder, input[type="tel"]::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        input[id="numberInput"]:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        input[type="text"].error, input[type="tel"].error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        input[type="text"].error + .input-icon, input[type="tel"].error + .input-icon {
+            color: #ef4444;
+        }
+
+        .format-btn-compact {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 52px;
+            width: 52px;
+            height: 52px;
+        }
+
+        .format-btn-compact::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .format-btn-compact:hover::after {
+            left: 100%;
+        }
+
+        .format-btn-compact:hover {
+            transform: translateY(-2px);
+        }
+
+        .format-btn-compact:active {
+            transform: translateY(0);
+        }
+
+        .result-container {
+            margin-bottom: var(--spacing-lg);
+            display: block;
+        }
+
+        .result-label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .result-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .result {
+            flex-grow: 1;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: var(--text-primary);
+            text-align: center;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .result:hover {
+            background: var(--bg-hover);
+        }
+
+        .copy-btn {
+            background: var(--gradient-success);
+            white-space: nowrap;
+            width: auto;
+            padding: 14px;
+            min-width: 52px;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
+
+        .button-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .group-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .check-btn {
+            flex: 1;
+            min-width: 120px;
+            min-height: 60px;
+            padding: 12px 8px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .check-btn i {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        button {
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .auth-group-btn { background: var(--gradient-indigo); }
+        .auth-group-btn:hover { background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); }
+
+        .mso-group-btn { background: var(--gradient-danger); }
+        .mso-group-btn:hover { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+
+        .geo-group-btn { background: var(--gradient-info); }
+        .geo-group-btn:hover { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+
+        .phone-group-btn { background: var(--gradient-cyan); }
+        .phone-group-btn:hover { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); }
+
+        .notification-btn { background: var(--gradient-pink); }
+        .notification-btn:hover { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
+
+        .photo-btn { background: var(--gradient-orange); }
+        .photo-btn:hover { background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); }
+
+        .documents-btn { background: var(--gradient-emerald); }
+        .documents-btn:hover { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+
+        .utc-time-section {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .utc-title {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            text-align: center;
+        }
+
+        .utc-btn {
+            background: var(--gradient-warning);
+            margin-bottom: var(--spacing-md);
+            width: 100%;
+            justify-content: center;
+            height: 52px;
+        }
+
+        .utc-btn:hover {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+        }
+
+        .utc-input-group {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .utc-result-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .utc-result {
+            flex-grow: 1;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: var(--text-primary);
+            text-align: center;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .utc-result:hover {
+            background: var(--bg-hover);
+        }
+
+        .utc-copy-btn {
+            background: var(--gradient-orange);
+            white-space: nowrap;
+            width: auto;
+            padding: 14px;
+            min-width: 52px;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .utc-copy-btn:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        }
+
+        .format-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        .additional-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .additional-buttons button {
+            flex: 1;
+            min-width: 120px;
+            min-height: 60px;
+            padding: 12px 8px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .additional-buttons button i {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .additional-btn {
+            flex: 1;
+            min-width: 120px;
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .additional-btn:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: inherit;
+            z-index: 1;
+        }
+
+        .passport-section {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .passport-title {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            text-align: center;
+        }
+
+        .passport-input-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .passport-input-with-button {
+            display: flex;
+            gap: 10px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .passport-check-btn {
+            background: var(--gradient-teal);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 52px;
+            width: 52px;
+            height: 52px;
+        }
+
+        .passport-check-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            transform: translateY(-2px);
+        }
+
+        .passport-check-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .passport-check-btn:hover::after {
+            left: 100%;
+        }
+
+        .quick-templates {
+            display: flex;
+            gap: 8px;
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .template-btn {
+            background: var(--gradient-violet);
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            min-height: auto;
+        }
+
+        .template-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+        }
+
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all var(--transition-fast);
+        }
+
+        .theme-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .history-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .history-group-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-search {
+            margin-bottom: var(--spacing-md);
+        }
+
+        body.light-theme {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --bg-hover: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --text-placeholder: #94a3b8;
+            --border-color: #cbd5e1;
+            --border-focus: #94a3b8;
+            
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-theme .result,
+        body.light-theme .utc-result {
+            background: #f8fafc;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        body.light-theme .result:hover,
+        body.light-theme .utc-result:hover {
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .history-container {
+                width: 100%;
+                max-width: 600px;
+                order: 2;
+            }
+            
+            .container {
+                order: 1;
+            }
+
+            .notification-container {
+                right: 10px;
+                top: 10px;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .check-buttons, .additional-buttons {
+                gap: 6px;
+            }
+            
+            .check-btn, .additional-buttons button {
+                min-width: 110px;
+                min-height: 55px;
+                font-size: 0.75rem;
+                padding: 10px 6px;
+            }
+            
+            .check-btn i, .additional-buttons button i {
+                font-size: 1rem;
+                margin-bottom: 3px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container, .history-container {
+                padding: var(--spacing-lg);
+                border-radius: 14px;
+            }
+            
+            .input-with-button {
+                flex-direction: column;
+            }
+            
+            .format-btn-compact {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .check-buttons, .additional-buttons {
+                flex-direction: column;
+            }
+            
+            .result-wrapper, .utc-result-wrapper {
+                flex-direction: column;
+            }
+            
+            .copy-btn, .utc-copy-btn, .check-btn, .additional-buttons button {
+                width: 100%;
+                min-width: auto;
+                min-height: 50px;
+                flex-direction: row;
+                gap: 8px;
+            }
+            
+            .check-btn i, .additional-buttons button i {
+                margin-bottom: 0;
+                font-size: 1rem;
+            }
+            
+            button {
+                font-size: 0.8125rem;
+                padding: 10px 14px;
+            }
+
+            .notification {
+                min-width: 250px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .notification-container {
+                width: calc(100% - 20px);
+                top: 10px;
+            }
+
+            .result, .utc-result {
+                min-height: 44px;
+                font-size: 0.8125rem;
+            }
+
+            .copy-btn, .utc-copy-btn {
+                height: 44px;
+            }
+            
+            .passport-input-with-button {
+                flex-direction: column;
+            }
+            
+            .passport-check-btn {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .theme-switcher {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: var(--spacing-md);
+                align-self: center;
+            }
+
+            .quick-templates {
+                flex-direction: column;
+            }
+
+            .format-btn-compact,
+            .copy-btn,
+            .utc-copy-btn,
+            .passport-check-btn {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="theme-switcher" id="themeSwitcher">
+                <button class="theme-btn active" data-theme="dark">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="theme-btn" data-theme="light">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+
+            <h1>Форма для работы с UUID</h1>
+            <p class="description">Введите число длиной 23 символа для форматирования</p>
+            
+            <div class="quick-templates" id="quickTemplates">
+                <!-- Шаблоны будут добавляться динамически -->
+            </div>
+            
+            <div class="toggle-container" id="toggleContainer">
+                <div class="toggle-option active" data-value="profile">
+                    <i class="fas fa-user toggle-icon"></i>
+                    <span>Профиль</span>
+                </div>
+                <div class="toggle-option" data-value="photo">
+                    <i class="fas fa-image toggle-icon"></i>
+                    <span>Фото</span>
+                </div>
+                <div class="toggle-slider"></div>
+            </div>
+
+            <div class="input-with-button">
+                <div class="input-group">
+                    <input type="tel" id="numberInput" placeholder="Введите UUID" maxlength="23" pattern="[0-9]*" inputmode="numeric">
+                    <div class="input-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                </div>
+                <button class="format-btn-compact" id="formatBtn" title="Форматировать">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </button>
+            </div>
+
+            <div class="result-container" id="resultContainer">
+                <div class="result-label">Отформатированный результат:</div>
+                <div class="result-wrapper">
+                    <div class="result" id="formattedResult">Каталог для s3</div>
+                    <button class="copy-btn" id="copyBtn" title="Копировать">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <div class="group-title">Сервисы мобильного приложения</div>
+                <div class="check-buttons" id="mobileAppButtons">
+                    <!-- Кнопки будут добавляться автоматически из конфигурации -->
+                </div>
+            </div>
+
+            <div class="button-group">
+                <div class="group-title">Запросы в ММЦ</div>
+                <div class="additional-buttons" id="mmcButtons">
+                    <!-- Будут добавляться динамически -->
+                </div>
+            </div>
+
+            <div class="passport-section">
+                <div class="passport-title">Проверка паспорта</div>
+                <div class="passport-input-with-button">
+                    <div class="input-group">
+                        <input type="text" id="passportInput" placeholder="Введите номер паспорта">
+                        <div class="input-icon">
+                            <i class="fas fa-passport"></i>
+                        </div>
+                    </div>
+                    <button class="passport-check-btn" id="checkPassportBtn" title="Проверить">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="utc-time-section">
+                <div class="utc-title">Текущее время в формате UTC</div>
+                <button class="utc-btn" id="utcTimeBtn">
+                    <i class="fas fa-clock"></i> Получить UTC время
+                </button>
+
+                <div class="utc-input-group">
+                    <div class="format-label">С миллисекундами:</div>
+                    <div class="utc-result-wrapper">
+                        <div class="utc-result" id="utcTimeResult">Время в UTC формате</div>
+                        <button class="utc-copy-btn" id="utcCopyBtn" title="Копировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="utc-input-group">
+                    <div class="format-label">Без миллисекунд:</div>
+                    <div class="utc-result-wrapper">
+                        <div class="utc-result" id="utcTimeResultSimple">Время в UTC формате</div>
+                        <button class="utc-copy-btn" id="utcCopyBtnSimple" title="Копировать">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-container">
+            <div class="history-title">
+                <span>История UUID</span>
+                <span id="historyCount">0/20</span>
+            </div>
+            
+            <div class="history-search">
+                <div class="input-group">
+                    <input type="text" id="historySearch" placeholder="Поиск в истории...">
+                    <div class="input-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <ul class="history-list" id="historyList">
+                <li class="history-empty">История пуста</li>
+            </ul>
+            
+            <button class="clear-history-btn" id="clearHistoryBtn">
+                <i class="fas fa-trash"></i> Очистить историю
+            </button>
+        </div>
+    </div>
+
+    <div class="notification-container">
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+        const CONFIG = {
+            maxInputLength: 23,
+            messageTimeout: 3000,
+            maxHistoryItems: 20,
+            quickTemplates: [
+                { name: "Тестовый UUID 1", value: "47102956833471298560341" },
+                { name: "Тестовый UUID 2", value: "98765432109876543210987" },
+                { name: "Модерский UUID", value: "11111111111111111111111" }
+            ],
+            categories: [
+                {
+                    category: "Сервисы мобильного приложения",
+                    class: "mobile",
+                    pages: [
+                        {
+                            name: "Регистрация",
+                            icon: "fas fa-user-plus",
+                            gradient: "auth-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fstatus%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Авторизация",
+                            icon: "fas fa-key",
+                            gradient: "auth-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fauth%2Fapi%2Fv2%2Fmobile%2Fauth%2Fauthorization%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Учет",
+                            icon: "fas fa-address-book",
+                            gradient: "mso-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2Fadd%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "МСО",
+                            icon: "fas fa-building",
+                            gradient: "mso-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2FsetAddress%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fresidence-mobile%2Fapi%2Fv3%2Fmobile%2Fresidence%2FsetAddress%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "ГЕО",
+                            icon: "fas fa-globe",
+                            gradient: "geo-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmessages%2Fapi%2Fv3%2Fmobile%2Fmessages%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request_body,negate:!f,params:(query:coords),type:phrase),query:(match_phrase:(request_body:coords))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request_body,negate:!t,params:!(TERMINATED,LOCATION_DISABLED,'%22lon%22:%20null','%22speed%22:%20null','%22lat%22:%20null'),type:phrases,value:'TERMINATED,%20LOCATION_DISABLED,%20%22lon%22:%20null,%20%22speed%22:%20null,%20%22lat%22:%20null'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(request_body:TERMINATED)),(match_phrase:(request_body:LOCATION_DISABLED)),(match_phrase:(request_body:'%22lon%22:%20null')),(match_phrase:(request_body:'%22speed%22:%20null')),(match_phrase:(request_body:'%22lat%22:%20null'))))))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Телефон",
+                            icon: "fas fa-mobile-screen-button",
+                            gradient: "phone-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:!('POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1','POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1','POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'),type:phrases,value:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1,%20POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1,%20POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsSend%20HTTP%2F1.1')),(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsResend%20HTTP%2F1.1')),(match_phrase:(request:'POST%20%2Fphone-verification%2Fapi%2FVerification%2FSmsRequest%20HTTP%2F1.1')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Уведомления",
+                            icon: "fas fa-bell",
+                            gradient: "notification-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fpush-dispatcher%2Fapi%2Fv2%2Fmobile%2Fpush%2Ffull%2Finfo%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Фото",
+                            icon: "fas fa-camera",
+                            gradient: "photo-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-integration),type:phrase),query:(match_phrase:(app:echd-integration))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Error%20on%20get%20photo%20by%20link','Incoming%20photo%20message','Photo%20success%20loaded%20by%20link','Error%20in%20identification%20message','Start%20process%20identification%20message','Error%20while%20validating%20photo%20in%20ECHD'),type:phrases,value:'Error%20on%20get%20photo%20by%20link,%20Incoming%20photo%20message,%20Photo%20success%20loaded%20by%20link,%20Error%20in%20identification%20message,%20Start%20process%20identification%20message,%20Error%20while%20validating%20photo%20in%20ECHD'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Error%20on%20get%20photo%20by%20link')),(match_phrase:(message:'Incoming%20photo%20message')),(match_phrase:(message:'Photo%20success%20loaded%20by%20link')),(match_phrase:(message:'Error%20in%20identification%20message')),(match_phrase:(message:'Start%20process%20identification%20message')),(match_phrase:(message:'Error%20while%20validating%20photo%20in%20ECHD')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }
+                    ]
+                }, {
+                    category: "Запросы в ММЦ",
+                    class: "mmc",
+                    pages: [
+                        {
+                            name: "Профиль",
+                            icon: "fas fa-user",
+                            gradient: "auth-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:!(mmc-adapter,cache-engine),type:phrases,value:'mmc-adapter,%20cache-engine'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:mmc-adapter)),(match_phrase:(app:cache-engine)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Profile%20sending%20OK','Profile%20sending%20error','Profile%20seems%20not%20exists'),type:phrases,value:'Profile%20sending%20OK,%20Profile%20sending%20error,%20Profile%20seems%20not%20exists'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Profile%20sending%20OK')),(match_phrase:(message:'Profile%20sending%20error')),(match_phrase:(message:'Profile%20seems%20not%20exists')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "МСО",
+                            icon: "fas fa-building",
+                            gradient: "mso-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:'residence%20sending'),type:phrase),query:(match_phrase:(message:'residence%20sending'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "ГЕО",
+                            icon: "fas fa-globe",
+                            gradient: "geo-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-track),type:phrase),query:(match_phrase:(app:mmc-track))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!t,params:(query:'Sending%20track%20to%20MMC...'),type:phrase),query:(match_phrase:(message:'Sending%20track%20to%20MMC...'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Фото",
+                            icon: "fas fa-camera",
+                            gradient: "photo-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:!('Error%20on%20get%20photo%20by%20link','Incoming%20photo%20message','Photo%20success%20loaded%20by%20link','Error%20in%20identification%20message','Start%20process%20identification%20message','Error%20while%20validating%20photo%20in%20ECHD'),type:phrases,value:'Error%20on%20get%20photo%20by%20link,%20Incoming%20photo%20message,%20Photo%20success%20loaded%20by%20link,%20Error%20in%20identification%20message,%20Start%20process%20identification%20message,%20Error%20while%20validating%20photo%20in%20ECHD'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(message:'Error%20on%20get%20photo%20by%20link')),(match_phrase:(message:'Incoming%20photo%20message')),(match_phrase:(message:'Photo%20success%20loaded%20by%20link')),(match_phrase:(message:'Error%20in%20identification%20message')),(match_phrase:(message:'Start%20process%20identification%20message')),(match_phrase:(message:'Error%20while%20validating%20photo%20in%20ECHD')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Телефон",
+                            icon: "fas fa-mobile-screen-button",
+                            gradient: "phone-group-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:'Send%20mobile%20verification%20message%20to%20mmc%20for%20user'),type:phrase),query:(match_phrase:(message:'Send%20mobile%20verification%20message%20to%20mmc%20for%20user'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:properties.UserId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(properties.UserId:'{userId}')))),query:(language:kuery,query:''))"
+                        }, {
+                            name: "Документы",
+                            icon: "fas fa-file",
+                            gradient: "documents-btn",
+                            url: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
+                        }
+                    ]
+                }
+            ],
+            urlTemplates: {
+                passport: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-2M,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:'getting%20uuid'),type:phrase),query:(match_phrase:(message:'getting%20uuid'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:{passport}),type:phrase),query:(match_phrase:(message:{passport})))),query:(language:kuery,query:''))"
+            }
+        };
+
+            const elements = {
+                numberInput: document.getElementById('numberInput'),
+                formatBtn: document.getElementById('formatBtn'),
+                resultContainer: document.getElementById('resultContainer'),
+                formattedResult: document.getElementById('formattedResult'),
+                copyBtn: document.getElementById('copyBtn'),
+                notification: document.getElementById('notification'),
+                toggleContainer: document.getElementById('toggleContainer'),
+                mobileAppButtons: document.getElementById('mobileAppButtons'),
+                mmcButtons: document.getElementById('mmcButtons'),
+                utcTimeBtn: document.getElementById('utcTimeBtn'),
+                utcTimeResult: document.getElementById('utcTimeResult'),
+                utcTimeResultSimple: document.getElementById('utcTimeResultSimple'),
+                utcCopyBtn: document.getElementById('utcCopyBtn'),
+                utcCopyBtnSimple: document.getElementById('utcCopyBtnSimple'),
+                historyList: document.getElementById('historyList'),
+                historyCount: document.getElementById('historyCount'),
+                clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+                passportInput: document.getElementById('passportInput'),
+                checkPassportBtn: document.getElementById('checkPassportBtn'),
+                quickTemplates: document.getElementById('quickTemplates'),
+                themeSwitcher: document.getElementById('themeSwitcher'),
+                historySearch: document.getElementById('historySearch')
+            };
+
+            const state = {
+                selectedType: 'profile',
+                messageTimeout: null,
+                history: [],
+                currentTheme: 'dark'
+            };
+
+            const utils = {
+                cleanNumber: (number) => number.replace(/\D/g, ''),
+                
+                isValidUserId: (userId) => utils.cleanNumber(userId).length === CONFIG.maxInputLength,
+                
+                formatWithSeparators: (number, separator = '/', chunkSize = 4) => {
+                    const cleanNumber = utils.cleanNumber(number);
+                    const chunks = [];
+                    for (let i = 0; i < cleanNumber.length; i += chunkSize) {
+                        chunks.push(cleanNumber.substring(i, i + chunkSize));
+                    }
+                    return chunks.join(separator);
+                },
+                
+                debounce: (func, wait) => {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                },
+
+                saveHistory: () => {
+                    localStorage.setItem('uuidHistory', JSON.stringify(state.history));
+                },
+
+                loadHistory: () => {
+                    const savedHistory = localStorage.getItem('uuidHistory');
+                    if (savedHistory) {
+                        state.history = JSON.parse(savedHistory);
+                    }
+                },
+
+                addToHistory: (uuid) => {
+                    const cleanUuid = utils.cleanNumber(uuid);
+                    if (cleanUuid.length !== CONFIG.maxInputLength) return;
+
+                    state.history = state.history.filter(item => item !== cleanUuid);
+                    state.history.unshift(cleanUuid);
+                    
+                    if (state.history.length > CONFIG.maxHistoryItems) {
+                        state.history = state.history.slice(0, CONFIG.maxHistoryItems);
+                    }
+                    
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                removeFromHistory: (uuid) => {
+                    state.history = state.history.filter(item => item !== uuid);
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                clearHistory: () => {
+                    state.history = [];
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                formatHistoryDate: (timestamp) => {
+                    const date = new Date(timestamp);
+                    const today = new Date();
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    if (date.toDateString() === today.toDateString()) return 'Сегодня';
+                    if (date.toDateString() === yesterday.toDateString()) return 'Вчера';
+                    return date.toLocaleDateString('ru-RU');
+                },
+
+                saveTheme: (theme) => {
+                    localStorage.setItem('appTheme', theme);
+                },
+
+                loadTheme: () => {
+                    const savedTheme = localStorage.getItem('appTheme');
+                    if (savedTheme) {
+                        state.currentTheme = savedTheme;
+                        themeUI.applyTheme(savedTheme);
+                    }
+                }
+            };
+
+            const formatter = {
+                formatNumber: (number, type) => {
+                    const cleanNumber = utils.cleanNumber(number);
+                    
+                    if (cleanNumber.length !== CONFIG.maxInputLength) {
+                        throw new Error(`Число должно содержать ровно ${CONFIG.maxInputLength} цифр`);
+                    }
+                    
+                    const formattedNumber = utils.formatWithSeparators(cleanNumber);
+                    const prefix = type === 'photo' 
+                        ? '/s3b-pudsmmu-prod/' 
+                        : '/s3b-pudsmmu-cached-prod/';
+                    
+                    return prefix + formattedNumber;
+                }
+            };
+
+            const timeUtils = {
+                getCurrentUTCTimeWithMs: () => {
+                    const now = new Date();
+                    const year = now.getUTCFullYear();
+                    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+                    const day = String(now.getUTCDate()).padStart(2, '0');
+                    const hours = String(now.getUTCHours()).padStart(2, '0');
+                    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+                    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+                    const milliseconds = String(now.getUTCMilliseconds()).padStart(3, '0');
+                    const microseconds = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+
+                    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${microseconds}Z`;
+                },
+
+                getCurrentUTCTimeSimple: () => {
+                    const now = new Date();
+                    const year = now.getUTCFullYear();
+                    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+                    const day = String(now.getUTCDate()).padStart(2, '0');
+                    const hours = String(now.getUTCHours()).padStart(2, '0');
+                    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+                    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+                    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+                }
+            };
+
+            const ui = {
+                showNotification: (text, isError = false) => {
+                    if (state.messageTimeout) {
+                        clearTimeout(state.messageTimeout);
+                        state.messageTimeout = null;
+                    }
+                    
+                    elements.notification.textContent = text;
+                    elements.notification.className = `notification ${isError ? 'error' : 'success'}`;
+                    elements.notification.style.display = 'block';
+                    
+                    state.messageTimeout = setTimeout(() => {
+                        elements.notification.style.display = 'none';
+                    }, CONFIG.messageTimeout);
+                },
+
+                copyToClipboard: (text) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        ui.showNotification('Скопировано в буфер обмена!');
+                    }).catch(err => {
+                        ui.showNotification('Ошибка копирования', true);
+                        console.error('Ошибка копирования: ', err);
+                    });
+                },
+
+                openCheckUrl: (urlTemplate, userId) => {
+                    if (!utils.isValidUserId(userId)) {
+                        ui.showNotification(`Число должно содержать ровно ${CONFIG.maxInputLength} цифр`, true);
+                        elements.numberInput.classList.add('error');
+                        return;
+                    }
+                    
+                    const cleanUserId = utils.cleanNumber(userId);
+                    const url = urlTemplate.replace(/{userId}/g, cleanUserId);
+                    window.open(url, '_blank');
+                },
+
+                openPassportCheckUrl: (passportNumber) => {
+                    if (!passportNumber || passportNumber.trim() === '') {
+                        ui.showNotification('Введите номер паспорта', true);
+                        elements.passportInput.classList.add('error');
+                        return;
+                    }
+                    
+                    const url = CONFIG.urlTemplates.passport.replace(/{passport}/g, encodeURIComponent(passportNumber));
+                    window.open(url, '_blank');
+                },
+
+                createCheckButton: (config) => {
+                    const button = document.createElement('button');
+                    button.className = `check-btn ${config.gradient}`;
+                    button.innerHTML = `<i class="${config.icon}"></i> ${config.name}`;
+                    
+                    button.addEventListener('click', () => {
+                        ui.openCheckUrl(config.url, elements.numberInput.value.trim());
+                    });
+                    
+                    return button;
+                },
+
+                initCheckButtons: () => {
+                    elements.mobileAppButtons.innerHTML = '';
+                    elements.mmcButtons.innerHTML = '';
+                    
+                    CONFIG.categories.forEach(category => {
+                        const container = category.class === 'mobile' ? elements.mobileAppButtons : elements.mmcButtons;
+                        
+                        category.pages.forEach(page => {
+                            const button = ui.createCheckButton(page);
+                            container.appendChild(button);
+                        });
+                    });
+                },
+
+                setLoading: (element, isLoading) => {
+                    if (isLoading) {
+                        element.classList.add('loading');
+                    } else {
+                        element.classList.remove('loading');
+                    }
+                },
+
+                initQuickTemplates: () => {
+                    CONFIG.quickTemplates.forEach(template => {
+                        const button = document.createElement('button');
+                        button.className = 'template-btn';
+                        button.textContent = template.name;
+                        button.title = `Вставить: ${template.value}`;
+                        
+                        button.addEventListener('click', () => {
+                            elements.numberInput.value = template.value;
+                            elements.numberInput.focus();
+                            ui.showNotification(`Шаблон "${template.name}" вставлен`);
+                        });
+                        
+                        elements.quickTemplates.appendChild(button);
+                    });
+                }
+            };
+
+            const historyUI = {
+                updateHistoryDisplay: () => {
+                    elements.historyList.innerHTML = '';
+                    
+                    if (state.history.length === 0) {
+                        elements.historyList.innerHTML = '<li class="history-empty">История пуста</li>';
+                        elements.historyCount.textContent = `${state.history.length}/${CONFIG.maxHistoryItems}`;
+                        return;
+                    }
+                    
+                    elements.historyCount.textContent = `${state.history.length}/${CONFIG.maxHistoryItems}`;
+                    
+                    const historyGroups = {
+                        'Сегодня': [],
+                        'Вчера': [],
+                        'Ранее': []
+                    };
+                    
+                    state.history.forEach(uuid => {
+                        historyGroups['Сегодня'].push(uuid);
+                    });
+                    
+                    Object.entries(historyGroups).forEach(([groupName, items]) => {
+                        if (items.length === 0) return;
+                        
+                        const groupElement = document.createElement('div');
+                        groupElement.className = 'history-group';
+                        
+                        const groupTitle = document.createElement('div');
+                        groupTitle.className = 'history-group-title';
+                        groupTitle.textContent = groupName;
+                        groupElement.appendChild(groupTitle);
+                        
+                        items.forEach(uuid => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'history-item';
+                            
+                            const numberSpan = document.createElement('span');
+                            numberSpan.className = 'history-number';
+                            numberSpan.textContent = uuid;
+                            
+                            const actionsDiv = document.createElement('div');
+                            actionsDiv.className = 'history-actions';
+                            
+                            const copyButton = document.createElement('button');
+                            copyButton.className = 'history-action-btn';
+                            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            copyButton.title = 'Копировать';
+                            copyButton.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                ui.copyToClipboard(uuid);
+                            });
+                            
+                            const deleteButton = document.createElement('button');
+                            deleteButton.className = 'history-action-btn';
+                            deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+                            deleteButton.title = 'Удалить';
+                            deleteButton.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                utils.removeFromHistory(uuid);
+                            });
+                            
+                            actionsDiv.appendChild(copyButton);
+                            actionsDiv.appendChild(deleteButton);
+                            
+                            listItem.appendChild(numberSpan);
+                            listItem.appendChild(actionsDiv);
+                            
+                            listItem.addEventListener('click', () => {
+                                elements.numberInput.value = uuid;
+                                elements.numberInput.focus();
+                            });
+                            
+                            historyUI.setupSwipe(listItem);
+                            
+                            groupElement.appendChild(listItem);
+                        });
+                        
+                        elements.historyList.appendChild(groupElement);
+                    });
+                },
+
+                setupSwipe: (listItem) => {
+                    let touchStartX = 0;
+                    let touchEndX = 0;
+                    
+                    listItem.addEventListener('touchstart', (e) => {
+                        touchStartX = e.changedTouches[0].screenX;
+                    });
+                    
+                    listItem.addEventListener('touchend', (e) => {
+                        touchEndX = e.changedTouches[0].screenX;
+                        const diff = touchStartX - touchEndX;
+                        
+                        if (Math.abs(diff) > 50) {
+                            const actions = listItem.querySelector('.history-actions');
+                            if (diff > 0) {
+                                actions.style.opacity = '1';
+                            } else {
+                                actions.style.opacity = '0';
+                            }
+                        }
+                    });
+                },
+
+                setupSearch: () => {
+                    elements.historySearch.addEventListener('input', utils.debounce((e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        const items = elements.historyList.querySelectorAll('.history-item');
+                        
+                        items.forEach(item => {
+                            const uuid = item.querySelector('.history-number').textContent;
+                            if (uuid.includes(searchTerm)) {
+                                item.style.display = 'flex';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+                    }, 300));
+                }
+            };
+
+            const themeUI = {
+                applyTheme: (theme) => {
+                    state.currentTheme = theme;
+                    document.body.className = theme === 'light' ? 'light-theme' : '';
+                    
+                    document.querySelectorAll('.theme-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+                    });
+                },
+
+                initThemeSwitcher: () => {
+                    document.querySelectorAll('.theme-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const theme = this.getAttribute('data-theme');
+                            themeUI.applyTheme(theme);
+                            utils.saveTheme(theme);
+                        });
+                    });
+                }
+            };
+
+            const setupEventListeners = () => {
+                elements.formatBtn.addEventListener('click', () => {
+                    const inputValue = elements.numberInput.value.trim();
+                    
+                    try {
+                        const formatted = formatter.formatNumber(inputValue, state.selectedType);
+                        elements.formattedResult.textContent = formatted;
+                        ui.copyToClipboard(formatted);
+                        
+                        utils.addToHistory(inputValue);
+                    } catch (error) {
+                        ui.showNotification(error.message, true);
+                        elements.numberInput.classList.add('error');
+                    }
+                });
+
+                elements.checkPassportBtn.addEventListener('click', () => {
+                    const passportValue = elements.passportInput.value.trim();
+                    ui.openPassportCheckUrl(passportValue);
+                });
+
+                elements.passportInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        elements.checkPassportBtn.click();
+                    }
+                });
+
+                elements.passportInput.addEventListener('input', () => {
+                    elements.passportInput.classList.remove('error');
+                });
+
+                elements.formattedResult.addEventListener('click', function() {
+                    if (this.textContent && this.textContent !== 'Каталог для s3') {
+                        ui.copyToClipboard(this.textContent);
+                    }
+                });
+
+                elements.utcTimeResult.addEventListener('click', function() {
+                    if (this.textContent && this.textContent !== 'Время в UTC формате') {
+                        ui.copyToClipboard(this.textContent);
+                    }
+                });
+
+                elements.utcTimeResultSimple.addEventListener('click', function() {
+                    if (this.textContent && this.textContent !== 'Время в UTC формате') {
+                        ui.copyToClipboard(this.textContent);
+                    }
+                });
+
+                elements.utcTimeBtn.addEventListener('click', () => {
+                    const utcTimeWithMs = timeUtils.getCurrentUTCTimeWithMs();
+                    const utcTimeSimple = timeUtils.getCurrentUTCTimeSimple();
+
+                    elements.utcTimeResult.textContent = utcTimeWithMs;
+                    elements.utcTimeResultSimple.textContent = utcTimeSimple;
+                    ui.copyToClipboard(utcTimeWithMs);
+                });
+
+                elements.utcCopyBtn.addEventListener('click', () => {
+                    if (elements.utcTimeResult.textContent && elements.utcTimeResult.textContent !== '-') {
+                        ui.copyToClipboard(elements.utcTimeResult.textContent);
+                    } else {
+                        ui.showNotification('Сначала получите время UTC', true);
+                    }
+                });
+
+                elements.utcCopyBtnSimple.addEventListener('click', () => {
+                    if (elements.utcTimeResultSimple.textContent && elements.utcTimeResultSimple.textContent !== '-') {
+                        ui.copyToClipboard(elements.utcTimeResultSimple.textContent);
+                    } else {
+                        ui.showNotification('Сначала получите время UTC', true);
+                    }
+                });
+
+                elements.numberInput.addEventListener('input', () => {
+                    elements.numberInput.classList.remove('error');
+                });
+
+                elements.copyBtn.addEventListener('click', () => {
+                    ui.copyToClipboard(elements.formattedResult.textContent);
+                });
+
+                document.querySelectorAll('.toggle-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        if (this.classList.contains('active')) return;
+                        
+                        elements.toggleContainer.classList.add('animate');
+                        document.querySelectorAll('.toggle-option').forEach(opt => {
+                            opt.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        state.selectedType = this.getAttribute('data-value');
+                        
+                        setTimeout(() => {
+                            elements.toggleContainer.classList.remove('animate');
+                        }, 600);
+                    });
+                });
+
+                elements.numberInput.addEventListener('keydown', (e) => {
+                    if ([46, 8, 9, 27, 13, 110].includes(e.keyCode) ||
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true) ||
+                        (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        return;
+                    }
+                    
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && 
+                        (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+
+                elements.numberInput.addEventListener('input', utils.debounce((e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length > CONFIG.maxInputLength) {
+                        e.target.value = value.slice(0, CONFIG.maxInputLength);
+                    }
+                }, 300));
+
+                elements.numberInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        elements.formatBtn.click();
+                    }
+                });
+
+                elements.clearHistoryBtn.addEventListener('click', () => {
+                    if (state.history.length > 0) {
+                        if (confirm('Вы уверены, что хотите очистить историю?')) {
+                            utils.clearHistory();
+                            ui.showNotification('История очищена');
+                        }
+                    } else {
+                        ui.showNotification('История уже пуста');
+                    }
+                });
+
+                document.addEventListener('paste', function(e) {
+                    if (document.activeElement === elements.numberInput || document.activeElement === elements.passportInput) {
+                        return;
+                    }
+                    
+                    const text = e.clipboardData.getData('text/plain');
+                    const cleanText = text.replace(/\D/g, '');
+                    
+                    if (cleanText.length > 0) {
+                        e.preventDefault();
+                        
+                        elements.numberInput.value = cleanText.slice(0, CONFIG.maxInputLength);
+                        elements.numberInput.focus();
+                        ui.showNotification('Текст из буфера обмена вставлен в поле ввода UUID');
+                    } else {
+                        ui.showNotification('В буфере обмена нет числовых данных', true);
+                    }
+                });
+            };
+
+            const init = () => {
+                setupEventListeners();
+                
+                ui.initCheckButtons();
+                ui.initQuickTemplates();
+                themeUI.initThemeSwitcher();
+                utils.loadTheme();
+                historyUI.setupSearch();
+                utils.loadHistory();
+                historyUI.updateHistoryDisplay();
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html>

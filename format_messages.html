@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Формирование текста для отправки в телеграм</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили из исходного файла */
+        :root {
+            /* Цветовая палитра */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-placeholder: #64748b;
+            --border-color: #334155;
+            --border-focus: #475569;
+            
+            /* Градиенты для кнопок */
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --gradient-indigo: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            
+            /* Тени */
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            
+            /* Размеры */
+            --border-radius: 12px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            
+            /* Анимации */
+            --transition-fast: 0.3s;
+            --transition-normal: 0.4s;
+            --transition-slow: 0.5s;
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .main-container {
+            display: flex;
+            gap: var(--spacing-lg);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            position: relative;
+            flex: 1;
+        }
+
+        .history-container {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            width: 370px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-title {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0 10px 0 0;
+            max-height: 900px;
+            overflow-y: auto;
+            margin-bottom: var(--spacing-md);
+            flex: 1;
+            
+            /* Стили для скроллбара */
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-hover) var(--bg-tertiary);
+        }
+
+        /* Стили для скроллбара в Webkit-браузерах */
+        .history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: var(--border-focus);
+        }
+
+        .history-item {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-focus);
+        }
+
+        .history-number {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            word-break: break-all;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .history-item:hover .history-actions {
+            opacity: 1;
+        }
+
+        .history-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all var(--transition-fast);
+        }
+
+        .history-action-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .clear-history-btn {
+            background: var(--gradient-danger);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .clear-history-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: var(--spacing-lg);
+            font-style: italic;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        /* Стили для уведомлений в правом верхнем углу */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+
+        .notification {
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-md);
+            animation: slideInRight 0.3s ease-out;
+            max-width: 100%;
+        }
+
+        @keyframes slideInRight {
+            from {
+                right: -100%;
+                opacity: 0;
+            }
+            to {
+                right: 20px;
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-placeholder);
+            font-size: 16px;
+            transition: color var(--transition-fast);
+        }
+
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 14px 16px 14px 42px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            outline: none;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        input[type="text"]::placeholder, input[type="date"]::placeholder {
+            color: var(--text-placeholder);
+        }
+
+        /* Упрощенная подсветка - только при фокусе */
+        input[type="text"]:focus, input[type="date"]:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        input[type="text"].error, input[type="date"].error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        input[type="text"].error + .input-icon, input[type="date"].error + .input-icon {
+            color: #ef4444;
+        }
+
+        /* Обновленный контейнер результата - всегда видимый */
+        .result-container {
+            margin-bottom: var(--spacing-lg);
+            display: block; /* Всегда видимый */
+        }
+
+        .result-label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .result-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .result {
+            flex-grow: 1;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-sm);
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            color: var(--text-primary);
+            text-align: left;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            white-space: pre-line;
+        }
+
+        .copy-btn {
+            background: var(--gradient-success);
+            white-space: nowrap;
+            width: auto;
+            padding: 12px 16px;
+            min-width: 120px;
+            height: 48px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Стиль для иконки календаря */
+        input[type="date"] {
+            /* Убираем стандартную иконку календаря */
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Добавляем кастомную иконку календаря */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(175deg);
+            opacity: 0.7;
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        /* Для Firefox */
+        input[type="date"]::-moz-calendar-picker-indicator {
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(175deg);
+            opacity: 0.7;
+            cursor: pointer;
+        }
+
+        /* Стили для групп кнопок */
+        .button-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .group-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .check-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        button {
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Стили для кнопок проверки */
+        .auth-btn { background: var(--gradient-primary); }
+        .auth-btn:hover { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); }
+
+        .mso-process-btn { background: var(--gradient-info); }
+        .mso-process-btn:hover { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); }
+
+        .mso-docvalid-btn { background: var(--gradient-warning); }
+        .mso-docvalid-btn:hover { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
+
+        .mso-middlename-btn { background: var(--gradient-purple); }
+        .mso-middlename-btn:hover { background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%); }
+
+        .mso-esfl-btn { background: var(--gradient-danger); }
+        .mso-esfl-btn:hover { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+
+        .mso-birthcountry-btn { background: var(--gradient-teal); }
+        .mso-birthcountry-btn:hover { background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%); }
+
+        .mso-firstnamelat-btn { background: var(--gradient-pink); }
+        .mso-firstnamelat-btn:hover { background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); }
+
+        .mso-birthplace-btn { background: var(--gradient-cyan); }
+        .mso-birthplace-btn:hover { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); }
+
+        .telemetry-btn { background: var(--gradient-orange); }
+        .telemetry-btn:hover { background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); }
+
+        /* Улучшенная адаптивность */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .history-container {
+                width: 100%;
+                max-width: 800px;
+                order: 2;
+            }
+            
+            .container {
+                order: 1;
+            }
+
+            .notification-container {
+                right: 10px;
+                top: 10px;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container, .history-container {
+                padding: var(--spacing-lg) var(--spacing-md);
+                border-radius: 14px;
+            }
+            
+            .check-buttons {
+                flex-direction: column;
+            }
+            
+            .result-wrapper {
+                flex-direction: column;
+            }
+            
+            .copy-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            button {
+                font-size: 0.8125rem;
+                padding: 10px 14px;
+            }
+
+            .notification {
+                min-width: 250px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .notification-container {
+                width: calc(100% - 20px);
+                top: 10px;
+            }
+
+            .result {
+                min-height: 44px;
+                font-size: 0.8125rem;
+            }
+
+            .copy-btn {
+                height: 44px;
+            }
+        }
+
+        /* Улучшения доступности */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Фокус для доступности */
+        button:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        /* Стили для загрузки */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: inherit;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <h1>Формирование текста для отправки в телеграм</h1>
+            <p class="description">Введите данные для формирования сообщений</p>
+            
+            <!-- Поле для номера заявки -->
+            <div class="input-group">
+                <input type="text" id="requestNumber" placeholder="Введите номер заявки">
+                <div class="input-icon">
+                    <i class="fas fa-hashtag"></i>
+                </div>
+            </div>
+
+            <!-- Поле для UUID -->
+            <div class="input-group">
+                <input type="text" id="uuidInput" placeholder="Введите UUID" maxlength="23">
+                <div class="input-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+            </div>
+
+            <!-- Поле для даты -->
+            <div class="input-group">
+                <input type="date" id="dateInput" placeholder="Выберите дату">
+                <div class="input-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+            </div>
+
+            <!-- Обновленный контейнер результата -->
+            <div class="result-container" id="resultContainer">
+                <div class="result-label">Сформированное сообщение:</div>
+                <div class="result-wrapper">
+                    <div class="result" id="formattedResult">Здесь будет сгенерированное сообщение</div>
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i> Копировать
+                    </button>
+                </div>
+            </div>
+
+            <!-- Группа кнопок "Аутентификация" -->
+            <div class="button-group">
+                <div class="group-title">Аутентификация</div>
+                <div class="check-buttons">
+                    <button class="check-btn auth-btn" id="authBtn">
+                        Аутентификация
+                    </button>
+                </div>
+            </div>
+
+            <!-- Группа кнопок "МСО" -->
+            <div class="button-group">
+                <div class="group-title">МСО</div>
+                <div class="check-buttons">
+                    <button class="check-btn mso-process-btn" id="msoProcessBtn">
+                        Process
+                    </button>
+                    <button class="check-btn mso-docvalid-btn" id="msoDocValidBtn">
+                        docValidTo
+                    </button>
+                    <button class="check-btn mso-middlename-btn" id="msoMiddleNameBtn">
+                        middleName
+                    </button>
+                    <button class="check-btn mso-esfl-btn" id="msoEsflBtn">
+                        ФЛ из ЕСФЛ
+                    </button>
+                    <button class="check-btn mso-birthcountry-btn" id="msoBirthCountryBtn">
+                        birthCountryId
+                    </button>
+                    <button class="check-btn mso-firstnamelat-btn" id="msoFirstNameLatBtn">
+                        firstNameLat
+                    </button>
+                    <button class="check-btn mso-birthplace-btn" id="msoBirthPlaceBtn">
+                        birthPlace
+                    </button>
+                </div>
+            </div>
+
+            <!-- Группа кнопок "Телеметрия" -->
+            <div class="button-group">
+                <div class="group-title">Телеметрия</div>
+                <div class="check-buttons">
+                    <button class="check-btn telemetry-btn" id="telemetryBtn">
+                        Нет телеметрии
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок истории -->
+        <div class="history-container">
+            <div class="history-title">
+                <span>История сообщений</span>
+                <span id="historyCount">0/20</span>
+            </div>
+            <ul class="history-list" id="historyList">
+                <li class="history-empty">История пуста</li>
+            </ul>
+            <button class="clear-history-btn" id="clearHistoryBtn">
+                <i class="fas fa-trash"></i> Очистить историю
+            </button>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений в правом верхнем углу -->
+    <div class="notification-container">
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Конфигурация приложения
+            const CONFIG = {
+                maxInputLength: 23,
+                messageTimeout: 3000,
+                maxHistoryItems: 20,
+            };
+
+            // DOM элементы
+            const elements = {
+                requestNumber: document.getElementById('requestNumber'),
+                uuidInput: document.getElementById('uuidInput'),
+                dateInput: document.getElementById('dateInput'),
+                resultContainer: document.getElementById('resultContainer'),
+                formattedResult: document.getElementById('formattedResult'),
+                copyBtn: document.getElementById('copyBtn'),
+                notification: document.getElementById('notification'),
+                authBtn: document.getElementById('authBtn'),
+                msoProcessBtn: document.getElementById('msoProcessBtn'),
+                msoDocValidBtn: document.getElementById('msoDocValidBtn'),
+                msoMiddleNameBtn: document.getElementById('msoMiddleNameBtn'),
+                msoEsflBtn: document.getElementById('msoEsflBtn'),
+                msoBirthCountryBtn: document.getElementById('msoBirthCountryBtn'),
+                msoFirstNameLatBtn: document.getElementById('msoFirstNameLatBtn'),
+                msoBirthPlaceBtn: document.getElementById('msoBirthPlaceBtn'),
+                telemetryBtn: document.getElementById('telemetryBtn'),
+                historyList: document.getElementById('historyList'),
+                historyCount: document.getElementById('historyCount'),
+                clearHistoryBtn: document.getElementById('clearHistoryBtn')
+            };
+
+            // Состояние приложения
+            const state = {
+                messageTimeout: null,
+                history: []
+            };
+
+            // Утилиты
+            const utils = {
+                // Очистка числа от нецифровых символов
+                cleanNumber: (number) => number.replace(/\D/g, ''),
+                
+                // Проверка валидности номера заявки
+                isValidRequestNumber: (number) => utils.cleanNumber(number).length > 0,
+                
+                // Проверка валидности UUID
+                isValidUUID: (uuid) => utils.cleanNumber(uuid).length === CONFIG.maxInputLength,
+                
+                // Проверка валидности даты
+                isValidDate: (date) => date && date.trim() !== '',
+                
+                // Создание debounce функции
+                debounce: (func, wait) => {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                },
+
+                // Сохранение истории в localStorage
+                saveHistory: () => {
+                    localStorage.setItem('messageHistory', JSON.stringify(state.history));
+                },
+
+                // Загрузка истории из localStorage
+                loadHistory: () => {
+                    const savedHistory = localStorage.getItem('messageHistory');
+                    if (savedHistory) {
+                        state.history = JSON.parse(savedHistory);
+                    }
+                },
+
+                // Добавление сообщения в историю
+                addToHistory: (message) => {
+                    // Удаляем дубликаты
+                    state.history = state.history.filter(item => item !== message);
+                    
+                    // Добавляем в начало
+                    state.history.unshift(message);
+                    
+                    // Ограничиваем количество элементов
+                    if (state.history.length > CONFIG.maxHistoryItems) {
+                        state.history = state.history.slice(0, CONFIG.maxHistoryItems);
+                    }
+                    
+                    // Сохраняем и обновляем UI
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                // Удаление сообщения из истории
+                removeFromHistory: (message) => {
+                    state.history = state.history.filter(item => item !== message);
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                // Очистка всей истории
+                clearHistory: () => {
+                    state.history = [];
+                    utils.saveHistory();
+                    historyUI.updateHistoryDisplay();
+                },
+
+                // Форматирование даты в нужный формат
+                formatDate: (dateString) => {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                }
+            };
+
+            // Основные функции
+            const messageGenerator = {
+                // Генерация сообщения аутентификации
+                generateAuthMessage: (requestNumber, uuid, date) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nАутентификация в статусе process: ${date}`;
+                },
+
+                // Генерация сообщения МСО Process
+                generateMsoProcessMessage: (requestNumber, uuid, date) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе process: ${date}`;
+                },
+
+                // Генерация сообщения МСО docValidTo
+                generateMsoDocValidMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: Дата окончания действия документа находится в прошлом или формат переданных данных неверен.`;
+                },
+
+                // Генерация сообщения МСО middleName
+                generateMsoMiddleNameMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: Отчество содержит недопустимые символы.`;
+                },
+
+                // Генерация сообщения МСО ЕСФЛ
+                generateMsoEsflMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: Произошла непредвиденная ошибка при отождествлении ФЛ в ЕСФЛ.`;
+                },
+
+                // Генерация сообщения МСО birthCountryId
+                generateMsoBirthCountryMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: В заявлении отсутствует информация о стране рождения.`;
+                },
+
+                // Генерация сообщения МСО firstNameLat
+                generateMsoFirstNameLatMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: Имя содержит недопустимые символы.`;
+                },
+
+                // Генерация сообщения МСО birthPlace
+                generateMsoBirthPlaceMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nМСО в статусе failedStop: Место рождения содержит недопустимые символы.`;
+                },
+
+                // Генерация сообщения телеметрии
+                generateTelemetryMessage: (requestNumber, uuid) => {
+                    return `Номер заявки: ${requestNumber}\nUUID: ${uuid}\nИнформация: Отсутствуют данные в навигаторе.`;
+                }
+            };
+
+            const ui = {
+                // Показать уведомление
+                showNotification: (text, isError = false) => {
+                    if (state.messageTimeout) {
+                        clearTimeout(state.messageTimeout);
+                        state.messageTimeout = null;
+                    }
+                    
+                    elements.notification.textContent = text;
+                    elements.notification.className = `notification ${isError ? 'error' : 'success'}`;
+                    elements.notification.style.display = 'block';
+                    
+                    state.messageTimeout = setTimeout(() => {
+                        elements.notification.style.display = 'none';
+                    }, CONFIG.messageTimeout);
+                },
+
+                // Копирование в буфер обмена
+                copyToClipboard: (text) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        ui.showNotification('Скопировано в буфер обмена!');
+                    }).catch(err => {
+                        ui.showNotification('Ошибка копирования', true);
+                        console.error('Ошибка копирования: ', err);
+                    });
+                },
+
+                // Проверка всех полей
+                validateInputs: () => {
+                    const requestNumber = elements.requestNumber.value.trim();
+                    const uuid = elements.uuidInput.value.trim();
+                    const date = elements.dateInput.value;
+
+                    let isValid = true;
+
+                    // Проверка номера заявки
+                    if (!utils.isValidRequestNumber(requestNumber)) {
+                        elements.requestNumber.classList.add('error');
+                        isValid = false;
+                    }
+
+                    // Проверка UUID
+                    if (!utils.isValidUUID(uuid)) {
+                        elements.uuidInput.classList.add('error');
+                        isValid = false;
+                    }
+
+                    // Проверка даты
+                    if (!utils.isValidDate(date)) {
+                        elements.dateInput.classList.add('error');
+                        isValid = false;
+                    }
+
+                    return isValid ? { requestNumber, uuid, date } : null;
+                },
+
+                // Установка состояния загрузки
+                setLoading: (element, isLoading) => {
+                    if (isLoading) {
+                        element.classList.add('loading');
+                    } else {
+                        element.classList.remove('loading');
+                    }
+                }
+            };
+
+            // Функции для работы с историей
+            const historyUI = {
+                // Обновление отображения истории
+                updateHistoryDisplay: () => {
+                    elements.historyList.innerHTML = '';
+                    
+                    if (state.history.length === 0) {
+                        elements.historyList.innerHTML = '<li class="history-empty">История пуста</li>';
+                        elements.historyCount.textContent = '0/20';
+                        return;
+                    }
+                    
+                    elements.historyCount.textContent = `${state.history.length}/${CONFIG.maxHistoryItems}`;
+                    
+                    state.history.forEach(message => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'history-item';
+                        
+                        const messageSpan = document.createElement('span');
+                        messageSpan.className = 'history-number';
+                        messageSpan.textContent = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+                        
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'history-actions';
+                        
+                        const useButton = document.createElement('button');
+                        useButton.className = 'history-action-btn';
+                        useButton.innerHTML = '<i class="fas fa-redo"></i>';
+                        useButton.title = 'Использовать';
+                        useButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            elements.formattedResult.textContent = message;
+                        });
+                        
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'history-action-btn';
+                        deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+                        deleteButton.title = 'Удалить';
+                        deleteButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            utils.removeFromHistory(message);
+                        });
+                        
+                        actionsDiv.appendChild(useButton);
+                        actionsDiv.appendChild(deleteButton);
+                        
+                        listItem.appendChild(messageSpan);
+                        listItem.appendChild(actionsDiv);
+                        
+                        listItem.addEventListener('click', () => {
+                            elements.formattedResult.textContent = message;
+                        });
+                        
+                        elements.historyList.appendChild(listItem);
+                    });
+                }
+            };
+
+            // Обработчики событий
+            const setupEventListeners = () => {
+                // Аутентификация
+                elements.authBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const formattedDate = utils.formatDate(inputs.date);
+                    const message = messageGenerator.generateAuthMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid, 
+                        formattedDate
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО Process
+                elements.msoProcessBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const formattedDate = utils.formatDate(inputs.date);
+                    const message = messageGenerator.generateMsoProcessMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid, 
+                        formattedDate
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО docValidTo
+                elements.msoDocValidBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoDocValidMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО middleName
+                elements.msoMiddleNameBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoMiddleNameMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО ЕСФЛ
+                elements.msoEsflBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoEsflMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО birthCountryId
+                elements.msoBirthCountryBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoBirthCountryMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО firstNameLat
+                elements.msoFirstNameLatBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoFirstNameLatMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // МСО birthPlace
+                elements.msoBirthPlaceBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateMsoBirthPlaceMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // Телеметрия
+                elements.telemetryBtn.addEventListener('click', () => {
+                    const inputs = ui.validateInputs();
+                    if (!inputs) {
+                        ui.showNotification('Пожалуйста, заполните все поля корректно', true);
+                        return;
+                    }
+                    
+                    const message = messageGenerator.generateTelemetryMessage(
+                        inputs.requestNumber, 
+                        inputs.uuid
+                    );
+                    
+                    elements.formattedResult.textContent = message;
+                    ui.copyToClipboard(message);
+                    utils.addToHistory(message);
+                });
+
+                // Копирование результата
+                elements.copyBtn.addEventListener('click', () => {
+                    if (elements.formattedResult.textContent && elements.formattedResult.textContent !== 'Здесь будет сгенерированное сообщение') {
+                        ui.copyToClipboard(elements.formattedResult.textContent);
+                    } else {
+                        ui.showNotification('Сначала сгенерируйте сообщение', true);
+                    }
+                });
+
+                // Снятие ошибок при вводе
+                elements.requestNumber.addEventListener('input', () => {
+                    elements.requestNumber.classList.remove('error');
+                });
+
+                elements.uuidInput.addEventListener('input', () => {
+                    elements.uuidInput.classList.remove('error');
+                });
+
+                elements.dateInput.addEventListener('change', () => {
+                    elements.dateInput.classList.remove('error');
+                });
+
+                // Ограничение ввода только цифрами для номера заявки
+                elements.requestNumber.addEventListener('keydown', (e) => {
+                    if ([46, 8, 9, 27, 13, 110].includes(e.keyCode) ||
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true) ||
+                        (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        return;
+                    }
+                    
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && 
+                        (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Ограничение ввода только цифрами для UUID
+                elements.uuidInput.addEventListener('keydown', (e) => {
+                    if ([46, 8, 9, 27, 13, 110].includes(e.keyCode) ||
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true) ||
+                        (e.keyCode >= 35 && e.keyCode <= 39)) {
+                        return;
+                    }
+                    
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && 
+                        (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Автоформатирование при вводе UUID
+                elements.uuidInput.addEventListener('input', utils.debounce((e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length > CONFIG.maxInputLength) {
+                        e.target.value = value.slice(0, CONFIG.maxInputLength);
+                    }
+                }, 300));
+
+                // Очистка истории
+                elements.clearHistoryBtn.addEventListener('click', () => {
+                    if (state.history.length > 0) {
+                        if (confirm('Вы уверены, что хотите очистить историю?')) {
+                            utils.clearHistory();
+                            ui.showNotification('История очищена');
+                        }
+                    } else {
+                        ui.showNotification('История уже пуста');
+                    }
+                });
+
+                // Глобальная вставка по Ctrl+V
+                document.addEventListener('paste', function(e) {
+                    // Если фокус уже в поле ввода, не делаем ничего (стандартное поведение)
+                    if (document.activeElement === elements.requestNumber || 
+                        document.activeElement === elements.uuidInput || 
+                        document.activeElement === elements.dateInput) {
+                        return;
+                    }
+                    
+                    // Получаем текст из буфера обмена
+                    const text = e.clipboardData.getData('text/plain');
+                    
+                    // Очищаем текст от нецифровых символов
+                    const cleanText = text.replace(/\D/g, '');
+                    
+                    // Если текст содержит только цифры и подходящей длины
+                    if (cleanText.length > 0) {
+                        // Предотвращаем стандартное поведение
+                        e.preventDefault();
+                        
+                        // Определяем, куда вставлять текст
+                        if (cleanText.length <= CONFIG.maxInputLength) {
+                            elements.uuidInput.value = cleanText;
+                            elements.uuidInput.focus();
+                        } else {
+                            elements.requestNumber.value = cleanText;
+                            elements.requestNumber.focus();
+                        }
+                        
+                        ui.showNotification('Текст из буфера обмена вставлен в поле ввода');
+                    } else {
+                        ui.showNotification('В буфере обмена нет числовых данных', true);
+                    }
+                });
+            };
+
+            // Инициализация приложения
+            const init = () => {
+                setupEventListeners();
+                
+                // Загружаем историю
+                utils.loadHistory();
+                historyUI.updateHistoryDisplay();
+                
+                // Устанавливаем сегодняшнюю дату по умолчанию
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                elements.dateInput.value = formattedDate;
+            };
+
+            // Запуск приложения
+            init();
+        });
+    </script>
+</body>
+</html>
