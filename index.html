@@ -246,6 +246,18 @@
             padding-top: var(--spacing-md);
             border-top: 1px solid var(--border-color);
         }
+        
+        /* Стили для обычной ссылки на Telegram */
+        .footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer a:hover {
+            color: #bfccde;
+            text-decoration: underline;
+        }
 
         /* Исправление для всплывающих эффектов */
         .tool-link:focus-visible {
@@ -309,7 +321,7 @@
                 </div>
                 <h3 class="tool-title">UUID Форма</h3>
                 <p class="tool-description">
-                    Форматирование 23-значных чисел в путь для S3, поиск по паспорту и получение UTC времени
+                    Форматирование 23-значного uuid в путь для S3, поиск по паспорту и получение UTC времени
                 </p>
                 <a href="https://brsftechpd.github.io/format_uuid.html" class="tool-link" target="_blank">
                     <span><i class="fas fa-external-link-alt"></i> Открыть</span>
@@ -360,9 +372,10 @@
         </div>
         
         <div class="footer">
-            <p>Инструменты разработаны для упрощения рабочих процессов разработки</p>
+            <p>Инструменты разработаны для упрощения рабочих процессов тех.поддержки</p>
             <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.7;">
-                Все инструменты открываются в новой вкладке
+                По любым вопросам по работе с инструментами пишите в телеграм 
+                <a href="https://t.me/shilov_dv" target="_blank">@shilov_dv</a>
             </p>
         </div>
     </div>
