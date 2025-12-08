@@ -20,11 +20,15 @@
             --color-primary: #6366f1;
             --color-success: #10b981;
             --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-info: #3b82f6;
             
             --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             --gradient-waiting: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
             --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
@@ -134,9 +138,9 @@
         
         .editors-container {
             display: flex;
-            height: 70vh;
+            height: 60vh;
             max-width: 1400px;
-            margin: 0 auto;
+            margin: 0 auto 40px;
             position: relative;
         }
         
@@ -388,6 +392,14 @@
             background: var(--gradient-danger);
         }
         
+        .notification.warning {
+            background: var(--gradient-warning);
+        }
+        
+        .notification.info {
+            background: var(--gradient-info);
+        }
+        
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -415,6 +427,106 @@
         
         .editor-content::-webkit-scrollbar-thumb:hover {
             background: var(--color-primary);
+        }
+        
+        /* Стили для панели residenceRegistration */
+        .residence-panel {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .residence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            background: var(--gradient-info);
+            color: var(--text-white);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .residence-header h3 {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .residence-content {
+            padding: var(--spacing-lg);
+            background: var(--bg-tertiary);
+            margin: var(--spacing-md);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .residence-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            justify-content: center;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .residence-btn {
+            background: var(--gradient-warning);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .residence-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .residence-btn.process {
+            background: var(--gradient-success);
+        }
+        
+        .residence-btn.invalid {
+            background: var(--gradient-danger);
+        }
+        
+        .reg-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 8px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .reg-status-3 {
+            background: var(--color-warning);
+            color: #000;
+        }
+        
+        .reg-status-6 {
+            background: var(--color-danger);
+            color: white;
         }
     </style>
 </head>
@@ -487,6 +599,29 @@
         </div>
     </div>
     
+    <!-- Панель для отображения блока residenceRegistration и кнопок -->
+    <div class="residence-panel" id="residencePanel">
+        <div class="residence-header">
+            <h3>
+                <i class="fas fa-home"></i>
+                Блок residenceRegistration
+                <span id="regStatusBadge" class="reg-status"></span>
+            </h3>
+            <div class="editor-status" id="residenceStatus">Найден в JSON</div>
+        </div>
+        <div class="residence-content" id="residenceBlockDisplay">
+            <!-- Здесь будет отображен блок residenceRegistration -->
+        </div>
+        <div class="residence-buttons">
+            <button class="residence-btn process" id="processMsoBtn" style="display: none;">
+                <i class="fas fa-cog"></i> Process МСО
+            </button>
+            <button class="residence-btn invalid" id="invalidMsoBtn" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i> Невалидные данные МСО
+            </button>
+        </div>
+    </div>
+    
     <div class="notification" id="notification"></div>
 
     <script>
@@ -498,6 +633,9 @@
                 this.textOutput = '';
                 this.splitterActive = false;
                 this.isJsonValid = false;
+                this.residenceRegistrationFound = false;
+                this.residenceRegistrationBlock = null;
+                this.currentRegStatus = null;
                 
                 // JSON блоки для копирования
                 this.jsonBlocks = {
@@ -694,6 +832,15 @@
                     });
                 });
                 
+                // Обработка кнопок для residenceRegistration
+                document.getElementById('processMsoBtn').addEventListener('click', () => {
+                    this.fixResidenceRegistration(1);
+                });
+                
+                document.getElementById('invalidMsoBtn').addEventListener('click', () => {
+                    this.fixResidenceRegistration(5);
+                });
+                
                 // Инициализация нумерации строк
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                 this.updateLineNumbers('outputLineNumbers', 'outputEditor');
@@ -764,6 +911,9 @@
                         outputHeader.classList.add('valid');
                         this.isJsonValid = true;
                         
+                        // Ищем блок residenceRegistration
+                        this.findResidenceRegistration(parsed);
+                        
                         // Обрабатываем вывод только если JSON валиден
                         this.processOutput(input);
                     } catch (e) {
@@ -774,6 +924,9 @@
                         inputHeader.classList.add('invalid');
                         outputHeader.classList.add('invalid');
                         this.isJsonValid = false;
+                        
+                        // Скрываем панель residenceRegistration
+                        this.hideResidencePanel();
                         
                         // Очищаем вывод при невалидном JSON
                         this.clearOutput();
@@ -787,11 +940,186 @@
                     outputHeader.classList.add('waiting');
                     this.isJsonValid = false;
                     
+                    // Скрываем панель residenceRegistration
+                    this.hideResidencePanel();
+                    
                     // Очищаем вывод
                     this.clearOutput();
                 }
                 
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+            }
+            
+            findResidenceRegistration(obj) {
+                this.residenceRegistrationFound = false;
+                this.residenceRegistrationBlock = null;
+                this.currentRegStatus = null;
+                
+                // Рекурсивно ищем residenceRegistration в объекте
+                const search = (currentObj, path = '') => {
+                    if (!currentObj || typeof currentObj !== 'object') return;
+                    
+                    if (currentObj.hasOwnProperty('residenceRegistration')) {
+                        this.residenceRegistrationFound = true;
+                        this.residenceRegistrationBlock = currentObj.residenceRegistration;
+                        
+                        // Сохраняем regStatus
+                        if (this.residenceRegistrationBlock && 
+                            this.residenceRegistrationBlock.hasOwnProperty('regStatus')) {
+                            this.currentRegStatus = this.residenceRegistrationBlock.regStatus;
+                        }
+                        
+                        // Отображаем панель
+                        this.displayResidencePanel();
+                        return true;
+                    }
+                    
+                    // Рекурсивный поиск во вложенных объектах и массивах
+                    for (const key in currentObj) {
+                        if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
+                            if (search(currentObj[key], `${path}.${key}`)) {
+                                return true;
+                            }
+                        }
+                    }
+                    
+                    return false;
+                };
+                
+                search(obj);
+                
+                // Если не нашли, скрываем панель
+                if (!this.residenceRegistrationFound) {
+                    this.hideResidencePanel();
+                }
+            }
+            
+            displayResidencePanel() {
+                const panel = document.getElementById('residencePanel');
+                const display = document.getElementById('residenceBlockDisplay');
+                const statusBadge = document.getElementById('regStatusBadge');
+                const processBtn = document.getElementById('processMsoBtn');
+                const invalidBtn = document.getElementById('invalidMsoBtn');
+                
+                if (!this.residenceRegistrationBlock) {
+                    panel.style.display = 'none';
+                    return;
+                }
+                
+                // Форматируем блок для отображения
+                const formattedBlock = JSON.stringify(this.residenceRegistrationBlock, null, 2);
+                display.textContent = formattedBlock;
+                
+                // Отображаем статус
+                if (this.currentRegStatus !== null) {
+                    statusBadge.textContent = `regStatus: ${this.currentRegStatus}`;
+                    statusBadge.className = 'reg-status';
+                    
+                    // Добавляем класс в зависимости от значения
+                    if (this.currentRegStatus === 3) {
+                        statusBadge.classList.add('reg-status-3');
+                    } else if (this.currentRegStatus === 6) {
+                        statusBadge.classList.add('reg-status-6');
+                    }
+                } else {
+                    statusBadge.textContent = 'regStatus: не найден';
+                    statusBadge.className = 'reg-status';
+                }
+                
+                // Показываем соответствующие кнопки
+                processBtn.style.display = this.currentRegStatus === 3 ? 'flex' : 'none';
+                invalidBtn.style.display = this.currentRegStatus === 6 ? 'flex' : 'none';
+                
+                // Показываем панель
+                panel.style.display = 'block';
+                
+                // Прокручиваем к панели
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            hideResidencePanel() {
+                const panel = document.getElementById('residencePanel');
+                panel.style.display = 'none';
+                this.residenceRegistrationFound = false;
+                this.residenceRegistrationBlock = null;
+                this.currentRegStatus = null;
+            }
+            
+            fixResidenceRegistration(newStatus) {
+                if (!this.residenceRegistrationFound || !this.residenceRegistrationBlock) {
+                    this.showNotification('Блок residenceRegistration не найден', true);
+                    return;
+                }
+                
+                // Получаем текущий JSON
+                try {
+                    const input = document.getElementById('inputEditor').value;
+                    const parsed = JSON.parse(input);
+                    
+                    // Функция для рекурсивного поиска и замены
+                    const replaceRegStatus = (obj) => {
+                        if (!obj || typeof obj !== 'object') return false;
+                        
+                        if (obj.hasOwnProperty('residenceRegistration') && 
+                            obj.residenceRegistration && 
+                            obj.residenceRegistration.hasOwnProperty('regStatus')) {
+                            
+                            // Сохраняем старое значение
+                            const oldStatus = obj.residenceRegistration.regStatus;
+                            
+                            // Меняем на новое
+                            obj.residenceRegistration.regStatus = newStatus;
+                            
+                            // Обновляем в памяти
+                            this.residenceRegistrationBlock = obj.residenceRegistration;
+                            this.currentRegStatus = newStatus;
+                            
+                            // Показываем уведомление
+                            const statusNames = {
+                                1: '1 (Process МСО)',
+                                5: '5 (Невалидные данные МСО)'
+                            };
+                            this.showNotification(
+                                `regStatus изменен с ${oldStatus} на ${statusNames[newStatus] || newStatus}`, 
+                                false,
+                                'info'
+                            );
+                            
+                            return true;
+                        }
+                        
+                        // Рекурсивный поиск
+                        for (const key in obj) {
+                            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                                if (replaceRegStatus(obj[key])) {
+                                    return true;
+                                }
+                            }
+                        }
+                        
+                        return false;
+                    };
+                    
+                    // Заменяем значение
+                    if (replaceRegStatus(parsed)) {
+                        // Обновляем поле ввода
+                        const formatted = JSON.stringify(parsed, null, 2);
+                        document.getElementById('inputEditor').value = formatted;
+                        
+                        // Обновляем отображение блока
+                        this.displayResidencePanel();
+                        
+                        // Обрабатываем вывод заново
+                        this.processOutput(formatted);
+                        
+                        // Обновляем нумерацию строк
+                        this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    } else {
+                        this.showNotification('Не удалось найти regStatus для замены', true);
+                    }
+                } catch (e) {
+                    this.showNotification('Ошибка при обработке JSON', true);
+                }
             }
             
             processOutput(input) {
@@ -907,6 +1235,9 @@
                 // Сбрасываем состояние JSON
                 this.isJsonValid = false;
                 
+                // Скрываем панель residenceRegistration
+                this.hideResidencePanel();
+                
                 // Сбрасываем вывод
                 this.clearOutput();
                 
@@ -931,10 +1262,10 @@
                 });
             }
             
-            showNotification(message, isError = false) {
+            showNotification(message, isError = false, type = '') {
                 const notification = document.getElementById('notification');
                 notification.textContent = message;
-                notification.className = `notification ${isError ? 'error' : ''}`;
+                notification.className = `notification ${isError ? 'error' : type}`;
                 notification.style.display = 'block';
                 
                 setTimeout(() => {
