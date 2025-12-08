@@ -86,8 +86,6 @@
             font-weight: 700;
             font-size: 2rem;
             background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
@@ -174,6 +172,10 @@
 
         .tool-icon.format {
             background: var(--gradient-purple);
+        }
+
+        .tool-icon.json {
+            background: var(--gradient-cyan);
         }
 
         .tool-title {
@@ -310,7 +312,7 @@
     <div class="container">
         <h1>Инструменты тех.поддержки</h1>
         <p class="description">
-            Набор полезных инструментов для работы с UUID, проверкой МП, поиском дублей и форматированием сообщений
+            Набор полезных инструментов для работы тех.поддержки
         </p>
         
         <div class="tools-grid">
@@ -366,6 +368,20 @@
                     Форматирование сообщений для отправки их в телеграм чат
                 </p>
                 <a href="https://brsftechpd.github.io/format_messages.html" class="tool-link" target="_blank">
+                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+                </a>
+            </div>
+            
+            <!-- JSON Редактор -->
+            <div class="tool-card">
+                <div class="tool-icon json">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="tool-title">JSON Редактор</h3>
+                <p class="tool-description">
+                    Редактор для работы с JSON файлом профиля S3
+                </p>
+                <a href="https://brsftechpd.github.io/json_format.html" class="tool-link" target="_blank">
                     <span><i class="fas fa-external-link-alt"></i> Открыть</span>
                 </a>
             </div>
