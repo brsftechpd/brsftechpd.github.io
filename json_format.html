@@ -95,26 +95,43 @@
         }
         
         .json-block-btn {
-            background: var(--gradient-primary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            color: var(--text-white);
-            padding: var(--spacing-sm) var(--spacing-lg);
+            color: var(--text-secondary);
+            padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: all var(--transition-fast);
             display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
             font-weight: 500;
             box-shadow: var(--shadow-md);
+            min-width: 200px;
+            text-align: left;
         }
         
         .json-block-btn:hover {
+            background: var(--border-focus);
+            border-color: var(--color-primary);
             transform: translateY(-2px);
         }
         
         .json-block-btn:active {
             transform: translateY(0);
+        }
+        
+        .json-block-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .json-block-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.3;
         }
         
         .control-btn {
@@ -373,6 +390,37 @@
             word-break: break-all;
         }
         
+        /* Стили для футеров редакторов */
+        .editor-footer {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .editor-footer-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .editor-footer-btn:hover {
+            background: var(--border-focus);
+            border-color: var(--color-primary);
+        }
+        
         .notification {
             position: fixed;
             top: 20px;
@@ -446,7 +494,8 @@
             justify-content: space-between;
             align-items: center;
             padding: var(--spacing-lg);
-            background: var(--gradient-info);
+            /* ИЗМЕНЕНО: всегда используем gradient-waiting (серый) */
+            background: var(--gradient-waiting);
             color: var(--text-white);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -502,11 +551,11 @@
         }
         
         .residence-btn.process {
-            background: var(--gradient-success);
+            background: var(--gradient-info);
         }
         
         .residence-btn.invalid {
-            background: var(--gradient-danger);
+            background: var(--gradient-warning);
         }
         
         .reg-status {
@@ -517,16 +566,31 @@
             font-weight: bold;
             margin-left: 8px;
             background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .reg-status-3 {
-            background: var(--color-warning);
-            color: #000;
-        }
-        
-        .reg-status-6 {
-            background: var(--color-danger);
             color: white;
+        }
+        
+        /* Статус 3 - синий */
+        .reg-status.reg-status-3 {
+            background: var(--gradient-info);
+        }
+        
+        /* Статус 6 - желтый */
+        .reg-status.reg-status-6 {
+            background: var(--gradient-warning);
+        }
+        
+        /* Статус 4 - зеленый */
+        .reg-status.reg-status-4 {
+            background: var(--gradient-success);
+        }
+        
+		.reg-status.reg-status-7 {
+			background: var(--gradient-danger);
+		}
+		
+        /* Другие статусы - серый */
+        .reg-status.reg-status-other {
+            background: #334155;
         }
     </style>
 </head>
@@ -536,25 +600,15 @@
         <p>Редактор для работы с JSON файлом профиля S3</p>
     </div>
     
-    <div class="controls-panel">
-        <button class="control-btn" data-action="clear-all">
-            <i class="fas fa-trash"></i> Очистить всё
-        </button>
-        <button class="control-btn" data-action="copy-input">
-            <i class="fas fa-copy"></i> Копировать ввод
-        </button>
-        <button class="control-btn" data-action="copy-output">
-            <i class="fas fa-copy"></i> Копировать вывод
-        </button>
-    </div>
-    
     <!-- Панель копирования JSON блоков -->
     <div class="json-blocks-panel">
         <button class="json-block-btn" data-action="copy-residence-address">
-            Скопировать блок residenceAddress для вставки
+            <div class="json-block-title">Блок residenceAddress</div>
+            <div class="json-block-desc">Адрес проживания с координатами</div>
         </button>
         <button class="json-block-btn" data-action="copy-residence-registration">
-            Скопировать блок residenceRegistration для вставки
+            <div class="json-block-title">Блок residenceRegistration</div>
+            <div class="json-block-desc">Регистрационные данные</div>
         </button>
     </div>
     
@@ -565,11 +619,20 @@
                     <i class="fas fa-keyboard"></i>
                     <span>Ввод json профиля</span>
                 </div>
-                <div class="editor-status" id="inputStatus">Ожидание ввода...</div>
+                <div class="editor-status" id="inputStatus">Вставьте json текст</div>
             </div>
             <div class="editor-container">
                 <div class="line-numbers" id="inputLineNumbers">1</div>
                 <textarea class="editor-content" id="inputEditor" placeholder='Введите JSON или текст...'></textarea>
+            </div>
+            <!-- Футер для левого редактора -->
+            <div class="editor-footer">
+                <button class="editor-footer-btn" data-action="clear-all">
+                    <i class="fas fa-trash"></i> Очистить всё
+                </button>
+                <button class="editor-footer-btn" data-action="copy-input">
+                    <i class="fas fa-copy"></i> Копировать ввод
+                </button>
             </div>
         </div>
         
@@ -596,6 +659,12 @@
                 <div class="line-numbers" id="outputLineNumbers">1</div>
                 <textarea class="editor-content" id="outputEditor" readonly placeholder="Здесь появится результат в Unicode..."></textarea>
             </div>
+            <!-- Футер для правого редактора -->
+            <div class="editor-footer">
+                <button class="editor-footer-btn" data-action="copy-output">
+                    <i class="fas fa-copy"></i> Копировать вывод
+                </button>
+            </div>
         </div>
     </div>
     
@@ -614,10 +683,10 @@
         </div>
         <div class="residence-buttons">
             <button class="residence-btn process" id="processMsoBtn" style="display: none;">
-                <i class="fas fa-cog"></i> Process МСО
+                Исправить на 1 статус
             </button>
             <button class="residence-btn invalid" id="invalidMsoBtn" style="display: none;">
-                <i class="fas fa-exclamation-triangle"></i> Невалидные данные МСО
+                Исправить на 5 статус
             </button>
         </div>
     </div>
@@ -636,6 +705,7 @@
                 this.residenceRegistrationFound = false;
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
+                this.currentUnregistrationReasonId = null; // Добавлено для хранения unregistrationReasonId
                 
                 // JSON блоки для копирования
                 this.jsonBlocks = {
@@ -816,20 +886,13 @@
                     outputEditor.scrollTop = outputLineNumbers.scrollTop;
                 });
                 
-                // Обработка кнопок управления
-                document.querySelectorAll('.control-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const action = e.target.closest('[data-action]').dataset.action;
+                // Обработка кнопок управления (включая футеры)
+                document.addEventListener('click', (e) => {
+                    const button = e.target.closest('[data-action]');
+                    if (button) {
+                        const action = button.dataset.action;
                         this.handleAction(action);
-                    });
-                });
-                
-                // Обработка кнопок копирования JSON блоков
-                document.querySelectorAll('.json-block-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const action = e.target.closest('[data-action]').dataset.action;
-                        this.handleAction(action);
-                    });
+                    }
                 });
                 
                 // Обработка кнопок для residenceRegistration
@@ -932,7 +995,7 @@
                         this.clearOutput();
                     }
                 } else {
-                    inputStatus.textContent = 'Ожидание ввода...';
+                    inputStatus.textContent = 'Вставьте json текст';
                     inputStatus.className = 'editor-status';
                     
                     // Пустой ввод - устанавливаем серый градиент
@@ -954,6 +1017,7 @@
                 this.residenceRegistrationFound = false;
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
+                this.currentUnregistrationReasonId = null;
                 
                 // Рекурсивно ищем residenceRegistration в объекте
                 const search = (currentObj, path = '') => {
@@ -963,10 +1027,15 @@
                         this.residenceRegistrationFound = true;
                         this.residenceRegistrationBlock = currentObj.residenceRegistration;
                         
-                        // Сохраняем regStatus
-                        if (this.residenceRegistrationBlock && 
-                            this.residenceRegistrationBlock.hasOwnProperty('regStatus')) {
-                            this.currentRegStatus = this.residenceRegistrationBlock.regStatus;
+                        // Сохраняем regStatus и unregistrationReasonId
+                        if (this.residenceRegistrationBlock) {
+                            if (this.residenceRegistrationBlock.hasOwnProperty('regStatus')) {
+                                this.currentRegStatus = this.residenceRegistrationBlock.regStatus;
+                            }
+                            
+                            if (this.residenceRegistrationBlock.hasOwnProperty('unregistrationReasonId')) {
+                                this.currentUnregistrationReasonId = this.residenceRegistrationBlock.unregistrationReasonId;
+                            }
                         }
                         
                         // Отображаем панель
@@ -1012,23 +1081,49 @@
                 
                 // Отображаем статус
                 if (this.currentRegStatus !== null) {
-                    statusBadge.textContent = `regStatus: ${this.currentRegStatus}`;
+                    let statusText = `regStatus: ${this.currentRegStatus}`;
+                    if (this.currentUnregistrationReasonId !== null) {
+                        statusText += `, reasonId: ${this.currentUnregistrationReasonId}`;
+                    }
+                    statusBadge.textContent = statusText;
+                    
+                    // Устанавливаем класс в зависимости от значения regStatus
                     statusBadge.className = 'reg-status';
                     
-                    // Добавляем класс в зависимости от значения
                     if (this.currentRegStatus === 3) {
                         statusBadge.classList.add('reg-status-3');
                     } else if (this.currentRegStatus === 6) {
                         statusBadge.classList.add('reg-status-6');
+                    } else if (this.currentRegStatus === 4) {
+                        statusBadge.classList.add('reg-status-4');
+                    } else if (this.currentRegStatus === 7) {
+                        statusBadge.classList.add('reg-status-7');
+                    } else {
+                        statusBadge.classList.add('reg-status-other');
                     }
                 } else {
                     statusBadge.textContent = 'regStatus: не найден';
-                    statusBadge.className = 'reg-status';
+                    statusBadge.className = 'reg-status reg-status-other';
                 }
                 
-                // Показываем соответствующие кнопки
-                processBtn.style.display = this.currentRegStatus === 3 ? 'flex' : 'none';
-                invalidBtn.style.display = this.currentRegStatus === 6 ? 'flex' : 'none';
+                // Логика показа кнопок:
+                // 1. Показываем кнопку "Исправить на 1 статус" для:
+                //    - regStatus === 3
+                //    - regStatus === 7 и unregistrationReasonId === 1
+                //    - regStatus === 7 и unregistrationReasonId === 3
+                const shouldShowProcessBtn = 
+                    this.currentRegStatus === 3 || 
+                    (this.currentRegStatus === 7 && 
+                     (this.currentUnregistrationReasonId === 1 || this.currentUnregistrationReasonId === 3));
+                
+                // 2. Показываем кнопку "Исправить на 5 статус" для regStatus === 6
+                const shouldShowInvalidBtn = this.currentRegStatus === 6;
+                
+                processBtn.style.display = shouldShowProcessBtn ? 'flex' : 'none';
+                processBtn.textContent = 'Исправить на 1 статус';
+                
+                invalidBtn.style.display = shouldShowInvalidBtn ? 'flex' : 'none';
+                invalidBtn.textContent = 'Исправить на 5 статус';
                 
                 // Показываем панель
                 panel.style.display = 'block';
@@ -1043,6 +1138,7 @@
                 this.residenceRegistrationFound = false;
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
+                this.currentUnregistrationReasonId = null;
             }
             
             fixResidenceRegistration(newStatus) {
@@ -1066,24 +1162,33 @@
                             
                             // Сохраняем старое значение
                             const oldStatus = obj.residenceRegistration.regStatus;
+                            const oldReasonId = obj.residenceRegistration.unregistrationReasonId;
                             
                             // Меняем на новое
                             obj.residenceRegistration.regStatus = newStatus;
                             
+                            // Для regStatus=7 с reasonId=1 или 3 при смене на статус 1 обнуляем reasonId
+                            if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3) && newStatus === 1) {
+                                obj.residenceRegistration.unregistrationReasonId = null;
+                            }
+                            
                             // Обновляем в памяти
                             this.residenceRegistrationBlock = obj.residenceRegistration;
                             this.currentRegStatus = newStatus;
+                            this.currentUnregistrationReasonId = obj.residenceRegistration.unregistrationReasonId;
                             
                             // Показываем уведомление
                             const statusNames = {
                                 1: '1 (Process МСО)',
                                 5: '5 (Невалидные данные МСО)'
                             };
-                            this.showNotification(
-                                `regStatus изменен с ${oldStatus} на ${statusNames[newStatus] || newStatus}`, 
-                                false,
-                                'info'
-                            );
+                            
+                            let message = `regStatus изменен с ${oldStatus} на ${statusNames[newStatus] || newStatus}`;
+                            if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
+                                message += ', unregistrationReasonId изменен на null';
+                            }
+                            
+                            this.showNotification(message, false, 'info');
                             
                             return true;
                         }
