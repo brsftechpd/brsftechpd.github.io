@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-white: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --border-focus: #475569;
+            
+            --color-primary: #6366f1;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-waiting: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --transition-fast: 0.3s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        .app-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding-top: var(--spacing-lg);
+        }
+        
+        .app-header h1 {
+            color: var(--text-primary);
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+            background: var(--gradient-primary);
+            background-clip: text;
+        }
+        
+        .app-header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
+        
+        .controls-panel {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+        }
+        
+        .control-btn:hover {
+            background: var(--border-focus);
+            border-color: var(--color-primary);
+        }
+        
+        .editors-container {
+            display: flex;
+            height: 70vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .editors-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .splitter {
+                display: none;
+            }
+        }
+        
+        .editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            min-width: 200px;
+        }
+        
+        .splitter {
+            width: 12px;
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background-color var(--transition-fast);
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+                
+        .splitter-handle {
+            width: 4px;
+            height: 40px;
+            background: var(--border-color);
+            border-radius: 2px;
+            transition: background-color var(--transition-fast);
+        }
+        
+        .splitter:hover .splitter-handle {
+            background: var(--color-primary);
+        }
+        
+        .splitter:active .splitter-handle {
+            background: var(--text-primary);
+        }
+        
+        /* EDITOR-HEADER С РАЗНЫМИ СОСТОЯНИЯМИ */
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition-fast);
+        }
+        
+        /* Состояние по умолчанию (ожидание) */
+        .editor-header.waiting {
+            background: var(--gradient-waiting);
+        }
+        
+        /* Состояние валидного JSON */
+        .editor-header.valid {
+            background: var(--gradient-success);
+        }
+        
+        /* Состояние невалидного JSON */
+        .editor-header.invalid {
+            background: var(--gradient-danger);
+        }
+        
+        .editor-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--text-white);
+            font-weight: 600;
+        }
+        
+        .editor-title i {
+            color: var(--text-white);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .editor-status {
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .editor-status.error {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .view-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background: var(--gradient-success);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-label {
+            font-size: 0.85rem;
+            color: var(--text-white);
+            font-weight: 500;
+        }
+        
+        .editor-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-tertiary);
+        }
+        
+        .line-numbers {
+            width: 50px;
+            padding: var(--spacing-lg) 8px;
+            background: var(--bg-tertiary);
+            border-right: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: right;
+            overflow-y: auto;
+            overflow-x: hidden;
+            user-select: none;
+            flex-shrink: 0;
+            white-space: pre;
+        }
+        
+        .line-numbers::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
+        
+        .editor-content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            overflow: auto;
+        }
+        
+        /* ЦВЕТ ДЛЯ PLACEHOLDER */
+        .editor-content::placeholder {
+            color: #64748b;
+            opacity: 0.7;
+        }
+        
+        #inputEditor {
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+        
+        #outputEditor {
+            word-break: break-all;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            background: var(--gradient-success);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+        
+        .notification.error {
+            background: var(--gradient-danger);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .editor-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .editor-content::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+        
+        .editor-content::-webkit-scrollbar-thumb {
+            background: var(--border-focus);
+            border-radius: 4px;
+        }
+        
+        .editor-content::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <h1>JSON Editor</h1>
+        <p>Редактор для работы с JSON файлом профиля S3</p>
+    </div>
+    
+    <div class="controls-panel">
+        <button class="control-btn" data-action="clear-all">
+            <i class="fas fa-trash"></i> Очистить всё
+        </button>
+        <button class="control-btn" data-action="copy-input">
+            <i class="fas fa-copy"></i> Копировать ввод
+        </button>
+        <button class="control-btn" data-action="copy-output">
+            <i class="fas fa-copy"></i> Копировать вывод
+        </button>
+    </div>
+    
+    <div class="editors-container">
+        <div class="editor-section">
+            <div class="editor-header waiting" id="inputHeader">
+                <div class="editor-title">
+                    <i class="fas fa-keyboard"></i>
+                    <span>Ввод json профиля</span>
+                </div>
+                <div class="editor-status" id="inputStatus">Ожидание ввода...</div>
+            </div>
+            <div class="editor-container">
+                <div class="line-numbers" id="inputLineNumbers">1</div>
+                <textarea class="editor-content" id="inputEditor" placeholder='Введите JSON или текст...'></textarea>
+            </div>
+        </div>
+        
+        <div class="splitter" id="splitter">
+            <div class="splitter-handle"></div>
+        </div>
+        
+        <div class="editor-section">
+            <div class="editor-header waiting" id="outputHeader">
+                <div class="editor-title">
+                    <i class="fas fa-code"></i>
+                    <span id="outputTitle">Вывод профиля в формате Unicode</span>
+                </div>
+                <div class="view-toggle">
+                    <span class="toggle-label">Unicode</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="viewSwitch" onchange="toggleViewMode()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Текст</span>
+                </div>
+            </div>
+            <div class="editor-container">
+                <div class="line-numbers" id="outputLineNumbers">1</div>
+                <textarea class="editor-content" id="outputEditor" readonly placeholder="Здесь появится результат в Unicode..."></textarea>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        class JSONProcessor {
+            constructor() {
+                this.isTextViewMode = false;
+                this.debounceTimer = null;
+                this.unicodeOutput = '';
+                this.textOutput = '';
+                this.splitterActive = false;
+                this.isJsonValid = false;
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.initSplitter();
+                this.processInput();
+                document.getElementById('inputEditor').focus();
+            }
+            
+            initSplitter() {
+                const splitter = document.getElementById('splitter');
+                const container = document.querySelector('.editors-container');
+                const leftPanel = document.querySelector('.editor-section:first-child');
+                const rightPanel = document.querySelector('.editor-section:last-child');
+                
+                let startX, startLeftWidth, startRightWidth;
+                
+                splitter.addEventListener('mousedown', (e) => {
+                    this.splitterActive = true;
+                    startX = e.clientX;
+                    startLeftWidth = leftPanel.offsetWidth;
+                    startRightWidth = rightPanel.offsetWidth;
+                    
+                    document.body.style.cursor = 'col-resize';
+                    
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                });
+                
+                const handleMouseMove = (e) => {
+                    if (!this.splitterActive) return;
+                    
+                    const containerWidth = container.offsetWidth;
+                    const splitterWidth = splitter.offsetWidth;
+                    const deltaX = e.clientX - startX;
+                    
+                    // Вычисляем новые ширины
+                    let newLeftWidth = startLeftWidth + deltaX;
+                    let newRightWidth = startRightWidth - deltaX;
+                    
+                    // Минимальная ширина блоков
+                    const minWidth = 200;
+                    const maxWidth = containerWidth - splitterWidth - minWidth;
+                    
+                    // Ограничиваем ширину
+                    newLeftWidth = Math.max(minWidth, Math.min(maxWidth, newLeftWidth));
+                    newRightWidth = containerWidth - splitterWidth - newLeftWidth;
+                    
+                    // Применяем новые ширины
+                    leftPanel.style.width = `${newLeftWidth}px`;
+                    leftPanel.style.flex = `0 0 ${newLeftWidth}px`;
+                    rightPanel.style.width = `${newRightWidth}px`;
+                    rightPanel.style.flex = `0 0 ${newRightWidth}px`;
+                };
+                
+                const handleMouseUp = () => {
+                    this.splitterActive = false;
+                    document.body.style.cursor = '';
+                    splitter.style.backgroundColor = '';
+                    
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                    
+                    // Обновляем нумерацию строк при изменении размера
+                    this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+                };
+                
+                // Обработка для тач-устройств
+                splitter.addEventListener('touchstart', (e) => {
+                    this.splitterActive = true;
+                    startX = e.touches[0].clientX;
+                    startLeftWidth = leftPanel.offsetWidth;
+                    startRightWidth = rightPanel.offsetWidth;
+                    
+                    splitter.style.backgroundColor = 'var(--color-primary)';
+                    
+                    document.addEventListener('touchmove', handleTouchMove);
+                    document.addEventListener('touchend', handleTouchEnd);
+                });
+                
+                const handleTouchMove = (e) => {
+                    if (!this.splitterActive || !e.touches.length) return;
+                    
+                    const containerWidth = container.offsetWidth;
+                    const splitterWidth = splitter.offsetWidth;
+                    const deltaX = e.touches[0].clientX - startX;
+                    
+                    let newLeftWidth = startLeftWidth + deltaX;
+                    let newRightWidth = startRightWidth - deltaX;
+                    
+                    const minWidth = 200;
+                    const maxWidth = containerWidth - splitterWidth - minWidth;
+                    
+                    newLeftWidth = Math.max(minWidth, Math.min(maxWidth, newLeftWidth));
+                    newRightWidth = containerWidth - splitterWidth - newLeftWidth;
+                    
+                    leftPanel.style.width = `${newLeftWidth}px`;
+                    leftPanel.style.flex = `0 0 ${newLeftWidth}px`;
+                    rightPanel.style.width = `${newRightWidth}px`;
+                    rightPanel.style.flex = `0 0 ${newRightWidth}px`;
+                };
+                
+                const handleTouchEnd = () => {
+                    this.splitterActive = false;
+                    splitter.style.backgroundColor = '';
+                    
+                    document.removeEventListener('touchmove', handleTouchMove);
+                    document.removeEventListener('touchend', handleTouchEnd);
+                    
+                    this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+                };
+            }
+            
+            bindEvents() {
+                const inputEditor = document.getElementById('inputEditor');
+                const outputEditor = document.getElementById('outputEditor');
+                const inputLineNumbers = document.getElementById('inputLineNumbers');
+                const outputLineNumbers = document.getElementById('outputLineNumbers');
+                
+                // Автоматическая обработка при вводе
+                inputEditor.addEventListener('input', () => {
+                    this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    this.debounceProcess();
+                });
+                
+                // Синхронизация скролла
+                inputEditor.addEventListener('scroll', () => {
+                    inputLineNumbers.scrollTop = inputEditor.scrollTop;
+                });
+                
+                inputLineNumbers.addEventListener('scroll', () => {
+                    inputEditor.scrollTop = inputLineNumbers.scrollTop;
+                });
+                
+                outputEditor.addEventListener('scroll', () => {
+                    outputLineNumbers.scrollTop = outputEditor.scrollTop;
+                });
+                
+                outputLineNumbers.addEventListener('scroll', () => {
+                    outputEditor.scrollTop = outputLineNumbers.scrollTop;
+                });
+                
+                // Обработка кнопок управления
+                document.querySelectorAll('.control-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const action = e.target.closest('[data-action]').dataset.action;
+                        this.handleAction(action);
+                    });
+                });
+                
+                // Инициализация нумерации строк
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+            }
+            
+            handleAction(action) {
+                switch(action) {
+                    case 'clear-all':
+                        this.clearAll();
+                        break;
+                    case 'copy-input':
+                        this.copyToClipboard('inputEditor');
+                        break;
+                    case 'copy-output':
+                        this.copyToClipboard('outputEditor');
+                        break;
+                }
+            }
+            
+            debounceProcess() {
+                clearTimeout(this.debounceTimer);
+                this.debounceTimer = setTimeout(() => {
+                    this.processInput();
+                }, 300);
+            }
+            
+            processInput() {
+                const input = document.getElementById('inputEditor').value;
+                const inputStatus = document.getElementById('inputStatus');
+                const inputHeader = document.getElementById('inputHeader');
+                const outputHeader = document.getElementById('outputHeader');
+                
+                // Сбрасываем состояние
+                inputHeader.className = 'editor-header';
+                outputHeader.className = 'editor-header';
+                
+                // Автоматическое форматирование и валидация JSON
+                if (input.trim()) {
+                    try {
+                        const parsed = JSON.parse(input);
+                        const formatted = JSON.stringify(parsed, null, 2);
+                        document.getElementById('inputEditor').value = formatted;
+                        inputStatus.textContent = 'Json валиден';
+                        inputStatus.className = 'editor-status';
+                        
+                        // JSON валиден - устанавливаем зеленый градиент
+                        inputHeader.classList.add('valid');
+                        outputHeader.classList.add('valid');
+                        this.isJsonValid = true;
+                        
+                        // Обрабатываем вывод только если JSON валиден
+                        this.processOutput(input);
+                    } catch (e) {
+                        inputStatus.textContent = 'Ошибка чтения json';
+                        inputStatus.className = 'editor-status error';
+                        
+                        // JSON невалиден - устанавливаем красный градиент
+                        inputHeader.classList.add('invalid');
+                        outputHeader.classList.add('invalid');
+                        this.isJsonValid = false;
+                        
+                        // Очищаем вывод при невалидном JSON
+                        this.clearOutput();
+                    }
+                } else {
+                    inputStatus.textContent = 'Ожидание ввода...';
+                    inputStatus.className = 'editor-status';
+                    
+                    // Пустой ввод - устанавливаем серый градиент
+                    inputHeader.classList.add('waiting');
+                    outputHeader.classList.add('waiting');
+                    this.isJsonValid = false;
+                    
+                    // Очищаем вывод
+                    this.clearOutput();
+                }
+                
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+            }
+            
+            processOutput(input) {
+                // Обрабатываем вывод только если JSON валиден
+                if (!this.isJsonValid || !input.trim()) {
+                    this.clearOutput();
+                    return;
+                }
+                
+                try {
+                    const parsed = JSON.parse(input);
+                    const minified = JSON.stringify(parsed);
+                    this.unicodeOutput = this.textToUnicode(minified);
+                    this.textOutput = this.unicodeToText(this.unicodeOutput);
+                    this.updateOutputDisplay();
+                } catch (e) {
+                    // Если произошла ошибка, очищаем вывод
+                    this.clearOutput();
+                }
+            }
+            
+            textToUnicode(text) {
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const code = char.charCodeAt(0);
+                    if (code > 127) {
+                        result += '\\u' + code.toString(16).toUpperCase().padStart(4, '0');
+                    } else {
+                        result += char;
+                    }
+                }
+                return result;
+            }
+            
+            unicodeToText(text) {
+                return text.replace(/\\u[0-9A-Fa-f]{4}/g, (match) => {
+                    return String.fromCharCode(parseInt(match.replace('\\u', ''), 16));
+                });
+            }
+            
+            toggleViewMode() {
+                // Включаем переключение режима только если JSON валиден
+                if (!this.isJsonValid) {
+                    document.getElementById('viewSwitch').checked = false;
+                    this.showNotification('Невозможно переключить режим: JSON невалиден', true);
+                    return;
+                }
+                
+                this.isTextViewMode = document.getElementById('viewSwitch').checked;
+                this.updateOutputDisplay();
+                
+                const modeText = this.isTextViewMode ? 'Текста' : 'Unicode';
+                document.getElementById('outputTitle').textContent = `Вывод профиля в формате ${modeText}`;
+                this.showNotification(`Режим просмотра: ${modeText}`);
+            }
+            
+            updateOutputDisplay() {
+                // Обновляем вывод только если JSON валиден
+                if (!this.isJsonValid) {
+                    document.getElementById('outputEditor').value = '';
+                    this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+                    return;
+                }
+                
+                const output = this.isTextViewMode ? this.textOutput : this.unicodeOutput;
+                document.getElementById('outputEditor').value = output;
+                this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+            }
+            
+            clearOutput() {
+                this.unicodeOutput = '';
+                this.textOutput = '';
+                document.getElementById('outputEditor').value = '';
+                this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+                
+                // Сбрасываем переключатель режима
+                document.getElementById('viewSwitch').checked = false;
+                this.isTextViewMode = false;
+                document.getElementById('outputTitle').textContent = 'Вывод профиля в формате Unicode';
+            }
+            
+            updateLineNumbers(lineNumbersId, editorId) {
+                const editor = document.getElementById(editorId);
+                const lineNumbers = document.getElementById(lineNumbersId);
+                const lines = editor.value.split('\n').length;
+                
+                const scrollTop = editor.scrollTop;
+                let numbers = '';
+                
+                for (let i = 1; i <= lines; i++) {
+                    numbers += i + '\n';
+                }
+                
+                lineNumbers.innerHTML = numbers;
+                editor.scrollTop = scrollTop;
+                lineNumbers.scrollTop = scrollTop;
+            }
+            
+            clearAll() {
+                document.getElementById('inputEditor').value = '';
+                document.getElementById('outputEditor').value = '';
+                document.getElementById('inputStatus').textContent = 'Ожидание ввода...';
+                document.getElementById('inputStatus').className = 'editor-status';
+                document.getElementById('inputEditor').focus();
+                
+                // Сбрасываем состояние заголовков
+                const inputHeader = document.getElementById('inputHeader');
+                const outputHeader = document.getElementById('outputHeader');
+                inputHeader.className = 'editor-header waiting';
+                outputHeader.className = 'editor-header waiting';
+                
+                // Сбрасываем состояние JSON
+                this.isJsonValid = false;
+                
+                // Сбрасываем вывод
+                this.clearOutput();
+                
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                this.showNotification('Все поля очищены');
+            }
+            
+            copyToClipboard(editorId) {
+                const editor = document.getElementById(editorId);
+                const text = editor.value;
+                
+                if (!text.trim()) {
+                    this.showNotification('Нет данных для копирования', true);
+                    return;
+                }
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    const editorName = editorId === 'inputEditor' ? 'Ввод' : 'Вывод';
+                    this.showNotification(`${editorName} скопирован в буфер`);
+                }).catch(() => {
+                    this.showNotification('Ошибка копирования', true);
+                });
+            }
+            
+            showNotification(message, isError = false) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${isError ? 'error' : ''}`;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.processor = new JSONProcessor();
+            window.toggleViewMode = () => window.processor.toggleViewMode();
+        });
+    </script>
+</body>
+</html>
