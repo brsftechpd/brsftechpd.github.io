@@ -911,6 +911,14 @@
       background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     }
     
+    .passport-profile-btn {
+      background: var(--gradient-indigo);
+    }
+    
+    .passport-profile-btn:hover {
+      background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+    }
+    
     .passport-missing-btn {
       background: var(--gradient-danger);
     }
@@ -1104,7 +1112,7 @@
     }
     
     .mso-status-btn {
-      background: var(--gradient-teal);
+      background: var(--gradient-danger);
       color: white;
       border: none;
       padding: 12px 20px;
@@ -1124,7 +1132,6 @@
     }
     
     .mso-status-btn:hover {
-      background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
       transform: translateY(-2px);
     }
     
@@ -1418,6 +1425,9 @@
           <button class="passport-btn passport-registered-btn" id="passportRegisteredBtn" title="Проверить регистрацию">
             <i class="fas fa-check-circle"></i> Зарегистрирован
           </button>
+          <button class="passport-btn passport-profile-btn" id="passportProfileBtn" title="Найти профиль по паспорту">
+            <i class="fas fa-search"></i> Найти профиль
+          </button>
           <button class="passport-btn passport-missing-btn" id="passportMissingBtn" title="Проверить отсутствие">
             <i class="fas fa-times-circle"></i> Отсутствует
           </button>
@@ -1596,6 +1606,7 @@
           kig: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(x_clientId,http.request.uri,http.request.body,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-3M,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!f,params:(query:{kig}),type:phrase),query:(match_phrase:(resp_body:{kig})))),query:(language:kuery,query:''))",
           passportRegistered: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.uri,http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fpassport%2Fstatus),type:phrase),query:(match_phrase:(http.request.uri:%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fpassport%2Fstatus))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22doc%22:%22{pasport}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22doc%22:%22{pasport}%22')))),query:(language:kuery,query:''))",
           passportMissing: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:'getting%20uuid'),type:phrase),query:(match_phrase:(message:'getting%20uuid'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:{pasport}),type:phrase),query:(match_phrase:(message:{pasport})))),query:(language:kuery,query:''))",
+          passportProfile: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!f,params:(query:'%22number%22:%22{pasport}%22'),type:phrase),query:(match_phrase:(resp_body:'%22number%22:%22{pasport}%22')))),query:(language:kuery,query:''))",
           msoStatus: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply),type:phrase),query:(match_phrase:(http.request.uri:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22uuid%22:%22{userId}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22uuid%22:%22{userId}%22')))),query:(language:kuery,query:''))"
         }
       };
@@ -1619,13 +1630,14 @@
         clearHistoryBtn: document.getElementById('clearHistoryBtn'),
         passportInput: document.getElementById('passportInput'),
         passportRegisteredBtn: document.getElementById('passportRegisteredBtn'),
+        passportProfileBtn: document.getElementById('passportProfileBtn'),
         passportMissingBtn: document.getElementById('passportMissingBtn'),
         kigInput: document.getElementById('kigInput'),
         searchKigBtn: document.getElementById('searchKigBtn'),
         quickTemplates: document.getElementById('quickTemplates'),
         themeSwitcher: document.getElementById('themeSwitcher'),
         historySearch: document.getElementById('historySearch'),
-        checkMsoStatusBtn: document.getElementById('checkMsoStatusBtn') // Новая кнопка
+        checkMsoStatusBtn: document.getElementById('checkMsoStatusBtn')
       };
       const state = {
         selectedType: 'profile',
@@ -2027,7 +2039,7 @@
           }
         });
         
-        // Обработчики для новых кнопок паспорта
+        // Обработчики для кнопок паспорта
         elements.passportRegisteredBtn.addEventListener('click', () => {
           const passportValue = elements.passportInput.value.trim();
           if (!passportValue) {
@@ -2036,8 +2048,20 @@
             return;
           }
           
-          // Подставляем номер паспорта в URL
           const url = CONFIG.urlTemplates.passportRegistered.replace(/{pasport}/g, passportValue);
+          window.open(url, '_blank');
+        });
+        
+        // НОВЫЙ ОБРАБОТЧИК ДЛЯ КНОПКИ "НАЙТИ ПРОФИЛЬ"
+        elements.passportProfileBtn.addEventListener('click', () => {
+          const passportValue = elements.passportInput.value.trim();
+          if (!passportValue) {
+            ui.showNotification('Введите номер паспорта', true);
+            elements.passportInput.classList.add('error');
+            return;
+          }
+          
+          const url = CONFIG.urlTemplates.passportProfile.replace(/{pasport}/g, passportValue);
           window.open(url, '_blank');
         });
         
@@ -2049,7 +2073,6 @@
             return;
           }
           
-          // Подставляем номер паспорта в URL
           const url = CONFIG.urlTemplates.passportMissing.replace(/{pasport}/g, passportValue);
           window.open(url, '_blank');
         });
@@ -2066,7 +2089,7 @@
           elements.passportInput.classList.remove('error');
         });
         
-        // Обработчик для новой кнопки проверки статуса МСО
+        // Обработчик для кнопки проверки статуса МСО
         elements.checkMsoStatusBtn.addEventListener('click', () => {
           const inputValue = elements.numberInput.value.trim();
           ui.openMsoStatusUrl(inputValue);
@@ -2075,21 +2098,17 @@
         // Обработчики для поля ввода КИГ
         elements.kigInput.addEventListener('input', () => {
           const processedValue = utils.processKigInput(elements.kigInput.value);
-          // Устанавливаем обработанное значение
           if (processedValue !== elements.kigInput.value) {
             const cursorPosition = elements.kigInput.selectionStart;
             elements.kigInput.value = processedValue;
-            // Восстанавливаем позицию курсора
             setTimeout(() => {
               elements.kigInput.setSelectionRange(cursorPosition, cursorPosition);
             }, 0);
           }
-          // Проверяем первые 2 символа в реальном времени
           if (processedValue.length >= 2) {
             const firstTwo = processedValue.substring(0, 2);
             const allowedPrefixes = ['AA', 'AB'];
             if (!allowedPrefixes.includes(firstTwo)) {
-              // Подсвечиваем поле, но не показываем уведомление каждый раз
               elements.kigInput.classList.add('error');
             } else {
               elements.kigInput.classList.remove('error');
@@ -2105,7 +2124,6 @@
             const validation = utils.validateKig(value);
             if (!validation.isValid) {
               elements.kigInput.classList.add('error');
-              // Не показываем уведомление для пустого поля
               if (validation.message !== 'Введите КИГ для поиска') {
                 ui.showNotification(validation.message, true);
               }
@@ -2123,7 +2141,6 @@
             elements.kigInput.classList.add('error');
             return;
           }
-          // Дополнительная проверка префикса
           if (kigValue.length >= 2) {
             const firstTwo = kigValue.substring(0, 2).toUpperCase();
             const allowedPrefixes = ['AA', 'AB'];
