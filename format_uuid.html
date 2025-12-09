@@ -2264,7 +2264,7 @@
         });
         
         document.addEventListener('paste', function(e) {
-          if (document.activeElement === elements.numberInput || document.activeElement === elements.passportInput || document.activeElement === elements.kigInput) {
+          if (document.activeElement === elements.numberInput || document.activeElement === elements.passportInput || document.activeElement === elements.kigInput || document.activeElement === elements.historySearch) {
             return;
           }
           const text = e.clipboardData.getData('text/plain');
