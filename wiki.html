@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База знаний</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Новая цветовая палитра - более мягкая и профессиональная */
+            --bg-primary: #0f1a2e;
+            --bg-secondary: #1e2b45;
+            --bg-tertiary: #2a3655;
+            --bg-hover: #364463;
+            --bg-card: #1e2b45;
+            --bg-editor: #1a243f;
+            
+            --text-primary: #f0f4ff;
+            --text-secondary: #c7d2ff;
+            --text-muted: #8a9bbf;
+            --text-placeholder: #6b7ba0;
+            
+            --border-color: #2a3655;
+            --border-light: #364463;
+            --border-focus: #4d5bff;
+            
+            /* Цвета категорий */
+            --category-purple: #8b5cf6;
+            --category-red: #ff6b8b;
+            --category-blue: #4d5bff;
+            --category-cyan: #00d4ff;
+            --category-orange: #ff8c42;
+            --category-green: #00c896;
+            --category-yellow: #ffc742;
+            --category-pink: #ff5e9e;
+            
+            /* Градиенты */
+            --gradient-primary: linear-gradient(135deg, #4d5bff 0%, #6d7cff 100%);
+            --gradient-success: linear-gradient(135deg, #00c896 0%, #00e6a8 100%);
+            --gradient-warning: linear-gradient(135deg, #ffc742 0%, #ffd966 100%);
+            --gradient-danger: linear-gradient(135deg, #ff6b8b 0%, #ff8aa3 100%);
+            --gradient-dark: linear-gradient(135deg, #2a3655 0%, #364463 100%);
+            
+            /* Размеры и отступы */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 20px;
+            --space-2xl: 24px;
+            --space-3xl: 32px;
+            
+            /* Тени */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            
+            /* Анимации */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Основной контейнер с сеткой */
+        .app-container {
+            display: grid;
+            grid-template-columns: 260px 1fr 320px;
+            gap: var(--space-xl);
+            padding: var(--space-xl);
+            max-width: 1920px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* Левая панель: Категории */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .panel-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(77, 91, 255, 0.1) 0%, rgba(106, 125, 255, 0.05) 100%);
+        }
+
+        .panel-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .panel-content {
+            padding: var(--space-lg);
+        }
+
+        /* Категории */
+        .categories-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .category-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-light);
+            transform: translateX(4px);
+        }
+
+        .category-item.active {
+            background: linear-gradient(135deg, rgba(77, 91, 255, 0.2) 0%, rgba(77, 91, 255, 0.1) 100%);
+            border-color: var(--border-focus);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .category-color::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .category-name {
+            flex: 1;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: var(--space-xs);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .category-item:hover .category-actions {
+            opacity: 1;
+        }
+
+        /* Кнопки */
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            white-space: nowrap;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .btn-dark {
+            background: var(--gradient-dark);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-dark:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Центральная панель: Редактор */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+
+        /* Информация о категории */
+        .category-info {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .category-title {
+            flex: 1;
+        }
+
+        .category-title h2 {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .category-stats {
+            display: flex;
+            gap: var(--space-lg);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .category-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-line;
+            word-break: break-word;
+        }
+
+        /* Панель инструментов редактора */
+        .editor-toolbar {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: var(--space-md);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            box-shadow: var(--shadow-md);
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding-right: var(--space-md);
+        }
+
+        .tool-group:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        .tool-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .tool-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .tool-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--border-focus);
+        }
+
+        /* Кнопки копирования и очистки в тулбаре */
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-left: auto;
+        }
+
+        .toolbar-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        /* Редактор */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-editor);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        #textEditor {
+            flex: 1;
+            padding: var(--space-xl);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            outline: none;
+            overflow-y: auto;
+            min-height: 400px;
+            background: transparent;
+        }
+
+        #textEditor:empty:before {
+            content: attr(placeholder);
+            color: var(--text-placeholder);
+            pointer-events: none;
+        }
+
+        /* Стили для элементов редактора */
+        #textEditor ul, #textEditor ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+
+        #textEditor ul {
+            list-style-type: disc;
+        }
+
+        #textEditor ol {
+            list-style-type: decimal;
+        }
+
+        #textEditor li {
+            margin-bottom: 4px;
+        }
+
+        #textEditor blockquote {
+            border-left: 3px solid var(--border-focus);
+            margin: 16px 0;
+            padding-left: 16px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        #textEditor pre {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        #textEditor code {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        #textEditor table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        #textEditor table th,
+        #textEditor table td {
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        #textEditor table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        #textEditor hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        /* Кнопки редактора (нижняя панель) */
+        .editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+        }
+
+        /* Правая панель: Шаблоны */
+        .templates-panel {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .templates-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .template-item {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: var(--space-lg);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .template-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-item.active {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 1px var(--border-focus);
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+
+        .template-title {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .template-content {
+            display: none; /* Скрываем содержимое в шаблоне */
+        }
+
+        .template-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-placeholder);
+        }
+
+        /* Переключатель копирования - новый дизайн */
+        .copy-toggle-container {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .copy-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+        }
+
+        .toggle-label-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .toggle-description {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-hover);
+            border-radius: 24px;
+            transition: var(--transition-normal);
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 2px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            transition: var(--transition-normal);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--category-green);
+            border-color: var(--category-green);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background-color: white;
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 26, 46, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            width: 480px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: var(--space-xl);
+        }
+
+        .modal-footer {
+            padding: var(--space-xl);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+            background: var(--bg-tertiary);
+        }
+
+        /* Формы */
+        .form-group {
+            margin-bottom: var(--space-xl);
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all var(--transition-normal);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(77, 91, 255, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 100px;
+            transition: all var(--transition-normal);
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(77, 91, 255, 0.2);
+        }
+
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 0 2px var(--bg-tertiary);
+        }
+
+        .color-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Таблица в модальном окне */
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin: var(--space-lg) 0;
+        }
+
+        .table-cell {
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .table-cell:hover {
+            background: var(--bg-hover);
+        }
+
+        .table-cell.selected {
+            background: var(--gradient-primary);
+        }
+
+        .table-preview {
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-top: var(--space-lg);
+            padding: var(--space-md);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--gradient-success);
+            color: white;
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            gap: var(--space-md);
+            box-shadow: var(--shadow-lg);
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification.error {
+            background: var(--gradient-danger);
+        }
+
+        .notification.warning {
+            background: var(--gradient-warning);
+            color: var(--bg-primary);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1280px) {
+            .app-container {
+                grid-template-columns: 240px 1fr;
+                gap: var(--space-lg);
+                padding: var(--space-lg);
+            }
+            
+            .templates-panel {
+                grid-column: 1 / -1;
+                grid-row: 2;
+            }
+            
+            .templates-list {
+                max-height: 400px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .template-item {
+                min-width: 280px;
+                flex: 1;
+            }
+            
+            .editor-toolbar {
+                overflow-x: auto;
+            }
+            
+            .toolbar-actions {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                padding: var(--space-md);
+                gap: var(--space-md);
+            }
+            
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+            
+            .category-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .editor-toolbar {
+                overflow-x: auto;
+                padding: var(--space-sm);
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .tool-group {
+                flex-shrink: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding-right: 0;
+                padding-bottom: var(--space-sm);
+            }
+            
+            .tool-group:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .toolbar-actions {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .editor-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+
+        /* Полосы прокрутки */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-focus);
+        }
+
+        /* Состояние загрузки */
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Пустые состояния */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-3xl) var(--space-xl);
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: var(--space-lg);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: var(--space-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Левая панель: Категории -->
+        <div class="sidebar">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>
+                            <i class="fas fa-folder"></i>
+                            Категории
+                        </span>
+                        <button class="btn btn-sm btn-primary" id="createCategoryBtn">
+                            <i class="fas fa-plus"></i>
+                            Создать
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="categories-list" id="categoriesList">
+                        <!-- Категории будут добавлены динамически -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>
+                            <i class="fas fa-database"></i>
+                            База знаний
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <button class="btn btn-dark" id="importExportBtn" style="width: 100%; margin-bottom: var(--space-md);">
+                        <i class="fas fa-file-export"></i>
+                        Импорт/Экспорт
+                    </button>
+                    <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                        <p><i class="fas fa-info-circle"></i> Все данные хранятся локально в вашем браузере.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Центральная панель: Редактор -->
+        <div class="main-content">
+            <!-- Информация о категории -->
+            <div class="category-info" id="categoryInfo">
+                <div class="category-header">
+                    <div class="category-badge" id="categoryBadge" style="background: var(--category-purple);">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="category-title">
+                        <h2 id="categoryName">Выберите категорию</h2>
+                        <div class="category-stats">
+                            <span id="categoryStats">0 шаблонов</span>
+                            <span id="categoryDate"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-description" id="categoryDescription">
+                    Выберите категорию слева для просмотра и редактирования записей
+                </div>
+            </div>
+
+            <!-- Панель инструментов -->
+            <div class="editor-toolbar">
+                <div class="tool-group">
+                    <button class="tool-btn" id="boldBtn" title="Жирный (Ctrl+B)"><i class="fas fa-bold"></i></button>
+                    <button class="tool-btn" id="italicBtn" title="Курсив (Ctrl+I)"><i class="fas fa-italic"></i></button>
+                    <button class="tool-btn" id="underlineBtn" title="Подчеркнутый (Ctrl+U)"><i class="fas fa-underline"></i></button>
+                    <button class="tool-btn" id="strikeBtn" title="Зачеркнутый"><i class="fas fa-strikethrough"></i></button>
+                </div>
+                <div class="tool-group">
+                    <button class="tool-btn" id="unorderedListBtn" title="Маркированный список"><i class="fas fa-list-ul"></i></button>
+                    <button class="tool-btn" id="orderedListBtn" title="Нумерованный список"><i class="fas fa-list-ol"></i></button>
+                </div>
+                <div class="tool-group">
+                    <button class="tool-btn" id="clearFormatBtn" title="Очистить форматирование"><i class="fas fa-eraser"></i></button>
+                    <button class="tool-btn" id="horizontalRuleBtn" title="Разделитель"><i class="fas fa-minus"></i></button>
+                </div>
+                
+                <!-- Кнопки копирования и очистки в тулбаре -->
+                <div class="toolbar-actions">
+                    <button class="toolbar-btn" id="copyForAnswerBtn">
+                        <i class="fas fa-copy"></i>
+                        Скопировать для ответа
+                    </button>
+                    <button class="toolbar-btn" id="clearEditorBtnToolbar">
+                        <i class="fas fa-trash"></i>
+                        Очистить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Редактор -->
+            <div class="editor-container">
+                <div 
+                    id="textEditor" 
+                    contenteditable="true"
+                    placeholder="Начните вводить текст... Используйте панель инструментов для форматирования."
+                ></div>
+                <div class="editor-actions">
+                    <button class="btn btn-success" id="updateTemplateBtn" style="display: none;">
+                        <i class="fas fa-sync-alt"></i>
+                        Обновить шаблон
+                    </button>
+                    <button class="btn btn-primary" id="newTemplateBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        Создать новый шаблон
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая панель: Шаблоны -->
+        <div class="templates-panel">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>
+                            <i class="fas fa-copy"></i>
+                            Шаблоны
+                        </span>
+                        <span id="templatesCount">0</span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <!-- Новый дизайн переключателя -->
+                    <div class="copy-toggle-container">
+                        <div class="copy-toggle">
+                            <div>
+                                <div class="toggle-label-text">Копировать при нажатии</div>
+                                <div class="toggle-description">Автоматически копировать шаблон при клике</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="copyOnClickToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="templates-list" id="templatesList">
+                        <!-- Шаблоны будут добавлены динамически -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно категории -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="categoryModalTitle">Новая категория</div>
+                <button class="modal-close" id="closeCategoryModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название категории</label>
+                    <input type="text" class="form-input" id="categoryNameInput" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Цвет категории</label>
+                    <div class="color-picker" id="colorPicker">
+                        <div class="color-option selected" style="background-color: var(--category-purple);" data-color="purple"></div>
+                        <div class="color-option" style="background-color: var(--category-red);" data-color="red"></div>
+                        <div class="color-option" style="background-color: var(--category-blue);" data-color="blue"></div>
+                        <div class="color-option" style="background-color: var(--category-cyan);" data-color="cyan"></div>
+                        <div class="color-option" style="background-color: var(--category-orange);" data-color="orange"></div>
+                        <div class="color-option" style="background-color: var(--category-green);" data-color="green"></div>
+                        <div class="color-option" style="background-color: var(--category-yellow);" data-color="yellow"></div>
+                        <div class="color-option" style="background-color: var(--category-pink);" data-color="pink"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание категории</label>
+                    <textarea class="form-textarea" id="categoryDescriptionInput" placeholder="Введите описание категории" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" id="cancelCategoryBtn">Отмена</button>
+                <button class="btn btn-primary" id="saveCategoryBtn">Создать категорию</button>
+                <button class="btn btn-success" id="updateCategoryBtn" style="display: none;">Обновить категорию</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно таблицы -->
+    <div class="modal-overlay" id="tableModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Создание таблицы</div>
+                <button class="modal-close" id="closeTableModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Выберите размер таблицы</label>
+                    <div class="table-grid" id="tableGrid">
+                        <!-- Ячейки таблицы будут созданы динамически -->
+                    </div>
+                    <div class="table-preview" id="tablePreview">Размер: 0×0</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" id="cancelTableBtn">Отмена</button>
+                <button class="btn btn-primary" id="insertTableBtn">Вставить таблицу</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно импорта/экспорта -->
+    <div class="modal-overlay" id="importExportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Импорт и экспорт данных</div>
+                <button class="modal-close" id="closeImportExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <h4 style="color: var(--text-primary); margin-bottom: var(--space-md);">Экспорт данных</h4>
+                    <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 14px;">
+                        Создайте резервную копию всех категорий и шаблонов в формат JSON.
+                    </p>
+                    <button class="btn btn-primary" id="exportBtn" style="width: 100%;">
+                        <i class="fas fa-download"></i>
+                        Экспортировать все данные
+                    </button>
+                </div>
+                
+                <div class="form-group" style="margin-top: var(--space-2xl);">
+                    <h4 style="color: var(--text-primary); margin-bottom: var(--space-md);">Импорт данных</h4>
+                    <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 14px;">
+                        Восстановите данные из ранее сохраненного файла. Текущие данные будут заменены.
+                    </p>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <button class="btn btn-dark" id="selectFileBtn" style="width: 100%; margin-bottom: var(--space-md);">
+                        <i class="fas fa-file-import"></i>
+                        Выбрать файл
+                    </button>
+                    <div id="selectedFileName" style="color: var(--text-secondary); font-size: 14px; margin-bottom: var(--space-lg); display: none;">
+                        Выбран файл: <span id="fileName"></span>
+                    </div>
+                    <button class="btn btn-success" id="importBtn" style="width: 100%;" disabled>
+                        <i class="fas fa-upload"></i>
+                        Импортировать данные
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" id="cancelImportExportBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="notification" id="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Конфигурация
+            const CONFIG = {
+                maxCategories: 50,
+                maxTemplatesPerCategory: 100,
+                defaultColor: 'purple',
+                notificationDuration: 4000
+            };
+
+            // Элементы DOM
+            const elements = {
+                // Основные контейнеры
+                categoriesList: document.getElementById('categoriesList'),
+                categoryInfo: document.getElementById('categoryInfo'),
+                categoryBadge: document.getElementById('categoryBadge'),
+                categoryName: document.getElementById('categoryName'),
+                categoryDescription: document.getElementById('categoryDescription'),
+                categoryStats: document.getElementById('categoryStats'),
+                categoryDate: document.getElementById('categoryDate'),
+                
+                textEditor: document.getElementById('textEditor'),
+                templatesList: document.getElementById('templatesList'),
+                templatesCount: document.getElementById('templatesCount'),
+                
+                // Кнопки
+                createCategoryBtn: document.getElementById('createCategoryBtn'),
+                updateTemplateBtn: document.getElementById('updateTemplateBtn'),
+                newTemplateBtn: document.getElementById('newTemplateBtn'),
+                importExportBtn: document.getElementById('importExportBtn'),
+                
+                // Кнопки в тулбаре
+                copyForAnswerBtn: document.getElementById('copyForAnswerBtn'),
+                clearEditorBtnToolbar: document.getElementById('clearEditorBtnToolbar'),
+                
+                // Переключатель
+                copyOnClickToggle: document.getElementById('copyOnClickToggle'),
+                
+                // Модальные окна
+                categoryModal: document.getElementById('categoryModal'),
+                tableModal: document.getElementById('tableModal'),
+                importExportModal: document.getElementById('importExportModal'),
+                
+                // Элементы модального окна категории
+                categoryModalTitle: document.getElementById('categoryModalTitle'),
+                categoryNameInput: document.getElementById('categoryNameInput'),
+                categoryDescriptionInput: document.getElementById('categoryDescriptionInput'),
+                colorPicker: document.getElementById('colorPicker'),
+                closeCategoryModal: document.getElementById('closeCategoryModal'),
+                cancelCategoryBtn: document.getElementById('cancelCategoryBtn'),
+                saveCategoryBtn: document.getElementById('saveCategoryBtn'),
+                updateCategoryBtn: document.getElementById('updateCategoryBtn'),
+                
+                // Элементы модального окна таблицы
+                tableGrid: document.getElementById('tableGrid'),
+                tablePreview: document.getElementById('tablePreview'),
+                closeTableModal: document.getElementById('closeTableModal'),
+                cancelTableBtn: document.getElementById('cancelTableBtn'),
+                insertTableBtn: document.getElementById('insertTableBtn'),
+                
+                // Элементы модального окна импорта/экспорта
+                closeImportExportModal: document.getElementById('closeImportExportModal'),
+                cancelImportExportBtn: document.getElementById('cancelImportExportBtn'),
+                exportBtn: document.getElementById('exportBtn'),
+                importFile: document.getElementById('importFile'),
+                selectFileBtn: document.getElementById('selectFileBtn'),
+                selectedFileName: document.getElementById('selectedFileName'),
+                fileName: document.getElementById('fileName'),
+                importBtn: document.getElementById('importBtn'),
+                
+                // Кнопки редактора
+                boldBtn: document.getElementById('boldBtn'),
+                italicBtn: document.getElementById('italicBtn'),
+                underlineBtn: document.getElementById('underlineBtn'),
+                strikeBtn: document.getElementById('strikeBtn'),
+                unorderedListBtn: document.getElementById('unorderedListBtn'),
+                orderedListBtn: document.getElementById('orderedListBtn'),
+                horizontalRuleBtn: document.getElementById('horizontalRuleBtn'),
+                clearFormatBtn: document.getElementById('clearFormatBtn'),
+                
+                // Уведомления
+                notification: document.getElementById('notification'),
+                notificationText: document.getElementById('notificationText')
+            };
+
+            // Состояние приложения
+            const state = {
+                categories: [],
+                templates: [],
+                selectedCategoryId: null,
+                selectedTemplateId: null,
+                selectedColor: CONFIG.defaultColor,
+                tableSelection: { rows: 0, cols: 0 },
+                editingCategoryId: null,
+                notificationTimeout: null,
+                importFileData: null,
+                copyOnClick: false
+            };
+
+            // Утилиты
+            const utils = {
+                generateId: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
+                
+                saveToStorage: () => {
+                    localStorage.setItem('knowledgeBaseCategories', JSON.stringify(state.categories));
+                    localStorage.setItem('knowledgeBaseTemplates', JSON.stringify(state.templates));
+                    localStorage.setItem('copyOnClick', JSON.stringify(state.copyOnClick));
+                },
+                
+                loadFromStorage: () => {
+                    const savedCategories = localStorage.getItem('knowledgeBaseCategories');
+                    const savedTemplates = localStorage.getItem('knowledgeBaseTemplates');
+                    const savedCopyOnClick = localStorage.getItem('copyOnClick');
+                    
+                    if (savedCategories) state.categories = JSON.parse(savedCategories);
+                    if (savedTemplates) state.templates = JSON.parse(savedTemplates);
+                    if (savedCopyOnClick) state.copyOnClick = JSON.parse(savedCopyOnClick);
+                    
+                    // Устанавливаем состояние переключателя
+                    elements.copyOnClickToggle.checked = state.copyOnClick;
+                },
+                
+                getColorValue: (colorName) => {
+                    const colorMap = {
+                        purple: 'var(--category-purple)',
+                        red: 'var(--category-red)',
+                        blue: 'var(--category-blue)',
+                        cyan: 'var(--category-cyan)',
+                        orange: 'var(--category-orange)',
+                        green: 'var(--category-green)',
+                        yellow: 'var(--category-yellow)',
+                        pink: 'var(--category-pink)'
+                    };
+                    return colorMap[colorName] || colorMap.purple;
+                },
+                
+                formatDate: (dateString) => {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
+                },
+                
+                showNotification: (message, type = 'success') => {
+                    if (state.notificationTimeout) {
+                        clearTimeout(state.notificationTimeout);
+                        state.notificationTimeout = null;
+                    }
+                    
+                    elements.notificationText.textContent = message;
+                    elements.notification.className = `notification ${type}`;
+                    elements.notification.style.display = 'flex';
+                    
+                    state.notificationTimeout = setTimeout(() => {
+                        elements.notification.style.display = 'none';
+                    }, CONFIG.notificationDuration);
+                },
+                
+                // Функция для сохранения всего форматирования
+                preserveAllFormatting: (html) => {
+                    if (!html) return '';
+                    
+                    // Создаем временный элемент для обработки
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Удаляем только стили и классы, но сохраняем все теги
+                    const removeStylesAndClasses = (element) => {
+                        if (element.attributes) {
+                            for (let i = element.attributes.length - 1; i >= 0; i--) {
+                                const attr = element.attributes[i];
+                                if (attr.name === 'style' || attr.name === 'class') {
+                                    element.removeAttribute(attr.name);
+                                }
+                            }
+                        }
+                        
+                        // Рекурсивно обрабатываем детей
+                        const children = Array.from(element.childNodes);
+                        children.forEach(child => {
+                            if (child.nodeType === Node.ELEMENT_NODE) {
+                                removeStylesAndClasses(child);
+                            }
+                        });
+                    };
+                    
+                    // Обрабатываем все элементы
+                    removeStylesAndClasses(tempDiv);
+                    
+                    return tempDiv.innerHTML;
+                },
+                
+                // Функция для конвертации текста с переносами строк в HTML
+                convertTextToHtmlWithBreaks: (text) => {
+                    if (!text) return '';
+                    
+                    // Заменяем переносы строк на <br>
+                    return text
+                        .replace(/\r\n/g, '<br>')
+                        .replace(/\n/g, '<br>')
+                        .replace(/\r/g, '<br>');
+                },
+                
+                // Функция для копирования с сохранением форматирования
+                copyToClipboardWithFormatting: (html) => {
+                    // Сохраняем все форматирование
+                    const cleanedHTML = utils.preserveAllFormatting(html);
+                    
+                    // Создаем текстовую версию для совместимости
+                    const tempElement = document.createElement('div');
+                    tempElement.innerHTML = cleanedHTML;
+                    const plainText = tempElement.textContent || tempElement.innerText || '';
+                    
+                    // Пытаемся использовать современный Clipboard API
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        try {
+                            // Создаем HTML Blob
+                            const htmlBlob = new Blob([cleanedHTML], { type: 'text/html' });
+                            const textBlob = new Blob([plainText], { type: 'text/plain' });
+                            
+                            const clipboardItem = new ClipboardItem({
+                                'text/html': htmlBlob,
+                                'text/plain': textBlob
+                            });
+                            
+                            navigator.clipboard.write([clipboardItem]).then(() => {
+                                utils.showNotification('Текст с форматированием скопирован в буфер обмена');
+                            }).catch(err => {
+                                console.error('Ошибка при копировании через Clipboard API:', err);
+                                utils.fallbackCopyText(plainText);
+                            });
+                        } catch (err) {
+                            console.error('Ошибка создания ClipboardItem:', err);
+                            utils.fallbackCopyText(plainText);
+                        }
+                    } else {
+                        // Fallback для старых браузеров
+                        utils.fallbackCopyText(plainText);
+                    }
+                },
+                
+                // Fallback копирования только текста
+                fallbackCopyText: (text) => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.opacity = '0';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        utils.showNotification('Текст скопирован в буфер обмена (без форматирования)');
+                    } catch (err) {
+                        console.error('Ошибка при копировании через execCommand:', err);
+                        utils.showNotification('Не удалось скопировать текст', 'error');
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                },
+                
+                clearFormatting: () => {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount === 0 || selection.isCollapsed) {
+                        utils.showNotification('Выделите текст для очистки форматирования', 'warning');
+                        return;
+                    }
+                    
+                    const range = selection.getRangeAt(0);
+                    const selectedContent = range.cloneContents();
+                    
+                    // Создаем временный элемент для обработки
+                    const tempDiv = document.createElement('div');
+                    tempDiv.appendChild(selectedContent);
+                    
+                    // Удаляем форматирование
+                    const elementsToRemove = tempDiv.querySelectorAll('b, strong, i, em, u, strike, s, ul, ol, li, hr');
+                    elementsToRemove.forEach(el => {
+                        const parent = el.parentNode;
+                        while (el.firstChild) {
+                            parent.insertBefore(el.firstChild, el);
+                        }
+                        parent.removeChild(el);
+                    });
+                    
+                    // Заменяем выбранный текст очищенным
+                    range.deleteContents();
+                    range.insertNode(tempDiv);
+                    
+                    utils.showNotification('Форматирование очищено');
+                }
+            };
+
+            // Работа с категориями
+            const categoryManager = {
+                createCategory: (name, color, description) => {
+                    const newCategory = {
+                        id: utils.generateId(),
+                        name: name.trim(),
+                        color: color || CONFIG.defaultColor,
+                        description: description || '',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    state.categories.push(newCategory);
+                    utils.saveToStorage();
+                    categoryUI.updateCategories();
+                    categoryUI.selectCategory(newCategory.id);
+                    
+                    utils.showNotification('Категория создана');
+                    return newCategory;
+                },
+                
+                updateCategory: (id, updates) => {
+                    const index = state.categories.findIndex(c => c.id === id);
+                    if (index === -1) return null;
+                    
+                    state.categories[index] = {
+                        ...state.categories[index],
+                        ...updates,
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    utils.saveToStorage();
+                    categoryUI.updateCategories();
+                    categoryUI.updateCategoryInfo();
+                    
+                    utils.showNotification('Категория обновлена');
+                    return state.categories[index];
+                },
+                
+                deleteCategory: (id) => {
+                    state.categories = state.categories.filter(c => c.id !== id);
+                    state.templates = state.templates.filter(t => t.categoryId !== id);
+                    utils.saveToStorage();
+                    categoryUI.updateCategories();
+                    
+                    if (state.selectedCategoryId === id) {
+                        state.selectedCategoryId = null;
+                        categoryUI.updateCategoryInfo();
+                        templateUI.updateTemplates();
+                        editorUI.resetEditor();
+                    }
+                    
+                    utils.showNotification('Категория удалена');
+                },
+                
+                getCategory: (id) => state.categories.find(c => c.id === id)
+            };
+
+            // Работа с шаблонами
+            const templateManager = {
+                createTemplate: (categoryId, content, title) => {
+                    // Используем функцию сохранения ВСЕГО форматирования
+                    const cleanContent = utils.preserveAllFormatting(content || '');
+                    const newTemplate = {
+                        id: utils.generateId(),
+                        categoryId,
+                        title: title || `Шаблон от ${utils.formatDate(new Date())}`,
+                        content: cleanContent,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    state.templates.push(newTemplate);
+                    utils.saveToStorage();
+                    templateUI.updateTemplates();
+                    
+                    utils.showNotification('Шаблон создан');
+                    return newTemplate;
+                },
+                
+                updateTemplate: (id, updates) => {
+                    const index = state.templates.findIndex(t => t.id === id);
+                    if (index === -1) return null;
+                    
+                    if (updates.content) {
+                        updates.content = utils.preserveAllFormatting(updates.content);
+                    }
+                    
+                    state.templates[index] = {
+                        ...state.templates[index],
+                        ...updates,
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    utils.saveToStorage();
+                    templateUI.updateTemplates();
+                    
+                    utils.showNotification('Шаблон обновлен');
+                    return state.templates[index];
+                },
+                
+                deleteTemplate: (id) => {
+                    state.templates = state.templates.filter(t => t.id !== id);
+                    utils.saveToStorage();
+                    templateUI.updateTemplates();
+                    
+                    if (state.selectedTemplateId === id) {
+                        editorUI.resetEditor();
+                    }
+                    
+                    utils.showNotification('Шаблон удален');
+                },
+                
+                getTemplate: (id) => state.templates.find(t => t.id === id),
+                getTemplatesByCategory: (categoryId) => state.templates.filter(t => t.categoryId === categoryId)
+            };
+
+            // Редактор
+            const editorManager = {
+                execCommand: (command, value = null) => {
+                    document.execCommand(command, false, value);
+                    elements.textEditor.focus();
+                },
+                
+                insertHorizontalRule: () => {
+                    editorManager.execCommand('insertHTML', '<hr>');
+                },
+                
+                clearFormatting: () => {
+                    utils.clearFormatting();
+                },
+                
+                handlePaste: (e) => {
+                    e.preventDefault();
+                    
+                    // Получаем HTML из буфера обмена
+                    let html = '';
+                    if (e.clipboardData) {
+                        html = e.clipboardData.getData('text/html');
+                    }
+                    
+                    // Если нет HTML, используем plain text
+                    if (!html) {
+                        const text = e.clipboardData.getData('text/plain');
+                        // Сохраняем переносы строк, заменяя их на <br>
+                        html = utils.convertTextToHtmlWithBreaks(text);
+                    }
+                    
+                    // Сохраняем все форматирование
+                    const cleanHTML = utils.preserveAllFormatting(html);
+                    editorManager.execCommand('insertHTML', cleanHTML);
+                },
+                
+                loadTemplate: (templateId) => {
+                    const template = templateManager.getTemplate(templateId);
+                    if (!template) return;
+                    
+                    state.selectedTemplateId = templateId;
+                    elements.textEditor.innerHTML = template.content;
+                    
+                    editorUI.showEditMode();
+                    
+                    // Если включено копирование при нажатии - копируем с форматированием
+                    if (state.copyOnClick) {
+                        utils.copyToClipboardWithFormatting(template.content);
+                    }
+                }
+            };
+
+            // UI редактора
+            const editorUI = {
+                showEditMode: () => {
+                    elements.updateTemplateBtn.style.display = 'flex';
+                },
+                
+                showCreateMode: () => {
+                    elements.updateTemplateBtn.style.display = 'none';
+                    state.selectedTemplateId = null;
+                },
+                
+                resetEditor: () => {
+                    state.selectedTemplateId = null;
+                    elements.textEditor.innerHTML = '';
+                    editorUI.showCreateMode();
+                },
+                
+                copyCurrentContent: () => {
+                    const content = elements.textEditor.innerHTML.trim();
+                    if (!content || content === '<br>') {
+                        utils.showNotification('Редактор пуст', 'error');
+                        return;
+                    }
+                    
+                    utils.copyToClipboardWithFormatting(content);
+                }
+            };
+
+            // UI категорий
+            const categoryUI = {
+                updateCategories: () => {
+                    elements.categoriesList.innerHTML = '';
+                    
+                    if (state.categories.length === 0) {
+                        elements.categoriesList.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-folder-open"></i>
+                                <h3>Нет категорий</h3>
+                                <p>Нажмите кнопку "Создать" для создания первой категории</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    state.categories.forEach(category => {
+                        const item = document.createElement('div');
+                        item.className = `category-item ${category.id === state.selectedCategoryId ? 'active' : ''}`;
+                        item.style.setProperty('--category-color', utils.getColorValue(category.color));
+                        
+                        item.innerHTML = `
+                            <div class="category-color" style="background: ${utils.getColorValue(category.color)}"></div>
+                            <div class="category-name">${category.name}</div>
+                            <div class="category-actions">
+                                <button class="action-btn edit-category" data-id="${category.id}" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-category" data-id="${category.id}" title="Удалить">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        
+                        item.addEventListener('click', (e) => {
+                            if (!e.target.closest('.action-btn')) {
+                                categoryUI.selectCategory(category.id);
+                            }
+                        });
+                        
+                        const editBtn = item.querySelector('.edit-category');
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            categoryUI.openEditModal(category.id);
+                        });
+                        
+                        const deleteBtn = item.querySelector('.delete-category');
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (confirm(`Удалить категорию "${category.name}"? Все шаблоны также будут удалены.`)) {
+                                categoryManager.deleteCategory(category.id);
+                            }
+                        });
+                        
+                        elements.categoriesList.appendChild(item);
+                    });
+                },
+                
+                selectCategory: (categoryId) => {
+                    state.selectedCategoryId = categoryId;
+                    editorUI.resetEditor();
+                    categoryUI.updateCategories();
+                    categoryUI.updateCategoryInfo();
+                    templateUI.updateTemplates();
+                },
+                
+                updateCategoryInfo: () => {
+                    if (!state.selectedCategoryId) {
+                        elements.categoryBadge.innerHTML = '<i class="fas fa-folder"></i>';
+                        elements.categoryBadge.style.background = utils.getColorValue('purple');
+                        elements.categoryName.textContent = 'Выберите категорию';
+                        elements.categoryDescription.textContent = 'Выберите категорию слева для просмотра и редактирования записей';
+                        elements.categoryStats.textContent = '0 шаблонов';
+                        elements.categoryDate.textContent = '';
+                        return;
+                    }
+                    
+                    const category = categoryManager.getCategory(state.selectedCategoryId);
+                    if (!category) return;
+                    
+                    const templates = templateManager.getTemplatesByCategory(category.id);
+                    
+                    elements.categoryBadge.innerHTML = '<i class="fas fa-folder"></i>';
+                    elements.categoryBadge.style.background = utils.getColorValue(category.color);
+                    elements.categoryName.textContent = category.name;
+                    elements.categoryDescription.textContent = category.description || 'Нет описания';
+                    elements.categoryStats.textContent = `${templates.length} шаблонов`;
+                    elements.categoryDate.textContent = `Обновлено: ${utils.formatDate(category.updatedAt)}`;
+                },
+                
+                openCreateModal: () => {
+                    elements.categoryModalTitle.textContent = 'Новая категория';
+                    elements.categoryNameInput.value = '';
+                    elements.categoryDescriptionInput.value = '';
+                    
+                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                    document.querySelector('.color-option[data-color="purple"]').classList.add('selected');
+                    state.selectedColor = 'purple';
+                    
+                    elements.saveCategoryBtn.style.display = 'block';
+                    elements.updateCategoryBtn.style.display = 'none';
+                    state.editingCategoryId = null;
+                    
+                    elements.categoryModal.style.display = 'flex';
+                    elements.categoryNameInput.focus();
+                },
+                
+                openEditModal: (categoryId) => {
+                    const category = categoryManager.getCategory(categoryId);
+                    if (!category) return;
+                    
+                    elements.categoryModalTitle.textContent = 'Редактирование категории';
+                    elements.categoryNameInput.value = category.name;
+                    elements.categoryDescriptionInput.value = category.description;
+                    
+                    document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                    document.querySelector(`.color-option[data-color="${category.color}"]`).classList.add('selected');
+                    state.selectedColor = category.color;
+                    
+                    elements.saveCategoryBtn.style.display = 'none';
+                    elements.updateCategoryBtn.style.display = 'block';
+                    state.editingCategoryId = categoryId;
+                    
+                    elements.categoryModal.style.display = 'flex';
+                    elements.categoryNameInput.focus();
+                },
+                
+                closeModal: () => {
+                    elements.categoryModal.style.display = 'none';
+                    state.editingCategoryId = null;
+                }
+            };
+
+            // UI шаблонов
+            const templateUI = {
+                updateTemplates: () => {
+                    elements.templatesList.innerHTML = '';
+                    
+                    if (!state.selectedCategoryId) {
+                        elements.templatesList.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-copy"></i>
+                                <h3>Выберите категорию</h3>
+                                <p>Для просмотра шаблонов выберите категорию</p>
+                            </div>
+                        `;
+                        elements.templatesCount.textContent = '0';
+                        return;
+                    }
+                    
+                    const templates = templateManager.getTemplatesByCategory(state.selectedCategoryId);
+                    elements.templatesCount.textContent = templates.length.toString();
+                    
+                    if (templates.length === 0) {
+                        elements.templatesList.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-file-alt"></i>
+                                <h3>Нет шаблонов</h3>
+                                <p>Создайте первый шаблон для этой категории</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    templates.forEach(template => {
+                        const item = document.createElement('div');
+                        item.className = `template-item ${template.id === state.selectedTemplateId ? 'active' : ''}`;
+                        
+                        item.innerHTML = `
+                            <div class="template-header">
+                                <div class="template-title">${template.title}</div>
+                                <div class="template-actions">
+                                    <button class="action-btn delete-template" data-id="${template.id}" title="Удалить">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="template-content"></div>
+                            <div class="template-meta">
+                                <span>${utils.formatDate(template.updatedAt)}</span>
+                            </div>
+                        `;
+                        
+                        // Клик на шаблон - открытие в редакторе
+                        item.addEventListener('click', (e) => {
+                            if (!e.target.closest('.action-btn')) {
+                                // Открываем шаблон в редакторе
+                                editorManager.loadTemplate(template.id);
+                                templateUI.updateTemplates();
+                            }
+                        });
+                        
+                        // Кнопка удаления
+                        const deleteBtn = item.querySelector('.delete-template');
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (confirm(`Удалить шаблон "${template.title}"?`)) {
+                                templateManager.deleteTemplate(template.id);
+                            }
+                        });
+                        
+                        elements.templatesList.appendChild(item);
+                    });
+                }
+            };
+
+            // Импорт/экспорт
+            const importExportManager = {
+                exportData: () => {
+                    const data = {
+                        categories: state.categories,
+                        templates: state.templates,
+                        exportedAt: new Date().toISOString(),
+                        version: '1.0'
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `knowledge-base-${new Date().toISOString().slice(0, 10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    utils.showNotification('Данные экспортированы');
+                },
+                
+                importData: () => {
+                    if (!state.importFileData) return;
+                    
+                    if (!confirm('Текущие данные будут заменены. Продолжить?')) return;
+                    
+                    try {
+                        const data = JSON.parse(state.importFileData);
+                        
+                        if (!data.categories || !data.templates) {
+                            throw new Error('Некорректный формат файла');
+                        }
+                        
+                        state.categories = data.categories;
+                        state.templates = data.templates;
+                        state.selectedCategoryId = null;
+                        state.selectedTemplateId = null;
+                        
+                        utils.saveToStorage();
+                        
+                        categoryUI.updateCategories();
+                        categoryUI.updateCategoryInfo();
+                        templateUI.updateTemplates();
+                        editorUI.resetEditor();
+                        
+                        elements.importExportModal.style.display = 'none';
+                        state.importFileData = null;
+                        
+                        utils.showNotification('Данные импортированы');
+                    } catch (error) {
+                        utils.showNotification('Ошибка импорта', 'error');
+                    }
+                },
+                
+                openModal: () => {
+                    elements.importExportModal.style.display = 'flex';
+                    elements.selectedFileName.style.display = 'none';
+                    elements.importBtn.disabled = true;
+                    state.importFileData = null;
+                },
+                
+                closeModal: () => {
+                    elements.importExportModal.style.display = 'none';
+                }
+            };
+
+            // Инициализация
+            const init = () => {
+                utils.loadFromStorage();
+                
+                // Создаем демо-данные если нет данных
+                if (state.categories.length === 0) {
+                    categoryManager.createCategory('Документация', 'blue', 
+                        'Хранилище документации по проектам и процессам\n\n• Технические требования\n• API документация\n• Руководства пользователя');
+                    
+                    categoryManager.createCategory('Шаблоны писем', 'green', 
+                        'Готовые шаблоны для деловой переписки\n\nКоллегам, клиентам и партнерам');
+                    
+                    categoryManager.createCategory('База знаний', 'purple', 
+                        'Основная база знаний компании\n\nВажная информация, которую должен знать каждый сотрудник');
+                    
+                    const docCategory = state.categories[0];
+                    
+                    // Создаем демо-шаблон с правильными переносами строк
+                    const demoTemplateContent = `
+                        <p><strong>Структура документации</strong></p>
+                        <p>Это пример структуры документации проекта. Здесь можно хранить:</p>
+                        <ul>
+                            <li>Технические требования</li>
+                            <li>API документацию</li>
+                            <li>Руководства пользователя</li>
+                            <li>Часто задаваемые вопросы</li>
+                        </ul>
+                        <hr>
+                        <p>Разделитель выше должен сохраниться!</p>
+                    `;
+                    
+                    templateManager.createTemplate(docCategory.id, 
+                        demoTemplateContent,
+                        'Пример структуры документации');
+                        
+                    // Создаем шаблон с переносами строк
+                    const tzTemplateContent = `
+                        <p><strong>Техническое задание</strong></p>
+                        <p><strong>Проект:</strong> [Название проекта]</p>
+                        <p><strong>Цель:</strong> [Описание цели]</p>
+                        <p><strong>Требования:</strong></p>
+                        <ol>
+                            <li>[Требование 1]</li>
+                            <li>[Требование 2]</li>
+                            <li>[Требование 3]</li>
+                        </ol>
+                    `;
+                    
+                    templateManager.createTemplate(docCategory.id,
+                        tzTemplateContent,
+                        'Шаблон ТЗ');
+                }
+                
+                categoryUI.updateCategories();
+                categoryUI.updateCategoryInfo();
+                templateUI.updateTemplates();
+                
+                setupEventListeners();
+            };
+
+            // Настройка обработчиков событий
+            const setupEventListeners = () => {
+                // Создание категории
+                elements.createCategoryBtn.addEventListener('click', () => categoryUI.openCreateModal());
+                
+                // Модальное окно категории
+                elements.closeCategoryModal.addEventListener('click', () => categoryUI.closeModal());
+                elements.cancelCategoryBtn.addEventListener('click', () => categoryUI.closeModal());
+                
+                elements.colorPicker.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('color-option')) {
+                        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                        state.selectedColor = e.target.dataset.color;
+                    }
+                });
+                
+                elements.saveCategoryBtn.addEventListener('click', () => {
+                    const name = elements.categoryNameInput.value.trim();
+                    if (!name) {
+                        utils.showNotification('Введите название категории', 'error');
+                        return;
+                    }
+                    
+                    categoryManager.createCategory(
+                        name,
+                        state.selectedColor,
+                        elements.categoryDescriptionInput.value
+                    );
+                    categoryUI.closeModal();
+                });
+                
+                elements.updateCategoryBtn.addEventListener('click', () => {
+                    const name = elements.categoryNameInput.value.trim();
+                    if (!name) {
+                        utils.showNotification('Введите название категории', 'error');
+                        return;
+                    }
+                    
+                    categoryManager.updateCategory(state.editingCategoryId, {
+                        name,
+                        color: state.selectedColor,
+                        description: elements.categoryDescriptionInput.value
+                    });
+                    categoryUI.closeModal();
+                });
+                
+                // Переключатель копирования
+                elements.copyOnClickToggle.addEventListener('change', (e) => {
+                    state.copyOnClick = e.target.checked;
+                    utils.saveToStorage();
+                });
+                
+                // Шаблоны
+                elements.updateTemplateBtn.addEventListener('click', () => {
+                    if (!state.selectedTemplateId) return;
+                    
+                    const content = elements.textEditor.innerHTML.trim();
+                    if (!content || content === '<br>') {
+                        utils.showNotification('Введите текст', 'error');
+                        return;
+                    }
+                    
+                    const title = prompt('Название шаблона:', templateManager.getTemplate(state.selectedTemplateId)?.title);
+                    if (title) {
+                        templateManager.updateTemplate(state.selectedTemplateId, { content, title });
+                    }
+                });
+                
+                elements.newTemplateBtn.addEventListener('click', () => {
+                    if (!state.selectedCategoryId) {
+                        utils.showNotification('Выберите категорию', 'error');
+                        return;
+                    }
+                    
+                    const content = elements.textEditor.innerHTML.trim();
+                    if (!content || content === '<br>') {
+                        utils.showNotification('Введите текст перед созданием шаблона', 'error');
+                        return;
+                    }
+                    
+                    const title = prompt('Название нового шаблона:', `Шаблон от ${utils.formatDate(new Date())}`);
+                    if (title) {
+                        templateManager.createTemplate(state.selectedCategoryId, content, title);
+                        editorUI.resetEditor();
+                    }
+                });
+                
+                // Кнопка копирования в тулбаре
+                elements.copyForAnswerBtn.addEventListener('click', () => {
+                    editorUI.copyCurrentContent();
+                });
+                
+                // Кнопка очистки в тулбаре
+                elements.clearEditorBtnToolbar.addEventListener('click', () => {
+                    if (confirm('Очистить редактор?')) {
+                        editorUI.resetEditor();
+                    }
+                });
+                
+                // Редактор
+                elements.textEditor.addEventListener('paste', (e) => editorManager.handlePaste(e));
+                
+                elements.boldBtn.addEventListener('click', () => editorManager.execCommand('bold'));
+                elements.italicBtn.addEventListener('click', () => editorManager.execCommand('italic'));
+                elements.underlineBtn.addEventListener('click', () => editorManager.execCommand('underline'));
+                elements.strikeBtn.addEventListener('click', () => editorManager.execCommand('strikeThrough'));
+                elements.unorderedListBtn.addEventListener('click', () => editorManager.execCommand('insertUnorderedList'));
+                elements.orderedListBtn.addEventListener('click', () => editorManager.execCommand('insertOrderedList'));
+                elements.horizontalRuleBtn.addEventListener('click', () => editorManager.insertHorizontalRule());
+                elements.clearFormatBtn.addEventListener('click', () => editorManager.clearFormatting());
+                
+                // Импорт/экспорт
+                elements.importExportBtn.addEventListener('click', () => importExportManager.openModal());
+                elements.closeImportExportModal.addEventListener('click', () => importExportManager.closeModal());
+                elements.cancelImportExportBtn.addEventListener('click', () => importExportManager.closeModal());
+                elements.exportBtn.addEventListener('click', () => importExportManager.exportData());
+                
+                elements.selectFileBtn.addEventListener('click', () => elements.importFile.click());
+                
+                elements.importFile.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            state.importFileData = e.target.result;
+                            elements.fileName.textContent = file.name;
+                            elements.selectedFileName.style.display = 'block';
+                            elements.importBtn.disabled = false;
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+                
+                elements.importBtn.addEventListener('click', () => importExportManager.importData());
+                
+                // Закрытие модальных окон по клику вне их
+                window.addEventListener('click', (e) => {
+                    if (e.target === elements.categoryModal) categoryUI.closeModal();
+                    if (e.target === elements.importExportModal) importExportManager.closeModal();
+                });
+                
+                // Сохранение при закрытии
+                window.addEventListener('beforeunload', () => utils.saveToStorage());
+                
+                // Горячие клавиши
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey) {
+                        switch(e.key.toLowerCase()) {
+                            case 'b': e.preventDefault(); editorManager.execCommand('bold'); break;
+                            case 'i': e.preventDefault(); editorManager.execCommand('italic'); break;
+                            case 'u': e.preventDefault(); editorManager.execCommand('underline'); break;
+                            case 'c': 
+                                if (e.target === elements.textEditor || document.activeElement === elements.textEditor) {
+                                    e.preventDefault();
+                                    editorUI.copyCurrentContent();
+                                }
+                                break;
+                        }
+                    }
+                });
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html>
