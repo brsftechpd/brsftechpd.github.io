@@ -34,6 +34,12 @@
             --category-yellow: #ffc742;
             --category-pink: #ff5e9e;
             
+            /* Статусы БЗ */
+            --status-green: #00c896;
+            --status-yellow: #ffc742;
+            --status-red: #ff6b8b;
+            --status-gray: #8a9bbf;
+            
             /* Градиенты */
             --gradient-primary: linear-gradient(135deg, #4d5bff 0%, #6d7cff 100%);
             --gradient-success: linear-gradient(135deg, #00c896 0%, #00e6a8 100%);
@@ -552,14 +558,70 @@
             flex-shrink: 0;
         }
 
+        /* Поиск в шаблонах */
+        .search-container {
+            margin-bottom: var(--space-md);
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all var(--transition-normal);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(77, 91, 255, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .search-clear:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
         .templates-list {
             display: flex;
             flex-direction: column;
             gap: var(--space-md);
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 300px);
             overflow-y: auto;
         }
 
+        /* Обновленный дизайн шаблона */
         .template-item {
             background: var(--bg-tertiary);
             border-radius: var(--radius-md);
@@ -582,19 +644,86 @@
         }
 
         .template-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: var(--space-md);
-            margin-bottom: var(--space-sm);
+            margin-bottom: var(--space-md);
         }
 
         .template-title {
             color: var(--text-primary);
             font-weight: 500;
             font-size: 14px;
-            flex: 1;
             line-height: 1.4;
+            word-break: break-word;
+            margin-bottom: var(--space-sm);
+        }
+
+        .template-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-sm);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .template-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 11px;
+            color: var(--text-placeholder);
+        }
+
+        .template-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: relative;
+            cursor: help;
+        }
+
+        .template-status::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+        }
+
+        .template-status.green {
+            background-color: var(--status-green);
+            box-shadow: 0 0 8px rgba(0, 200, 150, 0.3);
+        }
+
+        .template-status.green::after {
+            border: 1px solid rgba(0, 200, 150, 0.3);
+        }
+
+        .template-status.yellow {
+            background-color: var(--status-yellow);
+            box-shadow: 0 0 8px rgba(255, 199, 66, 0.3);
+        }
+
+        .template-status.yellow::after {
+            border: 1px solid rgba(255, 199, 66, 0.3);
+        }
+
+        .template-status.red {
+            background-color: var(--status-red);
+            box-shadow: 0 0 8px rgba(255, 107, 139, 0.3);
+        }
+
+        .template-status.red::after {
+            border: 1px solid rgba(255, 107, 139, 0.3);
+        }
+
+        .template-status.gray {
+            background-color: var(--status-gray);
+        }
+
+        .template-date {
+            font-size: 11px;
+            color: var(--text-placeholder);
         }
 
         .template-actions {
@@ -603,15 +732,7 @@
         }
 
         .template-content {
-            display: none; /* Скрываем содержимое в шаблоне */
-        }
-
-        .template-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            color: var(--text-placeholder);
+            display: none;
         }
 
         /* Переключатель копирования - новый дизайн */
@@ -692,6 +813,11 @@
             background-color: white;
         }
 
+        input[type="text"]::placeholder,
+        input[type="tel"]::placeholder {
+          color: var(--text-placeholder);
+        }
+
         /* Модальные окна */
         .modal-overlay {
             display: none;
@@ -717,6 +843,10 @@
             overflow: hidden;
             box-shadow: var(--shadow-lg);
             animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-medium {
+            width: 600px;
         }
 
         @keyframes modalSlideIn {
@@ -765,6 +895,8 @@
 
         .modal-body {
             padding: var(--space-xl);
+            max-height: 60vh;
+            overflow-y: auto;
         }
 
         .modal-footer {
@@ -863,6 +995,64 @@
             font-weight: bold;
         }
 
+        /* Соответствует БЗ */
+        .status-options {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-sm);
+        }
+
+        .status-option {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .status-option:hover {
+            background: var(--bg-hover);
+        }
+
+        .status-option.selected {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 1px var(--border-focus);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-dot.green {
+            background-color: var(--status-green);
+            box-shadow: 0 0 8px rgba(0, 200, 150, 0.3);
+        }
+
+        .status-dot.yellow {
+            background-color: var(--status-yellow);
+            box-shadow: 0 0 8px rgba(255, 199, 66, 0.3);
+        }
+
+        .status-dot.red {
+            background-color: var(--status-red);
+            box-shadow: 0 0 8px rgba(255, 107, 139, 0.3);
+        }
+
+        .status-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         /* Таблица в модальном окне */
         .table-grid {
             display: grid;
@@ -939,6 +1129,40 @@
             }
         }
 
+        /* Информация о шаблоне */
+        .template-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .template-info-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .template-info-value {
+            color: var(--text-primary);
+            font-size: 14px;
+            word-break: break-word;
+        }
+
+        .template-info-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .template-info-tag {
+            background: rgba(77, 91, 255, 0.1);
+            color: var(--category-blue);
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
         /* Адаптивность */
         @media (max-width: 1280px) {
             .app-container {
@@ -950,6 +1174,7 @@
             .templates-panel {
                 grid-column: 1 / -1;
                 grid-row: 2;
+                width: 100%;
             }
             
             .templates-list {
@@ -1026,6 +1251,11 @@
                 flex: 1;
                 min-width: 140px;
             }
+            
+            .template-info-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-sm);
+            }
         }
 
         /* Полосы прокрутки */
@@ -1098,12 +1328,92 @@
             font-size: 14px;
             margin-bottom: var(--space-xl);
         }
+
+        /* Подсказки для статуса */
+        .status-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-fast);
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-status:hover .status-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Стили для общей категории */
+        .template-count-badge {
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .all-category-active .category-info {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .all-category-active .category-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .category-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <!-- Левая панель: Категории -->
         <div class="sidebar">
+            <!-- Общая категория -->
+            <div class="panel" id="allTemplatesPanel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>
+                            <i class="fas fa-globe"></i>
+                            Общая
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-content">
+                    <div class="category-item" id="allCategoriesItem" style="--category-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="category-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                        <div class="category-name">Все шаблоны</div>
+                        <div class="category-actions">
+                            <span class="template-count-badge" id="allTemplatesCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-title">
@@ -1229,6 +1539,15 @@
                     </div>
                 </div>
                 <div class="panel-content">
+                    <!-- Поиск шаблонов -->
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="templateSearch" placeholder="Поиск по шаблонам">
+                        <button class="search-clear" id="clearSearch" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
                     <!-- Новый дизайн переключателя -->
                     <div class="copy-toggle-container">
                         <div class="copy-toggle">
@@ -1289,6 +1608,105 @@
         </div>
     </div>
 
+    <!-- Модальное окно создания/редактирования шаблона -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal modal-medium">
+            <div class="modal-header">
+                <div class="modal-title" id="templateModalTitle">Новый шаблон</div>
+                <button class="modal-close" id="closeTemplateModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Название шаблона *</label>
+                    <input type="text" class="form-input" id="templateNameInput" placeholder="Введите название шаблона" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Теги</label>
+                    <input type="text" class="form-input" id="templateTagsInput" placeholder="Введите теги через запятую">
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: var(--space-xs);">
+                        Пример: FAQ, документация, ошибка, API
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-textarea" id="templateDescriptionInput" placeholder="Введите описание шаблона" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Соответствует БЗ</label>
+                    <div class="status-options">
+                        <div class="status-option" data-status="green">
+                            <div class="status-dot green"></div>
+                            <span class="status-text">Соответствует</span>
+                        </div>
+                        <div class="status-option" data-status="yellow">
+                            <div class="status-dot yellow"></div>
+                            <span class="status-text">Частично</span>
+                        </div>
+                        <div class="status-option" data-status="red">
+                            <div class="status-dot red"></div>
+                            <span class="status-text">Не соответствует</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" id="cancelTemplateBtn">Отмена</button>
+                <button class="btn btn-primary" id="saveTemplateBtn">Создать шаблон</button>
+                <button class="btn btn-success" id="updateTemplateBtnModal" style="display: none;">Обновить шаблон</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно информации о шаблоне -->
+    <div class="modal-overlay" id="templateInfoModal">
+        <div class="modal modal-medium">
+            <div class="modal-header">
+                <div class="modal-title" id="templateInfoModalTitle">Информация о шаблоне</div>
+                <button class="modal-close" id="closeTemplateInfoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="template-info-grid">
+                    <div class="template-info-label">Название:</div>
+                    <div class="template-info-value" id="infoTemplateName"></div>
+                    
+                    <div class="template-info-label">Теги:</div>
+                    <div class="template-info-value">
+                        <div class="template-info-tags" id="infoTemplateTags">
+                            <!-- Теги будут добавлены динамически -->
+                        </div>
+                    </div>
+                    
+                    <div class="template-info-label">Описание:</div>
+                    <div class="template-info-value" id="infoTemplateDescription"></div>
+                    
+                    <div class="template-info-label">Соответствует БЗ:</div>
+                    <div class="template-info-value">
+                        <div class="template-info-status" id="infoTemplateStatus"></div>
+                    </div>
+                    
+                    <div class="template-info-label">Дата создания:</div>
+                    <div class="template-info-value" id="infoTemplateCreated"></div>
+                    
+                    <div class="template-info-label">Дата обновления:</div>
+                    <div class="template-info-value" id="infoTemplateUpdated"></div>
+                    
+                    <div class="template-info-label">Категория:</div>
+                    <div class="template-info-value" id="infoTemplateCategory"></div>
+                </div>
+                
+                <div class="form-group" style="margin-top: var(--space-2xl);">
+                    <label class="form-label">Содержимое шаблона:</label>
+                    <div class="form-textarea" style="min-height: 150px; overflow-y: auto; white-space: pre-wrap;" id="infoTemplateContent">
+                        <!-- Содержимое будет добавлено динамически -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-dark" id="closeTemplateInfoBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно таблицы -->
     <div class="modal-overlay" id="tableModal">
         <div class="modal">
@@ -1323,7 +1741,7 @@
                 <div class="form-group">
                     <h4 style="color: var(--text-primary); margin-bottom: var(--space-md);">Экспорт данных</h4>
                     <p style="color: var(--text-muted); margin-bottom: var(--space-lg); font-size: 14px;">
-                        Создайте резервную копию всех категорий и шаблонов в формат JSON.
+                        Создайте резервную копию всех категорий и шаблонов в формате JSON.
                     </p>
                     <button class="btn btn-primary" id="exportBtn" style="width: 100%;">
                         <i class="fas fa-download"></i>
@@ -1368,6 +1786,7 @@
                 maxCategories: 50,
                 maxTemplatesPerCategory: 100,
                 defaultColor: 'purple',
+                defaultStatus: 'green',
                 notificationDuration: 4000
             };
 
@@ -1385,6 +1804,12 @@
                 textEditor: document.getElementById('textEditor'),
                 templatesList: document.getElementById('templatesList'),
                 templatesCount: document.getElementById('templatesCount'),
+                allTemplatesCount: document.getElementById('allTemplatesCount'),
+                allCategoriesItem: document.getElementById('allCategoriesItem'),
+                
+                // Поиск
+                templateSearch: document.getElementById('templateSearch'),
+                clearSearch: document.getElementById('clearSearch'),
                 
                 // Кнопки
                 createCategoryBtn: document.getElementById('createCategoryBtn'),
@@ -1401,6 +1826,8 @@
                 
                 // Модальные окна
                 categoryModal: document.getElementById('categoryModal'),
+                templateModal: document.getElementById('templateModal'),
+                templateInfoModal: document.getElementById('templateInfoModal'),
                 tableModal: document.getElementById('tableModal'),
                 importExportModal: document.getElementById('importExportModal'),
                 
@@ -1413,6 +1840,30 @@
                 cancelCategoryBtn: document.getElementById('cancelCategoryBtn'),
                 saveCategoryBtn: document.getElementById('saveCategoryBtn'),
                 updateCategoryBtn: document.getElementById('updateCategoryBtn'),
+                
+                // Элементы модального окна шаблона
+                templateModalTitle: document.getElementById('templateModalTitle'),
+                templateNameInput: document.getElementById('templateNameInput'),
+                templateTagsInput: document.getElementById('templateTagsInput'),
+                templateDescriptionInput: document.getElementById('templateDescriptionInput'),
+                statusOptions: document.querySelectorAll('.status-option'),
+                closeTemplateModal: document.getElementById('closeTemplateModal'),
+                cancelTemplateBtn: document.getElementById('cancelTemplateBtn'),
+                saveTemplateBtn: document.getElementById('saveTemplateBtn'),
+                updateTemplateBtnModal: document.getElementById('updateTemplateBtnModal'),
+                
+                // Элементы модального окна информации о шаблоне
+                templateInfoModalTitle: document.getElementById('templateInfoModalTitle'),
+                infoTemplateName: document.getElementById('infoTemplateName'),
+                infoTemplateTags: document.getElementById('infoTemplateTags'),
+                infoTemplateDescription: document.getElementById('infoTemplateDescription'),
+                infoTemplateStatus: document.getElementById('infoTemplateStatus'),
+                infoTemplateCreated: document.getElementById('infoTemplateCreated'),
+                infoTemplateUpdated: document.getElementById('infoTemplateUpdated'),
+                infoTemplateCategory: document.getElementById('infoTemplateCategory'),
+                infoTemplateContent: document.getElementById('infoTemplateContent'),
+                closeTemplateInfoModal: document.getElementById('closeTemplateInfoModal'),
+                closeTemplateInfoBtn: document.getElementById('closeTemplateInfoBtn'),
                 
                 // Элементы модального окна таблицы
                 tableGrid: document.getElementById('tableGrid'),
@@ -1453,11 +1904,14 @@
                 selectedCategoryId: null,
                 selectedTemplateId: null,
                 selectedColor: CONFIG.defaultColor,
+                selectedStatus: CONFIG.defaultStatus,
                 tableSelection: { rows: 0, cols: 0 },
                 editingCategoryId: null,
+                editingTemplateId: null,
                 notificationTimeout: null,
                 importFileData: null,
-                copyOnClick: false
+                copyOnClick: false,
+                searchQuery: ''
             };
 
             // Утилиты
@@ -1475,8 +1929,24 @@
                     const savedTemplates = localStorage.getItem('knowledgeBaseTemplates');
                     const savedCopyOnClick = localStorage.getItem('copyOnClick');
                     
-                    if (savedCategories) state.categories = JSON.parse(savedCategories);
-                    if (savedTemplates) state.templates = JSON.parse(savedTemplates);
+                    if (savedCategories) {
+                        state.categories = JSON.parse(savedCategories);
+                        // Убедимся, что у всех категорий есть цвет
+                        state.categories.forEach(category => {
+                            if (!category.color) category.color = CONFIG.defaultColor;
+                        });
+                    }
+                    
+                    if (savedTemplates) {
+                        state.templates = JSON.parse(savedTemplates);
+                        // Убедимся, что у всех шаблонов есть необходимые поля
+                        state.templates.forEach(template => {
+                            if (!template.tags) template.tags = '';
+                            if (!template.description) template.description = '';
+                            if (!template.status) template.status = CONFIG.defaultStatus;
+                        });
+                    }
+                    
                     if (savedCopyOnClick) state.copyOnClick = JSON.parse(savedCopyOnClick);
                     
                     // Устанавливаем состояние переключателя
@@ -1502,8 +1972,30 @@
                     return date.toLocaleDateString('ru-RU', {
                         day: '2-digit',
                         month: '2-digit',
-                        year: 'numeric'
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
+                },
+                
+                formatDateShort: (dateString) => {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffTime = Math.abs(now - date);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        return 'Сегодня';
+                    } else if (diffDays === 2) {
+                        return 'Вчера';
+                    } else if (diffDays <= 7) {
+                        return `${diffDays} дн. назад`;
+                    } else {
+                        return date.toLocaleDateString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit'
+                        });
+                    }
                 },
                 
                 showNotification: (message, type = 'success') => {
@@ -1652,6 +2144,55 @@
                     range.insertNode(tempDiv);
                     
                     utils.showNotification('Форматирование очищено');
+                },
+                
+                // Функция для нормализации тегов (удаление лишних пробелов, приведение к нижнему регистру)
+                normalizeTags: (tagsString) => {
+                    if (!tagsString) return '';
+                    
+                    return tagsString
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(tag => tag.length > 0)
+                        .join(', ');
+                },
+                
+                // Функция для проверки соответствия шаблона поисковому запросу
+                templateMatchesSearch: (template, query) => {
+                    if (!query) return true;
+                    
+                    const searchQuery = query.toLowerCase().trim();
+                    if (!searchQuery) return true;
+                    
+                    // Поиск по названию
+                    if (template.title && template.title.toLowerCase().includes(searchQuery)) {
+                        return true;
+                    }
+                    
+                    // Поиск по тегам
+                    if (template.tags) {
+                        const tags = template.tags.toLowerCase().split(',').map(tag => tag.trim());
+                        if (tags.some(tag => tag.includes(searchQuery))) {
+                            return true;
+                        }
+                    }
+                    
+                    // Поиск по описанию
+                    if (template.description && template.description.toLowerCase().includes(searchQuery)) {
+                        return true;
+                    }
+                    
+                    return false;
+                },
+                
+                // Функция для получения текста статуса
+                getStatusText: (status) => {
+                    switch(status) {
+                        case 'green': return 'Соответствует БЗ';
+                        case 'yellow': return 'Частично соответствует БЗ';
+                        case 'red': return 'Не соответствует БЗ';
+                        default: return 'Статус не указан';
+                    }
                 }
             };
 
@@ -1707,21 +2248,32 @@
                         editorUI.resetEditor();
                     }
                     
+                    // Обновляем счетчик всех шаблонов
+                    allTemplatesManager.updateAllTemplatesCount();
+                    
                     utils.showNotification('Категория удалена');
                 },
                 
-                getCategory: (id) => state.categories.find(c => c.id === id)
+                getCategory: (id) => state.categories.find(c => c.id === id),
+                
+                getCategoryName: (id) => {
+                    const category = categoryManager.getCategory(id);
+                    return category ? category.name : 'Неизвестная категория';
+                }
             };
 
             // Работа с шаблонами
             const templateManager = {
-                createTemplate: (categoryId, content, title) => {
+                createTemplate: (categoryId, content, title, tags = '', description = '', status = CONFIG.defaultStatus) => {
                     // Используем функцию сохранения ВСЕГО форматирования
                     const cleanContent = utils.preserveAllFormatting(content || '');
                     const newTemplate = {
                         id: utils.generateId(),
                         categoryId,
                         title: title || `Шаблон от ${utils.formatDate(new Date())}`,
+                        tags: utils.normalizeTags(tags),
+                        description: description || '',
+                        status: status || CONFIG.defaultStatus,
                         content: cleanContent,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString()
@@ -1730,6 +2282,9 @@
                     state.templates.push(newTemplate);
                     utils.saveToStorage();
                     templateUI.updateTemplates();
+                    
+                    // Обновляем счетчик всех шаблонов
+                    allTemplatesManager.updateAllTemplatesCount();
                     
                     utils.showNotification('Шаблон создан');
                     return newTemplate;
@@ -1741,6 +2296,10 @@
                     
                     if (updates.content) {
                         updates.content = utils.preserveAllFormatting(updates.content);
+                    }
+                    
+                    if (updates.tags) {
+                        updates.tags = utils.normalizeTags(updates.tags);
                     }
                     
                     state.templates[index] = {
@@ -1756,6 +2315,22 @@
                     return state.templates[index];
                 },
                 
+                updateTemplateContent: (id, content) => {
+                    const index = state.templates.findIndex(t => t.id === id);
+                    if (index === -1) return null;
+                    
+                    state.templates[index] = {
+                        ...state.templates[index],
+                        content: utils.preserveAllFormatting(content),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    utils.saveToStorage();
+                    templateUI.updateTemplates();
+                    
+                    return state.templates[index];
+                },
+                
                 deleteTemplate: (id) => {
                     state.templates = state.templates.filter(t => t.id !== id);
                     utils.saveToStorage();
@@ -1765,11 +2340,232 @@
                         editorUI.resetEditor();
                     }
                     
+                    // Обновляем счетчик всех шаблонов
+                    allTemplatesManager.updateAllTemplatesCount();
+                    
                     utils.showNotification('Шаблон удален');
                 },
                 
                 getTemplate: (id) => state.templates.find(t => t.id === id),
-                getTemplatesByCategory: (categoryId) => state.templates.filter(t => t.categoryId === categoryId)
+                
+                getTemplatesByCategory: (categoryId) => {
+                    let templates = state.templates.filter(t => t.categoryId === categoryId);
+                    
+                    // Применяем поисковый фильтр
+                    if (state.searchQuery) {
+                        templates = templates.filter(template => 
+                            utils.templateMatchesSearch(template, state.searchQuery)
+                        );
+                    }
+                    
+                    return templates;
+                },
+                
+                getAllTemplates: () => {
+                    let templates = [...state.templates];
+                    
+                    // Применяем поисковый фильтр
+                    if (state.searchQuery) {
+                        templates = templates.filter(template => 
+                            utils.templateMatchesSearch(template, state.searchQuery)
+                        );
+                    }
+                    
+                    return templates;
+                }
+            };
+
+            // Управление общей категорией
+            const allTemplatesManager = {
+                getAllTemplatesCount: () => {
+                    return state.templates.length;
+                },
+                
+                updateAllTemplatesCount: () => {
+                    const count = allTemplatesManager.getAllTemplatesCount();
+                    elements.allTemplatesCount.textContent = count;
+                },
+                
+                getFilteredAllTemplates: () => {
+                    let templates = [...state.templates];
+                    
+                    if (state.searchQuery) {
+                        const query = state.searchQuery.toLowerCase().trim();
+                        if (query) {
+                            templates = templates.filter(template => {
+                                // Поиск по названию
+                                if (template.title && template.title.toLowerCase().includes(query)) {
+                                    return true;
+                                }
+                                
+                                // Поиск по тегам
+                                if (template.tags) {
+                                    const tags = template.tags.toLowerCase().split(',').map(tag => tag.trim());
+                                    if (tags.some(tag => tag.includes(query))) {
+                                        return true;
+                                    }
+                                }
+                                
+                                // Поиск по описанию
+                                if (template.description && template.description.toLowerCase().includes(query)) {
+                                    return true;
+                                }
+                                
+                                // Поиск по содержимому
+                                if (template.content && template.content.toLowerCase().includes(query)) {
+                                    return true;
+                                }
+                                
+                                // Поиск по названию категории
+                                const category = categoryManager.getCategory(template.categoryId);
+                                if (category && category.name.toLowerCase().includes(query)) {
+                                    return true;
+                                }
+                                
+                                return false;
+                            });
+                        }
+                    }
+                    
+                    // Сортируем по дате обновления (новые сначала)
+                    templates.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                    
+                    return templates;
+                },
+                
+                renderAllTemplatesView: () => {
+                    // Обновляем информацию о категории
+                    elements.categoryBadge.innerHTML = '<i class="fas fa-globe"></i>';
+                    elements.categoryBadge.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    elements.categoryName.textContent = 'Все шаблоны';
+                    elements.categoryDescription.textContent = 'Все шаблоны из всех категорий. Используйте поиск для фильтрации.';
+                    elements.categoryStats.textContent = `${state.templates.length} шаблонов из ${state.categories.length} категорий`;
+                    elements.categoryDate.textContent = '';
+                    
+                    // Добавляем специальный класс для подсветки
+                    elements.categoryInfo.classList.add('all-category-active');
+                    
+                    // Показываем все шаблоны
+                    const templates = allTemplatesManager.getFilteredAllTemplates();
+                    elements.templatesList.innerHTML = '';
+                    
+                    if (templates.length === 0) {
+                        if (state.searchQuery) {
+                            elements.templatesList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-search"></i>
+                                    <h3>Шаблоны не найдены</h3>
+                                    <p>Попробуйте изменить поисковый запрос</p>
+                                </div>
+                            `;
+                        } else {
+                            elements.templatesList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-copy"></i>
+                                    <h3>Нет шаблонов</h3>
+                                    <p>Создайте первый шаблон в любой категории</p>
+                                </div>
+                            `;
+                        }
+                        elements.templatesCount.textContent = `0 из ${state.templates.length}`;
+                        return;
+                    }
+                    
+                    templates.forEach(template => {
+                        const item = document.createElement('div');
+                        item.className = `template-item ${template.id === state.selectedTemplateId ? 'active' : ''}`;
+                        
+                        const statusText = utils.getStatusText(template.status);
+                        const dateText = utils.formatDateShort(template.updatedAt);
+                        const category = categoryManager.getCategory(template.categoryId);
+                        const categoryName = category ? category.name : 'Неизвестная категория';
+                        const categoryColor = category ? utils.getColorValue(category.color) : utils.getColorValue('purple');
+                        
+                        item.innerHTML = `
+                            <div class="template-header">
+                                <div class="template-title">${template.title}</div>
+                                <div class="category-tag">
+                                    <div class="category-color" style="width: 8px; height: 8px; background: ${categoryColor}; border-radius: 50%;"></div>
+                                    ${categoryName}
+                                </div>
+                            </div>
+                            <div class="template-footer">
+                                <div class="template-meta">
+                                    <div class="template-status ${template.status}" title="${statusText}"></div>
+                                    <div class="template-date">${dateText}</div>
+                                </div>
+                                <div class="template-actions">
+                                    <button class="action-btn info-template" data-id="${template.id}" title="Информация">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                    <button class="action-btn edit-template" data-id="${template.id}" title="Редактировать">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-template" data-id="${template.id}" title="Удалить">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="template-content"></div>
+                        `;
+                        
+                        // Клик на шаблон - открытие в редакторе
+                        item.addEventListener('click', (e) => {
+                            if (!e.target.closest('.action-btn')) {
+                                editorManager.loadTemplate(template.id);
+                                templateUI.updateTemplates();
+                            }
+                        });
+                        
+                        // Кнопка информации
+                        const infoBtn = item.querySelector('.info-template');
+                        infoBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            templateUI.openInfoModal(template.id);
+                        });
+                        
+                        // Кнопка редактирования
+                        const editBtn = item.querySelector('.edit-template');
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            templateUI.openEditModal(template.id);
+                        });
+                        
+                        // Кнопка удаления
+                        const deleteBtn = item.querySelector('.delete-template');
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (confirm(`Удалить шаблон "${template.title}"?`)) {
+                                templateManager.deleteTemplate(template.id);
+                                allTemplatesManager.updateAllTemplatesCount();
+                            }
+                        });
+                        
+                        elements.templatesList.appendChild(item);
+                    });
+                    
+                    elements.templatesCount.textContent = `${templates.length} из ${state.templates.length}`;
+                },
+                
+                selectAllTemplatesCategory: () => {
+                    state.selectedCategoryId = 'all';
+                    editorUI.resetEditor();
+                    categoryUI.updateCategories();
+                    allTemplatesManager.renderAllTemplatesView();
+                    
+                    // Убираем активный класс с обычных категорий
+                    document.querySelectorAll('.category-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс к элементу "Все шаблоны"
+                    elements.allCategoriesItem.classList.add('active');
+                    
+                    // Делаем кнопку создания шаблона неактивной
+                    elements.newTemplateBtn.style.opacity = '0.5';
+                    elements.newTemplateBtn.style.cursor = 'not-allowed';
+                    elements.newTemplateBtn.title = 'Выберите конкретную категорию для создания шаблона';
+                }
             };
 
             // Редактор
@@ -1916,6 +2712,15 @@
                     categoryUI.updateCategories();
                     categoryUI.updateCategoryInfo();
                     templateUI.updateTemplates();
+                    
+                    // Убираем активный класс с общей категории
+                    elements.allCategoriesItem.classList.remove('active');
+                    elements.categoryInfo.classList.remove('all-category-active');
+                    
+                    // Восстанавливаем кнопку создания шаблона
+                    elements.newTemplateBtn.style.opacity = '1';
+                    elements.newTemplateBtn.style.cursor = 'pointer';
+                    elements.newTemplateBtn.title = '';
                 },
                 
                 updateCategoryInfo: () => {
@@ -1988,9 +2793,28 @@
             // UI шаблонов
             const templateUI = {
                 updateTemplates: () => {
+                    // Если выбрана общая категория, показываем все шаблоны
+                    if (state.selectedCategoryId === 'all') {
+                        allTemplatesManager.renderAllTemplatesView();
+                        return;
+                    }
+                    
                     elements.templatesList.innerHTML = '';
                     
-                    if (!state.selectedCategoryId) {
+                    let templates = [];
+                    let totalTemplates = 0;
+                    
+                    if (state.selectedCategoryId) {
+                        templates = templateManager.getTemplatesByCategory(state.selectedCategoryId);
+                        totalTemplates = state.templates.filter(t => t.categoryId === state.selectedCategoryId).length;
+                    } else {
+                        templates = templateManager.getAllTemplates();
+                        totalTemplates = state.templates.length;
+                    }
+                    
+                    elements.templatesCount.textContent = `${templates.length} из ${totalTemplates}`;
+                    
+                    if (!state.selectedCategoryId && templates.length === 0) {
                         elements.templatesList.innerHTML = `
                             <div class="empty-state">
                                 <i class="fas fa-copy"></i>
@@ -1998,21 +2822,27 @@
                                 <p>Для просмотра шаблонов выберите категорию</p>
                             </div>
                         `;
-                        elements.templatesCount.textContent = '0';
                         return;
                     }
                     
-                    const templates = templateManager.getTemplatesByCategory(state.selectedCategoryId);
-                    elements.templatesCount.textContent = templates.length.toString();
-                    
                     if (templates.length === 0) {
-                        elements.templatesList.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fas fa-file-alt"></i>
-                                <h3>Нет шаблонов</h3>
-                                <p>Создайте первый шаблон для этой категории</p>
-                            </div>
-                        `;
+                        if (state.searchQuery) {
+                            elements.templatesList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-search"></i>
+                                    <h3>Шаблоны не найдены</h3>
+                                    <p>Попробуйте изменить поисковый запрос</p>
+                                </div>
+                            `;
+                        } else {
+                            elements.templatesList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h3>Нет шаблонов</h3>
+                                    <p>Создайте первый шаблон для этой категории</p>
+                                </div>
+                            `;
+                        }
                         return;
                     }
                     
@@ -2020,19 +2850,31 @@
                         const item = document.createElement('div');
                         item.className = `template-item ${template.id === state.selectedTemplateId ? 'active' : ''}`;
                         
+                        const statusText = utils.getStatusText(template.status);
+                        const dateText = utils.formatDateShort(template.updatedAt);
+                        
                         item.innerHTML = `
                             <div class="template-header">
                                 <div class="template-title">${template.title}</div>
+                            </div>
+                            <div class="template-footer">
+                                <div class="template-meta">
+                                    <div class="template-status ${template.status}" title="${statusText}"></div>
+                                    <div class="template-date">${dateText}</div>
+                                </div>
                                 <div class="template-actions">
+                                    <button class="action-btn info-template" data-id="${template.id}" title="Информация">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                    <button class="action-btn edit-template" data-id="${template.id}" title="Редактировать">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
                                     <button class="action-btn delete-template" data-id="${template.id}" title="Удалить">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="template-content"></div>
-                            <div class="template-meta">
-                                <span>${utils.formatDate(template.updatedAt)}</span>
-                            </div>
                         `;
                         
                         // Клик на шаблон - открытие в редакторе
@@ -2044,17 +2886,154 @@
                             }
                         });
                         
+                        // Кнопка информации
+                        const infoBtn = item.querySelector('.info-template');
+                        infoBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            templateUI.openInfoModal(template.id);
+                        });
+                        
+                        // Кнопка редактирования
+                        const editBtn = item.querySelector('.edit-template');
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            templateUI.openEditModal(template.id);
+                        });
+                        
                         // Кнопка удаления
                         const deleteBtn = item.querySelector('.delete-template');
                         deleteBtn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             if (confirm(`Удалить шаблон "${template.title}"?`)) {
                                 templateManager.deleteTemplate(template.id);
+                                allTemplatesManager.updateAllTemplatesCount();
                             }
                         });
                         
                         elements.templatesList.appendChild(item);
                     });
+                },
+                
+                openCreateModal: () => {
+                    if (state.selectedCategoryId === 'all') {
+                        utils.showNotification('Выберите конкретную категорию для создания шаблона', 'error');
+                        return;
+                    }
+                    
+                    if (!state.selectedCategoryId) {
+                        utils.showNotification('Выберите категорию', 'error');
+                        return;
+                    }
+                    
+                    const content = elements.textEditor.innerHTML.trim();
+                    if (!content || content === '<br>') {
+                        utils.showNotification('Введите текст перед созданием шаблона', 'error');
+                        return;
+                    }
+                    
+                    elements.templateModalTitle.textContent = 'Новый шаблон';
+                    elements.templateNameInput.value = `Шаблон от ${utils.formatDate(new Date())}`;
+                    elements.templateTagsInput.value = '';
+                    elements.templateDescriptionInput.value = '';
+                    
+                    // Сбрасываем статус на значение по умолчанию
+                    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+                    document.querySelector(`.status-option[data-status="${CONFIG.defaultStatus}"]`).classList.add('selected');
+                    state.selectedStatus = CONFIG.defaultStatus;
+                    
+                    elements.saveTemplateBtn.style.display = 'block';
+                    elements.updateTemplateBtnModal.style.display = 'none';
+                    state.editingTemplateId = null;
+                    
+                    elements.templateModal.style.display = 'flex';
+                    elements.templateNameInput.focus();
+                },
+                
+                openEditModal: (templateId) => {
+                    const template = templateManager.getTemplate(templateId);
+                    if (!template) return;
+                    
+                    elements.templateModalTitle.textContent = 'Редактирование шаблона';
+                    elements.templateNameInput.value = template.title;
+                    elements.templateTagsInput.value = template.tags;
+                    elements.templateDescriptionInput.value = template.description;
+                    
+                    // Устанавливаем статус
+                    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+                    document.querySelector(`.status-option[data-status="${template.status}"]`).classList.add('selected');
+                    state.selectedStatus = template.status;
+                    
+                    elements.saveTemplateBtn.style.display = 'none';
+                    elements.updateTemplateBtnModal.style.display = 'block';
+                    state.editingTemplateId = templateId;
+                    
+                    elements.templateModal.style.display = 'flex';
+                    elements.templateNameInput.focus();
+                },
+                
+                openInfoModal: (templateId) => {
+                    const template = templateManager.getTemplate(templateId);
+                    if (!template) return;
+                    
+                    elements.templateInfoModalTitle.textContent = `Информация: ${template.title}`;
+                    elements.infoTemplateName.textContent = template.title;
+                    
+                    // Очищаем и добавляем теги
+                    elements.infoTemplateTags.innerHTML = '';
+                    if (template.tags) {
+                        const tags = template.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+                        tags.forEach(tag => {
+                            const tagElement = document.createElement('span');
+                            tagElement.className = 'template-info-tag';
+                            tagElement.textContent = tag;
+                            elements.infoTemplateTags.appendChild(tagElement);
+                        });
+                    }
+                    
+                    elements.infoTemplateDescription.textContent = template.description || 'Нет описания';
+                    
+                    // Отображаем статус
+                    let statusText = '';
+                    let statusClass = '';
+                    switch(template.status) {
+                        case 'green':
+                            statusText = '✅ Соответствует';
+                            statusClass = 'green';
+                            break;
+                        case 'yellow':
+                            statusText = '⚠️ Частично соответствует';
+                            statusClass = 'yellow';
+                            break;
+                        case 'red':
+                            statusText = '❌ Не соответствует';
+                            statusClass = 'red';
+                            break;
+                        default:
+                            statusText = 'Не указан';
+                            statusClass = 'gray';
+                    }
+                    elements.infoTemplateStatus.innerHTML = `<span class="status-dot ${statusClass}"></span> ${statusText}`;
+                    
+                    elements.infoTemplateCreated.textContent = utils.formatDate(template.createdAt);
+                    elements.infoTemplateUpdated.textContent = utils.formatDate(template.updatedAt);
+                    elements.infoTemplateCategory.textContent = categoryManager.getCategoryName(template.categoryId);
+                    
+                    // Отображаем содержимое
+                    elements.infoTemplateContent.textContent = template.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                    if (!elements.infoTemplateContent.textContent) {
+                        elements.infoTemplateContent.textContent = 'Содержимое отсутствует';
+                    }
+                    
+                    elements.templateInfoModal.style.display = 'flex';
+                },
+                
+                closeModal: () => {
+                    elements.templateModal.style.display = 'none';
+                    state.editingTemplateId = null;
+                },
+                
+                closeInfoModal: () => {
+                    elements.templateInfoModal.style.display = 'none';
                 }
             };
 
@@ -2065,7 +3044,7 @@
                         categories: state.categories,
                         templates: state.templates,
                         exportedAt: new Date().toISOString(),
-                        version: '1.0'
+                        version: '1.1'
                     };
                     
                     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -2098,6 +3077,13 @@
                         state.selectedCategoryId = null;
                         state.selectedTemplateId = null;
                         
+                        // Убедимся, что у всех шаблонов есть новые поля
+                        state.templates.forEach(template => {
+                            if (!template.tags) template.tags = '';
+                            if (!template.description) template.description = '';
+                            if (!template.status) template.status = CONFIG.defaultStatus;
+                        });
+                        
                         utils.saveToStorage();
                         
                         categoryUI.updateCategories();
@@ -2105,11 +3091,15 @@
                         templateUI.updateTemplates();
                         editorUI.resetEditor();
                         
+                        // Обновляем счетчик всех шаблонов
+                        allTemplatesManager.updateAllTemplatesCount();
+                        
                         elements.importExportModal.style.display = 'none';
                         state.importFileData = null;
                         
                         utils.showNotification('Данные импортированы');
                     } catch (error) {
+                        console.error('Ошибка импорта:', error);
                         utils.showNotification('Ошибка импорта', 'error');
                     }
                 },
@@ -2143,45 +3133,65 @@
                     
                     const docCategory = state.categories[0];
                     
-                    // Создаем демо-шаблон с правильными переносами строк
-                    const demoTemplateContent = `
-                        <p><strong>Структура документации</strong></p>
-                        <p>Это пример структуры документации проекта. Здесь можно хранить:</p>
-                        <ul>
-                            <li>Технические требования</li>
-                            <li>API документацию</li>
-                            <li>Руководства пользователя</li>
-                            <li>Часто задаваемые вопросы</li>
-                        </ul>
-                        <hr>
-                        <p>Разделитель выше должен сохраниться!</p>
-                    `;
+                    // Создаем демо-шаблоны с новыми полями
+                    templateManager.createTemplate(
+                        docCategory.id,
+                        `<p><strong>Структура документации</strong></p>
+                         <p>Это пример структуры документации проекта. Здесь можно хранить:</p>
+                         <ul>
+                             <li>Технические требования</li>
+                             <li>API документацию</li>
+                             <li>Руководства пользователя</li>
+                             <li>Часто задаваемые вопросы</li>
+                         </ul>
+                         <hr>
+                         <p>Разделитель выше должен сохраниться!</p>`,
+                        'Пример структуры документации',
+                        'документация, структура, пример',
+                        'Базовый шаблон структуры документации проекта',
+                        'green'
+                    );
                     
-                    templateManager.createTemplate(docCategory.id, 
-                        demoTemplateContent,
-                        'Пример структуры документации');
-                        
-                    // Создаем шаблон с переносами строк
-                    const tzTemplateContent = `
-                        <p><strong>Техническое задание</strong></p>
-                        <p><strong>Проект:</strong> [Название проекта]</p>
-                        <p><strong>Цель:</strong> [Описание цели]</p>
-                        <p><strong>Требования:</strong></p>
-                        <ol>
-                            <li>[Требование 1]</li>
-                            <li>[Требование 2]</li>
-                            <li>[Требование 3]</li>
-                        </ol>
-                    `;
+                    templateManager.createTemplate(
+                        docCategory.id,
+                        `<p><strong>Техническое задание</strong></p>
+                         <p><strong>Проект:</strong> [Название проекта]</p>
+                         <p><strong>Цель:</strong> [Описание цели]</p>
+                         <p><strong>Требования:</strong></p>
+                         <ol>
+                             <li>[Требование 1]</li>
+                             <li>[Требование 2]</li>
+                             <li>[Требование 3]</li>
+                         </ol>`,
+                        'Шаблон ТЗ',
+                        'ТЗ, техническое задание, требования',
+                        'Шаблон для создания технического задания',
+                        'yellow'
+                    );
                     
-                    templateManager.createTemplate(docCategory.id,
-                        tzTemplateContent,
-                        'Шаблон ТЗ');
+                    templateManager.createTemplate(
+                        docCategory.id,
+                        `<p><strong>Отчет об ошибке</strong></p>
+                         <p><strong>Описание ошибки:</strong> [Подробное описание]</p>
+                         <p><strong>Шаги воспроизведения:</strong></p>
+                         <ol>
+                             <li>[Шаг 1]</li>
+                             <li>[Шаг 2]</li>
+                             <li>[Шаг 3]</li>
+                         </ol>
+                         <p><strong>Ожидаемый результат:</strong> [Что должно было произойти]</p>
+                         <p><strong>Фактический результат:</strong> [Что произошло на самом деле]</p>`,
+                        'Отчет об ошибке',
+                        'ошибка, баг, отчет, дефект',
+                        'Шаблон для создания отчетов об ошибках',
+                        'red'
+                    );
                 }
                 
                 categoryUI.updateCategories();
                 categoryUI.updateCategoryInfo();
                 templateUI.updateTemplates();
+                allTemplatesManager.updateAllTemplatesCount();
                 
                 setupEventListeners();
             };
@@ -2190,6 +3200,11 @@
             const setupEventListeners = () => {
                 // Создание категории
                 elements.createCategoryBtn.addEventListener('click', () => categoryUI.openCreateModal());
+                
+                // Общая категория
+                elements.allCategoriesItem.addEventListener('click', () => {
+                    allTemplatesManager.selectAllTemplatesCategory();
+                });
                 
                 // Модальное окно категории
                 elements.closeCategoryModal.addEventListener('click', () => categoryUI.closeModal());
@@ -2249,29 +3264,12 @@
                         return;
                     }
                     
-                    const title = prompt('Название шаблона:', templateManager.getTemplate(state.selectedTemplateId)?.title);
-                    if (title) {
-                        templateManager.updateTemplate(state.selectedTemplateId, { content, title });
-                    }
+                    templateManager.updateTemplateContent(state.selectedTemplateId, content);
+                    utils.showNotification('Содержимое шаблона обновлено');
                 });
                 
                 elements.newTemplateBtn.addEventListener('click', () => {
-                    if (!state.selectedCategoryId) {
-                        utils.showNotification('Выберите категорию', 'error');
-                        return;
-                    }
-                    
-                    const content = elements.textEditor.innerHTML.trim();
-                    if (!content || content === '<br>') {
-                        utils.showNotification('Введите текст перед созданием шаблона', 'error');
-                        return;
-                    }
-                    
-                    const title = prompt('Название нового шаблона:', `Шаблон от ${utils.formatDate(new Date())}`);
-                    if (title) {
-                        templateManager.createTemplate(state.selectedCategoryId, content, title);
-                        editorUI.resetEditor();
-                    }
+                    templateUI.openCreateModal();
                 });
                 
                 // Кнопка копирования в тулбаре
@@ -2297,6 +3295,89 @@
                 elements.orderedListBtn.addEventListener('click', () => editorManager.execCommand('insertOrderedList'));
                 elements.horizontalRuleBtn.addEventListener('click', () => editorManager.insertHorizontalRule());
                 elements.clearFormatBtn.addEventListener('click', () => editorManager.clearFormatting());
+                
+                // Модальное окно шаблона
+                elements.closeTemplateModal.addEventListener('click', () => templateUI.closeModal());
+                elements.cancelTemplateBtn.addEventListener('click', () => templateUI.closeModal());
+                
+                elements.statusOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('selected'));
+                        option.classList.add('selected');
+                        state.selectedStatus = option.dataset.status;
+                    });
+                });
+                
+                elements.saveTemplateBtn.addEventListener('click', () => {
+                    const title = elements.templateNameInput.value.trim();
+                    if (!title) {
+                        utils.showNotification('Введите название шаблона', 'error');
+                        return;
+                    }
+                    
+                    const content = elements.textEditor.innerHTML.trim();
+                    if (!content || content === '<br>') {
+                        utils.showNotification('Введите текст шаблона', 'error');
+                        return;
+                    }
+                    
+                    templateManager.createTemplate(
+                        state.selectedCategoryId,
+                        content,
+                        title,
+                        elements.templateTagsInput.value,
+                        elements.templateDescriptionInput.value,
+                        state.selectedStatus
+                    );
+                    
+                    templateUI.closeModal();
+                    editorUI.resetEditor();
+                });
+                
+                elements.updateTemplateBtnModal.addEventListener('click', () => {
+                    const title = elements.templateNameInput.value.trim();
+                    if (!title) {
+                        utils.showNotification('Введите название шаблона', 'error');
+                        return;
+                    }
+                    
+                    templateManager.updateTemplate(state.editingTemplateId, {
+                        title,
+                        tags: elements.templateTagsInput.value,
+                        description: elements.templateDescriptionInput.value,
+                        status: state.selectedStatus
+                    });
+                    
+                    templateUI.closeModal();
+                });
+                
+                // Модальное окно информации о шаблоне
+                elements.closeTemplateInfoModal.addEventListener('click', () => templateUI.closeInfoModal());
+                elements.closeTemplateInfoBtn.addEventListener('click', () => templateUI.closeInfoModal());
+                
+                // Поиск
+                elements.templateSearch.addEventListener('input', (e) => {
+                    state.searchQuery = e.target.value;
+                    elements.clearSearch.style.display = state.searchQuery ? 'flex' : 'none';
+                    
+                    if (state.selectedCategoryId === 'all') {
+                        allTemplatesManager.renderAllTemplatesView();
+                    } else {
+                        templateUI.updateTemplates();
+                    }
+                });
+                
+                elements.clearSearch.addEventListener('click', () => {
+                    elements.templateSearch.value = '';
+                    state.searchQuery = '';
+                    elements.clearSearch.style.display = 'none';
+                    
+                    if (state.selectedCategoryId === 'all') {
+                        allTemplatesManager.renderAllTemplatesView();
+                    } else {
+                        templateUI.updateTemplates();
+                    }
+                });
                 
                 // Импорт/экспорт
                 elements.importExportBtn.addEventListener('click', () => importExportManager.openModal());
@@ -2325,6 +3406,8 @@
                 // Закрытие модальных окон по клику вне их
                 window.addEventListener('click', (e) => {
                     if (e.target === elements.categoryModal) categoryUI.closeModal();
+                    if (e.target === elements.templateModal) templateUI.closeModal();
+                    if (e.target === elements.templateInfoModal) templateUI.closeInfoModal();
                     if (e.target === elements.importExportModal) importExportManager.closeModal();
                 });
                 
@@ -2345,6 +3428,14 @@
                                 }
                                 break;
                         }
+                    }
+                    
+                    // Escape закрывает модальные окна
+                    if (e.key === 'Escape') {
+                        if (elements.categoryModal.style.display === 'flex') categoryUI.closeModal();
+                        if (elements.templateModal.style.display === 'flex') templateUI.closeModal();
+                        if (elements.templateInfoModal.style.display === 'flex') templateUI.closeInfoModal();
+                        if (elements.importExportModal.style.display === 'flex') importExportManager.closeModal();
                     }
                 });
             };
