@@ -27,7 +27,7 @@ const defaultCategories = [
     },
     {
       "id": "cat3",
-      "name": "Учёт",
+      "name": "Постановка на учёт",
       "color": "#ef4444",
       "icon": "fas fa-address-book",
       "isFavorite": false,
