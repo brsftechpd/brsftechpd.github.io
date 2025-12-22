@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knowledge Base Pro | Техподдержка</title>
+    <title>База знаний тех.поддержки</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -16,6 +16,7 @@
             --bg-warning: #f59e0b;
             --bg-danger: #ef4444;
             --bg-partial: #f97316;
+            --bg-info: #3b82f6;
             --text-primary: #f3f4f9;
             --text-secondary: #c7d2fe;
             --text-muted: #94a3b8;
@@ -524,6 +525,8 @@
             cursor: pointer;
             transition: var(--transition);
             border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
         .template-item:hover {
@@ -533,34 +536,6 @@
         .template-item.active {
             background: var(--bg-accent-light);
             border-color: var(--bg-accent);
-        }
-
-        .template-item.copy-animation {
-            animation: copyFlash 2s ease;
-        }
-
-        /* Стиль для шаблонов при активации копирования по клику */
-        .copy-on-click-active .template-item {
-            cursor: copy !important;
-            border: 1px dashed rgba(79, 70, 229, 0.5) !important;
-            position: relative;
-        }
-
-        .copy-on-click-active .template-item:hover {
-            border: 1px dashed var(--bg-accent) !important;
-            background: rgba(79, 70, 229, 0.1) !important;
-        }
-
-        .copy-on-click-active .template-item:hover::after {
-            content: 'Клик для копирования';
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            font-size: 12px;
-            color: #fff;
-            background: rgba(79, 70, 229, 0.2);
-            padding: 2px 6px;
-            border-radius: 4px;
         }
 
         .template-header {
@@ -601,6 +576,8 @@
             flex: 1;
             font-size: 14px;
             color: var(--text-primary);
+            position: relative;
+            z-index: 2;
         }
 
         .template-category-badge {
@@ -611,6 +588,8 @@
             border-radius: 4px;
             background: rgba(79, 70, 229, 0.15);
             font-weight: 500;
+            position: relative;
+            z-index: 2;
         }
 
         /* Бейдж типа шаблона */
@@ -620,6 +599,8 @@
             border-radius: 4px;
             font-weight: 500;
             margin-left: 8px;
+            position: relative;
+            z-index: 2;
         }
 
         .type-other {
@@ -637,6 +618,11 @@
             color: #3b82f6;
         }
 
+        .type-information {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
         /* Правый блок - Переработанный дизайн без вкладок */
         .template-detail-view {
             display: flex;
@@ -649,6 +635,52 @@
             border-bottom: 1px solid var(--border-light);
             background: var(--bg-secondary);
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Оверлей для копирования */
+        .template-header-copy-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .template-header-copy-overlay.show {
+            display: flex;
+            opacity: 1;
+            animation: fadeInOut 2s ease;
+        }
+
+        .template-header-copy-overlay i {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
         }
 
         .template-title-large {
@@ -756,6 +788,8 @@
             min-height: 200px;
             line-height: 1.6;
             font-size: 14px;
+            position: relative;
+            z-index: 2;
         }
 
         .editor-content:focus {
@@ -771,6 +805,14 @@
 
         .editor-content li {
             margin-bottom: 4px;
+        }
+
+        /* Стили для разделителя <hr> в редакторе */
+        .editor-content hr {
+            margin: 24px 0;
+            border: none;
+            height: 1px;
+            background-color: rgb(255 255 255 / 27%);
         }
 
         .editor-footer {
@@ -1005,58 +1047,6 @@
             border-radius: 3px;
         }
 
-        /* Анимации */
-        @keyframes copyFlash {
-            0% {
-                background-color: var(--bg-tertiary);
-                border-color: transparent;
-            }
-            20% {
-                background-color: rgba(16, 185, 129, 0.5);
-                border-color: var(--bg-success);
-            }
-            60% {
-                background-color: rgba(16, 185, 129, 0.5);
-                border-color: var(--bg-success);
-            }
-            100% {
-                background-color: var(--bg-tertiary);
-                border-color: transparent;
-            }
-        }
-
-        @keyframes buttonSuccess {
-            0% {
-                background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-            }
-            20% {
-                background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            }
-            60% {
-                background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            }
-            100% {
-                background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-            }
-        }
-
-        .copy-button-animation {
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-			color: #fff;
-        }
-
-        .copy-button-animation:hover {
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-			color: #fff;
-        }
-
-        /* Эффект зеленого цвета для копирования по клику */
-        .template-item.copy-click-effect {
-            background-color: rgba(16, 185, 129, 0.3) !important;
-            border-color: var(--bg-success) !important;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
         /* Контекстное меню для категорий */
         .category-context-menu {
             position: fixed;
@@ -1088,17 +1078,6 @@
 
         .context-menu-item:hover {
             background: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Убираем все лишние анимации с кнопок, кроме блика */
-        .btn {
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        .btn:hover {
-            transform: none !important;
-            box-shadow: none !important;
         }
     </style>
 </head>
@@ -1164,6 +1143,12 @@
     <div class="column right-column">
         <div id="templateDetailView" class="template-detail-view">
             <div class="template-header-section">
+                <!-- Оверлей для копирования -->
+                <div class="template-header-copy-overlay" id="templateHeaderCopyOverlay">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Скопировано в буфер обмена для ответа</span>
+                </div>
+                
                 <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
                 
                 <div class="template-header-actions" id="templateHeaderActions">
@@ -1245,7 +1230,7 @@
         </div>
     </div>
     
-    <!-- Модальное окно для создания/редактирования категории -->
+    <!-- Модальные окна -->
     <div class="modal-overlay" id="categoryModal">
         <div class="modal">
             <div class="modal-header">
@@ -1271,7 +1256,6 @@
         </div>
     </div>
     
-    <!-- Модальное окно для создания/редактирования шаблона -->
     <div class="modal-overlay" id="templateModal">
         <div class="modal">
             <div class="modal-header">
@@ -1296,6 +1280,7 @@
                         <option value="other">Остальное</option>
                         <option value="recommendation">Рекомендация</option>
                         <option value="check">Проверка</option>
+                        <option value="information">Информация</option>
                     </select>
                 </div>
                 
@@ -1334,7 +1319,6 @@
         </div>
     </div>
     
-    <!-- Модальное окно подтверждения -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal" style="max-width: 400px;">
             <div class="modal-header">
@@ -1369,16 +1353,24 @@
     <!-- Скрытый input для импорта файлов -->
     <input type="file" id="importFileInput" accept=".json">
     
+    <!-- Подключение файла с данными -->
+    <script src="wiki/data.js"></script>
+    
     <script>
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
+            // Используем функцию из data.js для инициализации данных
+            const data = initAppData();
+            categories = data.categories;
+            templates = data.templates;
+            
             initApp();
             initEditor();
             setupEventListeners();
             loadData();
         });
         
-        // Переменные приложения
+        // Переменные приложения (без тестовых данных)
         let categories = [];
         let templates = [];
         let currentCategoryId = 'all';
@@ -1389,103 +1381,14 @@
         let pendingAction = null;
         let contextMenuCategoryId = null;
         
-        // Доступные цвета для категорий
-        const categoryColors = [
-            '#4f46e5', '#10b981', '#f59e0b', '#ef4444', 
-            '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
-            '#f97316', '#3b82f6', '#14b8a6', '#a855f7'
-        ];
-        
-        // Основные категории с иконками
-        const defaultCategories = [
-            { id: 'cat1', name: 'Регистрация', color: '#8b5cf6', icon: 'fas fa-user-plus', isFavorite: false, favoritedAt: null },
-            { id: 'cat2', name: 'Авторизация', color: '#8b5cf6', icon: 'fas fa-fingerprint', isFavorite: false, favoritedAt: null },
-            { id: 'cat3', name: 'Учёт', color: '#ef4444', icon: 'fas fa-address-book', isFavorite: false, favoritedAt: null },
-            { id: 'cat4', name: 'Место сна и отдыха', color: '#ef4444', icon: 'fas fa-bed', isFavorite: false, favoritedAt: null },
-            { id: 'cat5', name: 'Геолокация', color: '#3b82f6', icon: 'fas fa-map-marker-alt', isFavorite: false, favoritedAt: null },
-            { id: 'cat6', name: 'Телефон', color: '#06b6d4', icon: 'fas fa-phone', isFavorite: false, favoritedAt: null },
-            { id: 'cat7', name: 'Уведомления', color: '#ec4899', icon: 'fas fa-bell', isFavorite: false, favoritedAt: null },
-            { id: 'cat8', name: 'Фото', color: '#f97316', icon: 'fas fa-camera', isFavorite: false, favoritedAt: null },
-            { id: 'cat9', name: 'Документы', color: '#10b981', icon: 'fas fa-file-alt', isFavorite: false, favoritedAt: null },
-            { id: 'cat10', name: 'Запрос доп.информации', color: '#4f46e5', icon: 'fas fa-question-circle', isFavorite: false, favoritedAt: null },
-            { id: 'cat11', name: 'Инструкции', color: '#4f46e5', icon: 'fas fa-book', isFavorite: false, favoritedAt: null }
-        ];
-        
-        // Инициализация приложения
+        // Инициализация приложения (без тестовых данных)
         function initApp() {
             // Загрузка данных из localStorage
-            const savedCategories = localStorage.getItem('support-kb-categories');
-            const savedTemplates = localStorage.getItem('support-kb-templates');
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
             
             isSidebarCollapsed = savedSidebarState === 'true';
             if (isSidebarCollapsed) {
                 document.getElementById('leftColumn').classList.add('collapsed');
-            }
-            
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-            } else {
-                // Используем основные категории
-                categories = defaultCategories;
-                saveCategories();
-            }
-            
-            if (savedTemplates) {
-                templates = JSON.parse(savedTemplates);
-            } else {
-                // Создание начальных шаблонов с разделителями
-                templates = [
-                    {
-                        id: 'temp1',
-                        title: 'Приветствие клиента',
-                        categoryId: 'cat1',
-                        type: 'recommendation',
-                        kbMatch: 'true',
-                        tags: ['приветствие', 'вежливость', 'начало'],
-                        description: 'Стандартное приветствие при начале диалога с клиентом',
-                        content: '<p>Здравствуйте! Меня зовут [Имя]. Рад приветствовать вас в нашей службе поддержки. Чем могу помочь?</p><hr><p>Если у вас есть вопросы по использованию нашего сервиса, не стесняйтесь задавать их.</p>',
-                        createdAt: new Date('2023-10-01').toISOString(),
-                        updatedAt: new Date('2023-10-01').toISOString()
-                    },
-                    {
-                        id: 'temp2',
-                        title: 'Проблема с оплатой',
-                        categoryId: 'cat2',
-                        type: 'check',
-                        kbMatch: 'partial',
-                        tags: ['оплата', 'карта', 'банк', 'транзакция'],
-                        description: 'Инструкция при проблемах с оплатой на сайте',
-                        content: '<p><strong>Для решения проблемы с оплатой:</strong></p><ol><li>Проверьте баланс на вашей карте</li><li>Убедитесь, что карта поддерживает онлайн-платежи</li><li>Попробуйте использовать другую карту или способ оплаты</li></ol><hr><p>Если проблема не решена, обратитесь в ваш банк.</p>',
-                        createdAt: new Date('2023-10-05').toISOString(),
-                        updatedAt: new Date('2023-10-10').toISOString()
-                    },
-                    {
-                        id: 'temp3',
-                        title: 'Временные неполадки',
-                        categoryId: 'cat3',
-                        type: 'other',
-                        kbMatch: 'false',
-                        tags: ['технические работы', 'неполадки'],
-                        description: 'Сообщение о временных технических неполадках',
-                        content: '<p>В настоящее время мы наблюдаем временные технические неполадки. Наши специалисты уже работают над решением проблемы.</p><hr><p>Приносим извинения за доставленные неудобства. Пожалуйста, попробуйте повторить действие через 10-15 минут.</p><hr><p>Благодарим за понимание!</p>',
-                        createdAt: new Date('2023-10-12').toISOString(),
-                        updatedAt: new Date('2023-10-12').toISOString()
-                    },
-                    {
-                        id: 'temp4',
-                        title: 'Рекомендация по безопасности',
-                        categoryId: 'cat1',
-                        type: 'recommendation',
-                        kbMatch: 'true',
-                        tags: ['безопасность', 'пароль', 'защита'],
-                        description: 'Рекомендации по безопасности аккаунта',
-                        content: '<p><strong>Для обеспечения безопасности вашего аккаунта:</strong></p><ul><li>Используйте сложный пароль</li><li>Включайте двухфакторную аутентификацию</li><li>Не передавайте данные для входа третьим лицам</li></ul>',
-                        createdAt: new Date('2023-10-15').toISOString(),
-                        updatedAt: new Date('2023-10-15').toISOString()
-                    }
-                ];
-                saveTemplates();
             }
             
             // Инициализация цветов в модальном окне категорий
@@ -1688,6 +1591,7 @@
             // 2. Все шаблоны
             const allTemplatesItem = document.createElement('div');
             allTemplatesItem.className = `category-item ${currentCategoryId === 'all' ? 'active' : ''}`;
+            const allTemplatesCount = templates.length;
             allTemplatesItem.innerHTML = `
                 <div class="category-icon-wrapper" style="background: linear-gradient(135deg, #64748b, #475569);">
                     <i class="category-icon fas fa-th-list"></i>
@@ -1695,7 +1599,7 @@
                 <div class="category-content">
                     <div>
                         <div class="category-name">Все шаблоны</div>
-                        <div class="category-count">${templates.length} шаблонов</div>
+                        <div class="category-count">${allTemplatesCount} ${pluralizeTemplates(allTemplatesCount)}</div>
                     </div>
                 </div>
             `;
@@ -1758,6 +1662,8 @@
             const favoriteIcon = isFavorite ? 'fas fa-star' : 'far fa-star';
             const favoriteTitle = isFavorite ? 'Убрать из избранного' : 'Добавить в избранное';
             
+            const categoryTemplatesCount = templates.filter(t => t.categoryId === category.id).length;
+            
             const categoryHtml = `
                 <div class="category-icon-wrapper" style="background: ${category.color};">
                     <i class="category-icon ${category.icon || 'fas fa-folder'}"></i>
@@ -1765,7 +1671,7 @@
                 <div class="category-content">
                     <div>
                         <div class="category-name">${category.name}</div>
-                        <div class="category-count">${templates.filter(t => t.categoryId === category.id).length} шаблонов</div>
+                        <div class="category-count">${categoryTemplatesCount} ${pluralizeTemplates(categoryTemplatesCount)}</div>
                     </div>
                 </div>
                 <div class="favorite-star ${isFavorite ? 'active' : ''}" title="${favoriteTitle}" data-action="toggleFavorite">
@@ -1896,8 +1802,9 @@
             // Определяем порядок сортировки по типам
             const typeOrder = {
                 'recommendation': 1,
-                'check': 2,
-                'other': 3
+                'information': 2,
+                'check': 3,
+                'other': 4
             };
             
             // Сортируем шаблоны по типу
@@ -1913,7 +1820,7 @@
             });
             
             // Рендерим группы в заданном порядке
-            const typesOrder = ['recommendation', 'check', 'other'];
+            const typesOrder = ['recommendation', 'information', 'check', 'other'];
             
             typesOrder.forEach(type => {
                 if (groupedTemplates[type] && groupedTemplates[type].length > 0) {
@@ -1922,6 +1829,9 @@
                     switch(type) {
                         case 'recommendation':
                             groupTitle = 'Рекомендации';
+                            break;
+                        case 'information':
+                            groupTitle = 'Информация';
                             break;
                         case 'check':
                             groupTitle = 'Проверки';
@@ -1957,6 +1867,10 @@
                                 typeText = 'Рекомендация';
                                 typeClass = 'type-recommendation';
                                 break;
+                            case 'information':
+                                typeText = 'Информация';
+                                typeClass = 'type-information';
+                                break;
                             case 'check':
                                 typeText = 'Проверка';
                                 typeClass = 'type-check';
@@ -1976,11 +1890,13 @@
                         `;
                         
                         templateItem.addEventListener('click', function(e) {
+                            // Всегда открываем шаблон для просмотра
                             selectTemplate(template.id);
                             
+                            // Если включено копирование по клику, то копируем
                             const copyOnClick = document.getElementById('copyOnClickToggle').checked;
                             if (copyOnClick) {
-                                copyOnClickWithEffect(template.id, templateItem);
+                                copyOnClickWithEffect(template.id);
                             }
                         });
                         
@@ -1988,9 +1904,6 @@
                     });
                 }
             });
-            
-            // Обновляем состояние копирования по клику
-            updateCopyOnClick();
         }
         
         // Показать детальную информацию о шаблоне
@@ -2011,6 +1924,9 @@
             switch (template.type) {
                 case 'recommendation':
                     typeText = 'Рекомендация';
+                    break;
+                case 'information':
+                    typeText = 'Информация';
                     break;
                 case 'check':
                     typeText = 'Проверка';
@@ -2073,8 +1989,29 @@
                 : '<span class="tag" style="opacity: 0.5;">Теги не указаны</span>';
             document.getElementById('tagsContainer').innerHTML = tagsHtml;
             
-            // Контент редактора
-            document.getElementById('editorContent').innerHTML = template.content;
+            // Контент редактора - очищаем атрибуты у <hr>
+            let content = template.content;
+            
+            // Очищаем атрибуты у тега <hr>
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // Находим все <hr> элементы и удаляем у них все атрибуты
+            const hrElements = tempDiv.querySelectorAll('hr');
+            hrElements.forEach(hr => {
+                // Сохраняем родительский элемент
+                const parent = hr.parentNode;
+                
+                // Создаем новый чистый <hr> без атрибутов
+                const newHr = document.createElement('hr');
+                
+                // Заменяем старый <hr> на новый
+                parent.replaceChild(newHr, hr);
+            });
+            
+            content = tempDiv.innerHTML;
+            
+            document.getElementById('editorContent').innerHTML = content;
         }
         
         // Показать пустое состояние
@@ -2102,6 +2039,25 @@
             }
             
             localStorage.setItem('support-kb-sidebar-collapsed', isSidebarCollapsed);
+        }
+        
+        // Показать оверлей копирования
+        function showCopyOverlay() {
+            const overlay = document.getElementById('templateHeaderCopyOverlay');
+            
+            // Сбрасываем предыдущую анимацию
+            overlay.classList.remove('show');
+            
+            // Принудительный reflow для сброса анимации
+            void overlay.offsetWidth;
+            
+            // Запускаем анимацию
+            overlay.classList.add('show');
+            
+            // Через 2 секунды скрываем оверлей (анимация завершится сама)
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2000);
         }
         
         // Открытие модального окна категории
@@ -2209,6 +2165,7 @@
             const colorPicker = document.getElementById('colorPicker');
             colorPicker.innerHTML = '';
             
+            // Используем categoryColors из data.js
             categoryColors.forEach(color => {
                 const colorOption = document.createElement('div');
                 colorOption.className = 'color-option';
@@ -2350,7 +2307,27 @@
         function saveTemplateFromEditor() {
             if (!currentTemplateId) return;
             
-            const content = document.getElementById('editorContent').innerHTML;
+            let content = document.getElementById('editorContent').innerHTML;
+            
+            // Очищаем атрибуты у тега <hr> перед сохранением
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // Находим все <hr> элементы и удаляем у них все атрибуты
+            const hrElements = tempDiv.querySelectorAll('hr');
+            hrElements.forEach(hr => {
+                // Сохраняем родительский элемент
+                const parent = hr.parentNode;
+                
+                // Создаем новый чистый <hr> без атрибутов
+                const newHr = document.createElement('hr');
+                
+                // Заменяем старый <hr> на новый
+                parent.replaceChild(newHr, hr);
+            });
+            
+            content = tempDiv.innerHTML;
+            
             const templateIndex = templates.findIndex(t => t.id === currentTemplateId);
             
             if (templateIndex !== -1) {
@@ -2360,12 +2337,12 @@
                 
                 const saveBtn = document.getElementById('saveTemplateBtn');
                 const originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<i class="fas fa-check"></i> Сохранено';
-                saveBtn.classList.add('copy-button-animation');
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Шаблон сохранен';
+                saveBtn.classList.add('btn-success');
                 
                 setTimeout(() => {
                     saveBtn.innerHTML = originalText;
-                    saveBtn.classList.remove('copy-button-animation');
+                    saveBtn.classList.remove('btn-success');
                 }, 2000);
             }
         }
@@ -2409,8 +2386,8 @@
             }
         }
         
-        // Копирование по клику с эффектом зеленого цвета
-        function copyOnClickWithEffect(templateId, templateItem) {
+        // Копирование по клику с показом оверлея
+        function copyOnClickWithEffect(templateId) {
             const template = templates.find(t => t.id === templateId);
             if (!template) return;
             
@@ -2435,25 +2412,11 @@
                 });
                 
                 navigator.clipboard.write([clipboardItem]).then(() => {
-                    // Добавляем эффект зеленого цвета
-                    templateItem.classList.add('copy-click-effect');
-                    
-                    setTimeout(() => {
-                        templateItem.classList.remove('copy-click-effect');
-                    }, 2000);
-                    
-                    showCopySuccess('click');
+                    showCopyOverlay();
                 }).catch(err => {
                     // Если не поддерживается Clipboard API с HTML, копируем текст
                     navigator.clipboard.writeText(textElement.value).then(() => {
-                        // Добавляем эффект зеленого цвета
-                        templateItem.classList.add('copy-click-effect');
-                        
-                        setTimeout(() => {
-                            templateItem.classList.remove('copy-click-effect');
-                        }, 2000);
-                        
-                        showCopySuccess('click');
+                        showCopyOverlay();
                     }).catch(err => {
                         console.error('Ошибка копирования: ', err);
                     });
@@ -2461,14 +2424,7 @@
             } catch (err) {
                 // Fallback для старых браузеров
                 document.execCommand('copy');
-                // Добавляем эффект зеленого цвета
-                templateItem.classList.add('copy-click-effect');
-                
-                setTimeout(() => {
-                    templateItem.classList.remove('copy-click-effect');
-                }, 2000);
-                
-                showCopySuccess('click');
+                showCopyOverlay();
             } finally {
                 document.body.removeChild(textElement);
             }
@@ -2502,11 +2458,11 @@
                 });
                 
                 navigator.clipboard.write([clipboardItem]).then(() => {
-                    showCopySuccess('button');
+                    showCopyOverlay();
                 }).catch(err => {
                     // Если не поддерживается Clipboard API с HTML, копируем текст
                     navigator.clipboard.writeText(textElement.value).then(() => {
-                        showCopySuccess('button');
+                        showCopyOverlay();
                     }).catch(err => {
                         console.error('Ошибка копирования: ', err);
                     });
@@ -2514,29 +2470,9 @@
             } catch (err) {
                 // Fallback для старых браузеров
                 document.execCommand('copy');
-                showCopySuccess('button');
+                showCopyOverlay();
             } finally {
                 document.body.removeChild(textElement);
-            }
-        }
-        
-        // Показать успешное копирование
-        function showCopySuccess(type) {
-            if (type === 'button') {
-                const copyBtn = document.getElementById('copyAnswerBtn');
-                const originalText = copyBtn.innerHTML;
-                const originalIcon = copyBtn.querySelector('i').className;
-                
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Текст скопирован в буфер обмена';
-                copyBtn.classList.add('copy-button-animation');
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = `<i class="${originalIcon}"></i> Скопировать для ответа`;
-                    copyBtn.classList.remove('copy-button-animation');
-                }, 2000);
-            } else if (type === 'click') {
-                // Для копирования по клику можно показать небольшое уведомление
-                // или просто оставить эффект зеленого цвета
             }
         }
         
@@ -2546,9 +2482,17 @@
             const templatesList = document.getElementById('templatesList');
             
             if (copyOnClick) {
-                templatesList.classList.add('copy-on-click-active');
+                // Меняем курсор на copy для всех шаблонов
+                const templateItems = templatesList.querySelectorAll('.template-item');
+                templateItems.forEach(item => {
+                    item.style.cursor = 'copy';
+                });
             } else {
-                templatesList.classList.remove('copy-on-click-active');
+                // Возвращаем обычный курсор
+                const templateItems = templatesList.querySelectorAll('.template-item');
+                templateItems.forEach(item => {
+                    item.style.cursor = 'pointer';
+                });
             }
         }
         
