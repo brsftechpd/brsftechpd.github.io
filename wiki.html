@@ -446,6 +446,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            display: none; /* По умолчанию скрыта */
         }
 
         .left-column.collapsed .data-actions-panel {
@@ -761,10 +762,16 @@
             padding-right: 0;
         }
 
+        /* Измененный стиль для кнопки копирования в нижней части шапки */
         .template-header-actions {
             display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .template-header-actions .btn {
+            width: 100%;
+            justify-content: center;
         }
 
         .template-meta-grid {
@@ -1021,18 +1028,19 @@
 
                 <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
 
-                <div class="template-header-actions" id="templateHeaderActions">
-                    <button class="btn btn-copy btn-sm" id="copyAnswerBtn">
-                        <i class="fas fa-copy"></i> Скопировать для ответа
-                    </button>
-                </div>
-
                 <div id="templateMetaGrid" class="template-meta-grid">
                     <!-- Мета-информация будет добавлена динамически -->
                 </div>
 
                 <div id="tagsContainer" class="tags-container">
                     <!-- Теги будут добавлены динамически -->
+                </div>
+
+                <!-- Кнопка "Скопировать для ответа" теперь находится внизу и на всю ширину -->
+                <div class="template-header-actions" id="templateHeaderActions">
+                    <button class="btn btn-copy" id="copyAnswerBtn">
+                        <i class="fas fa-copy"></i> Скопировать для ответа
+                    </button>
                 </div>
             </div>
 
@@ -1050,38 +1058,207 @@
         </div>
     </div>
 
-    <!-- Подключение файла с данными -->
-    <script src="wiki/data.js"></script>
-
     <script>
-        // Инициализация приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            // Используем функцию из data.js для инициализации данных
-            const data = initAppData();
-            categories = data.categories;
-            templates = data.templates;
-
-            initApp();
-            setupEventListeners();
-            loadData();
-        });
-
-        // Переменные приложения (без тестовых данных)
+        // Глобальные переменные приложения
         let categories = [];
         let templates = [];
         let currentCategoryId = 'all';
         let currentTemplateId = null;
         let isSidebarCollapsed = false;
+        let updateCheckInterval = null;
 
-        // Инициализация приложения (без тестовых данных)
-        function initApp() {
-            // Загрузка данных из localStorage
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInitialData();
+            setupEventListeners();
+            
+            // Запускаем проверку обновлений каждый 1 час
+            updateCheckInterval = setInterval(checkForUpdates, 3600000);
+        });
+
+        // Загрузка начальных данных
+        function loadInitialData() {
+            const savedCategories = localStorage.getItem('support-kb-categories');
+            const savedTemplates = localStorage.getItem('support-kb-templates');
+
+            if (savedCategories && savedTemplates) {
+                // Данные есть в localStorage, загружаем их
+                categories = JSON.parse(savedCategories);
+                templates = JSON.parse(savedTemplates);
+                console.log('Данные загружены из localStorage');
+            } else {
+                // Данных нет в localStorage, загружаем из data.js
+                console.log('Данных нет в localStorage, загружаем из data.js');
+                loadDataFromServer();
+                // После загрузки данных с сервера функция сама вызовет инициализацию
+                return;
+            }
+
+            // Загружаем состояние боковой панели
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
-
             isSidebarCollapsed = savedSidebarState === 'true';
             if (isSidebarCollapsed) {
                 document.getElementById('leftColumn').classList.add('collapsed');
             }
+
+            // Инициализируем интерфейс
+            initApp();
+        }
+
+        // Загрузка данных с сервера (из data.js) - для первоначальной загрузки
+        function loadDataFromServer() {
+            console.log('Загрузка данных с сервера...');
+            // Добавляем временную метку, чтобы избежать кэширования
+            fetch('wiki/data.js?' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(jsCode => {
+                    try {
+                        // Извлекаем данные из JavaScript кода
+                        // Создаем временную функцию для выполнения кода и получения исходных данных
+                        const tempFunction = new Function(`
+                            ${jsCode};
+                            // В data.js функция initAppData() должна возвращать исходные данные
+                            // без учета localStorage
+                            return initAppData();
+                        `);
+                        const data = tempFunction();
+                        
+                        if (data && data.categories && data.templates) {
+                            // Инициализируем категории с параметрами isFavorite и favoritedAt
+                            categories = data.categories.map(category => ({
+                                ...category,
+                                isFavorite: category.isFavorite || false,
+                                favoritedAt: category.favoritedAt || null
+                            }));
+                            
+                            templates = data.templates;
+                            
+                            // Сохраняем в localStorage
+                            saveDataToLocalStorage();
+                            
+                            console.log('Данные загружены с сервера и сохранены в localStorage');
+                            
+                            // Загружаем состояние боковой панели
+                            const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
+                            isSidebarCollapsed = savedSidebarState === 'true';
+                            if (isSidebarCollapsed) {
+                                document.getElementById('leftColumn').classList.add('collapsed');
+                            }
+                            
+                            // Инициализируем интерфейс
+                            initApp();
+                        } else {
+                            console.error('Неверный формат данных в data.js');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при обработке данных:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки данных:', error);
+                });
+        }
+
+        // Проверка обновлений данных - вызывается каждые 10 секунд
+        function checkForUpdates() {
+            console.log('Проверка обновлений...');
+            
+            // Всегда загружаем данные с сервера для проверки
+            fetch('wiki/data.js?' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(jsCode => {
+                    try {
+                        const tempFunction = new Function(`
+                            ${jsCode};
+                            return initAppData();
+                        `);
+                        const data = tempFunction();
+                        
+                        if (data && data.categories && data.templates) {
+                            const serverData = {
+                                categories: JSON.parse(JSON.stringify(data.categories)),
+                                templates: JSON.parse(JSON.stringify(data.templates))
+                            };
+                            
+                            // Проверяем, есть ли обновления
+                            checkForDataUpdates(serverData);
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при загрузке данных для проверки:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки данных для проверки:', error);
+                });
+        }
+
+        // Проверка различий между локальными данными и данными сервера
+        function checkForDataUpdates(serverData) {
+            if (!serverData) return;
+            
+            // Создаем копии текущих данных без параметров isFavorite и favoritedAt для сравнения
+            const localCategoriesForCompare = categories.map(category => {
+                const { isFavorite, favoritedAt, ...rest } = category;
+                return rest;
+            }).sort((a, b) => a.id.localeCompare(b.id));
+            
+            const serverCategoriesForCompare = serverData.categories.map(category => {
+                const { isFavorite, favoritedAt, ...rest } = category;
+                return rest;
+            }).sort((a, b) => a.id.localeCompare(b.id));
+            
+            // Сортируем шаблоны для сравнения
+            const localTemplatesSorted = [...templates].sort((a, b) => a.id.localeCompare(b.id));
+            const serverTemplatesSorted = [...serverData.templates].sort((a, b) => a.id.localeCompare(b.id));
+            
+            // Сравниваем категории
+            const categoriesChanged = !isEqual(localCategoriesForCompare, serverCategoriesForCompare);
+            
+            // Сравниваем шаблоны
+            const templatesChanged = !isEqual(localTemplatesSorted, serverTemplatesSorted);
+            
+            console.log('Результат проверки обновлений:');
+            console.log('Локальные категории:', localCategoriesForCompare.length, 'Серверные категории:', serverCategoriesForCompare.length);
+            console.log('Локальные шаблоны:', localTemplatesSorted.length, 'Серверные шаблоны:', serverTemplatesSorted.length);
+            console.log('Категории изменились:', categoriesChanged);
+            console.log('Шаблоны изменились:', templatesChanged);
+            
+            // Если есть изменения, показываем панель обновления
+            if (categoriesChanged || templatesChanged) {
+                console.log('Обнаружены обновления данных');
+                document.getElementById('dataActionsPanel').style.display = 'flex';
+            } else {
+                console.log('Данные актуальны');
+                document.getElementById('dataActionsPanel').style.display = 'none';
+            }
+        }
+
+        // Функция для глубокого сравнения объектов
+        function isEqual(obj1, obj2) {
+            return JSON.stringify(obj1) === JSON.stringify(obj2);
+        }
+
+        // Сохранение данных в localStorage
+        function saveDataToLocalStorage() {
+            localStorage.setItem('support-kb-categories', JSON.stringify(categories));
+            localStorage.setItem('support-kb-templates', JSON.stringify(templates));
+        }
+
+        // Инициализация приложения
+        function initApp() {
+            renderCategories();
+            renderTemplates();
+            showEmptyStateView();
         }
 
         // Настройка обработчиков событий
@@ -1093,7 +1270,9 @@
             document.getElementById('copyAnswerBtn').addEventListener('click', copyAnswerToClipboard);
 
             // Обновление данных
-            document.getElementById('refreshDataBtn').addEventListener('click', refreshData);
+            document.getElementById('refreshDataBtn').addEventListener('click', function() {
+                updateLocalDataFromServer();
+            });
 
             // Поиск
             document.getElementById('searchInput').addEventListener('input', filterTemplates);
@@ -1110,11 +1289,85 @@
             });
         }
 
-        // Загрузка данных в интерфейс
-        function loadData() {
-            renderCategories();
-            renderTemplates();
-            showEmptyStateView();
+        // Обновление локальных данных из серверных данных
+        function updateLocalDataFromServer() {
+            console.log('Обновление данных с сервера...');
+            
+            // Загружаем данные с сервера
+            fetch('wiki/data.js?' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(jsCode => {
+                    try {
+                        const tempFunction = new Function(`
+                            ${jsCode};
+                            return initAppData();
+                        `);
+                        const data = tempFunction();
+                        
+                        if (data && data.categories && data.templates) {
+                            const serverData = {
+                                categories: JSON.parse(JSON.stringify(data.categories)),
+                                templates: JSON.parse(JSON.stringify(data.templates))
+                            };
+                            
+                            // Обновляем категории, сохраняя isFavorite и favoritedAt из локальных данных
+                            const updatedCategories = serverData.categories.map(serverCategory => {
+                                const localCategory = categories.find(c => c.id === serverCategory.id);
+                                
+                                if (localCategory) {
+                                    // Сохраняем параметры isFavorite и favoritedAt из локальных данных
+                                    return {
+                                        ...serverCategory,
+                                        isFavorite: localCategory.isFavorite,
+                                        favoritedAt: localCategory.favoritedAt
+                                    };
+                                } else {
+                                    // Новая категория
+                                    return {
+                                        ...serverCategory,
+                                        isFavorite: false,
+                                        favoritedAt: null
+                                    };
+                                }
+                            });
+                            
+                            // Обновляем шаблоны
+                            const updatedTemplates = serverData.templates;
+                            
+                            // Сохраняем обновленные данные
+                            categories = updatedCategories;
+                            templates = updatedTemplates;
+                            
+                            // Сохраняем в localStorage
+                            saveDataToLocalStorage();
+                            
+                            // Скрываем панель обновления
+                            document.getElementById('dataActionsPanel').style.display = 'none';
+                            
+                            // Обновляем интерфейс
+                            renderCategories();
+                            renderTemplates();
+                            
+                            // Если выбран шаблон, который мог быть удален, сбрасываем выбор
+                            if (currentTemplateId && !templates.find(t => t.id === currentTemplateId)) {
+                                currentTemplateId = null;
+                                showEmptyStateView();
+                            }
+                            
+                            console.log('Данные обновлены с сервера');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при обновлении данных:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки данных для обновления:', error);
+                });
         }
 
         // Рендеринг категорий
@@ -1245,7 +1498,7 @@
                 categories[categoryIndex].favoritedAt = null;
             }
 
-            saveCategories();
+            saveDataToLocalStorage();
             renderCategories();
         }
 
@@ -1634,22 +1887,6 @@
             renderTemplates();
         }
 
-        // Обновление данных (очистка и перезагрузка)
-        function refreshData() {
-            // Очищаем localStorage
-            localStorage.removeItem('support-kb-categories');
-            localStorage.removeItem('support-kb-templates');
-            localStorage.removeItem('support-kb-sidebar-collapsed');
-
-            // Перезагружаем страницу
-            location.reload();
-        }
-
-        // Сохранение категорий
-        function saveCategories() {
-            localStorage.setItem('support-kb-categories', JSON.stringify(categories));
-        }
-
         // Форматирование даты
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -1660,15 +1897,15 @@
             });
         }
 
-        // Функция для склонения слова "шаблон"
+        // Вспомогательная функция для склонения слова "шаблон"
         function pluralizeTemplates(count) {
-            const cases = [2, 0, 1, 1, 1, 2];
-            const words = ['шаблон', 'шаблона', 'шаблонов'];
-
-            const index = (count % 100 > 4 && count % 100 < 20) ?
-                2 : cases[Math.min(count % 10, 5)];
-
-            return words[index];
+            if (count % 10 === 1 && count % 100 !== 11) {
+                return 'шаблон';
+            } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+                return 'шаблона';
+            } else {
+                return 'шаблонов';
+            }
         }
     </script>
 </body>
