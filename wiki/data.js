@@ -9,17 +9,102 @@ const categoryColors = [
 
 // Основные категории с иконками
 const defaultCategories = [
-    { id: 'cat1', name: 'Регистрация', color: '#8b5cf6', icon: 'fas fa-user-plus', isFavorite: false, favoritedAt: null },
-    { id: 'cat2', name: 'Авторизация', color: '#8b5cf6', icon: 'fas fa-fingerprint', isFavorite: false, favoritedAt: null },
-    { id: 'cat3', name: 'Учёт', color: '#ef4444', icon: 'fas fa-address-book', isFavorite: false, favoritedAt: null },
-    { id: 'cat4', name: 'Место сна и отдыха', color: '#ef4444', icon: 'fas fa-bed', isFavorite: false, favoritedAt: null },
-    { id: 'cat5', name: 'Геолокация', color: '#3b82f6', icon: 'fas fa-map-marker-alt', isFavorite: false, favoritedAt: null },
-    { id: 'cat6', name: 'Телефон', color: '#06b6d4', icon: 'fas fa-phone', isFavorite: false, favoritedAt: null },
-    { id: 'cat7', name: 'Уведомления', color: '#ec4899', icon: 'fas fa-bell', isFavorite: false, favoritedAt: null },
-    { id: 'cat8', name: 'Фото', color: '#f97316', icon: 'fas fa-camera', isFavorite: false, favoritedAt: null },
-    { id: 'cat9', name: 'Документы', color: '#10b981', icon: 'fas fa-file-alt', isFavorite: false, favoritedAt: null },
-    { id: 'cat10', name: 'Запрос доп.информации', color: '#4f46e5', icon: 'fas fa-question-circle', isFavorite: false, favoritedAt: null },
-    { id: 'cat11', name: 'Инструкции', color: '#4f46e5', icon: 'fas fa-book', isFavorite: false, favoritedAt: null }
+    {
+      "id": "cat1",
+      "name": "Регистрация",
+      "color": "#8b5cf6",
+      "icon": "fas fa-user-plus",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat2",
+      "name": "Авторизация",
+      "color": "#8b5cf6",
+      "icon": "fas fa-fingerprint",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat3",
+      "name": "Учёт",
+      "color": "#ef4444",
+      "icon": "fas fa-address-book",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat4",
+      "name": "Место сна и отдыха",
+      "color": "#ef4444",
+      "icon": "fas fa-bed",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat5",
+      "name": "Геолокация",
+      "color": "#3b82f6",
+      "icon": "fas fa-map-marker-alt",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat6",
+      "name": "Телефон",
+      "color": "#06b6d4",
+      "icon": "fas fa-phone",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat7",
+      "name": "Уведомления",
+      "color": "#ec4899",
+      "icon": "fas fa-bell",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat8",
+      "name": "Фото",
+      "color": "#f97316",
+      "icon": "fas fa-camera",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat9",
+      "name": "Документы",
+      "color": "#10b981",
+      "icon": "fas fa-file-alt",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat10",
+      "name": "Запрос доп.информации",
+      "color": "#4f46e5",
+      "icon": "fas fa-question-circle",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat11",
+      "name": "Инструкции",
+      "color": "#4f46e5",
+      "icon": "fas fa-book",
+      "isFavorite": false,
+      "favoritedAt": null
+    },
+    {
+      "id": "cat12",
+      "name": "Перемещение",
+      "color": "#f59e0b",
+      "icon": "fas fa-folder",
+      "isFavorite": false,
+      "favoritedAt": null
+    }
 ];
 
 // Начальные шаблоны
@@ -167,7 +252,7 @@ const defaultTemplates = [
     {
       "id": "temp1766392923225",
       "title": "Выезд за Москву и МО",
-      "categoryId": "cat1766392881517",
+      "categoryId": "cat12",
       "type": "information",
       "kbMatch": "true",
       "tags": [],
@@ -179,7 +264,7 @@ const defaultTemplates = [
     {
       "id": "temp1766393035695",
       "title": "Выезд из РФ",
-      "categoryId": "cat1766392881517",
+      "categoryId": "cat12",
       "type": "information",
       "kbMatch": "true",
       "tags": [],
@@ -196,9 +281,9 @@ const defaultTemplates = [
       "kbMatch": "true",
       "tags": [],
       "description": "",
-      "content": "<p><b>Информация для оператора первой линии:</b></p><p><br></p><p>Специалисты 2-й линии проверили сведения о пользователя по КИГ, который указан в поле инициатор.</p><p><br></p><p>В БД есть информация, что пользователь успешно прошел аутентификацию. Уточните у пользователя был ли получен статус успешной проверки, если это так, то закрывайте запрос.</p>",
+      "content": "<p><b>Информация для оператора первой линии:</b></p><p><br></p><p>Специалисты 2-й линии проверили сведения о пользователе по КИГ, который указан в поле инициатор.</p><p><br></p><p>В БД есть информация, что пользователь успешно прошел аутентификацию. Уточните у пользователя был ли получен статус успешной проверки, если это так, то закрывайте запрос.</p>",
       "createdAt": "2025-12-22T08:52:22.692Z",
-      "updatedAt": "2025-12-22T08:53:24.066Z"
+      "updatedAt": "2025-12-22T14:53:22.710Z"
     }
 ];
 
@@ -215,23 +300,5 @@ function pluralizeTemplates(count) {
 
 // Функция инициализации данных приложения
 function initAppData() {
-    // Загрузка данных из localStorage
-    const savedCategories = localStorage.getItem('support-kb-categories');
-    const savedTemplates = localStorage.getItem('support-kb-templates');
-    
-    let categories, templates;
-    
-    if (savedCategories) {
-        categories = JSON.parse(savedCategories);
-    } else {
-        categories = defaultCategories;
-    }
-    
-    if (savedTemplates) {
-        templates = JSON.parse(savedTemplates);
-    } else {
-        templates = defaultTemplates;
-    }
-    
-    return { categories, templates };
+    return { categories: defaultCategories, templates: defaultTemplates };
 }
