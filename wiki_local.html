@@ -1325,10 +1325,10 @@
             </div>
         </div>
         
-        <div id="emptyStateView" class="empty-state" style="display: none;">
+        <div id="emptyStateView" class="empty-state" style="display: flex;">
             <i class="fas fa-file-alt"></i>
             <h3>Шаблон не выбран</h3>
-            <p>Выберите шаблон из списка или создайте новый</p>
+            <p>Выберите шаблон из списка или <a href="#" id="createNewTemplateLink">создайте новый</a></p>
         </div>
     </div>
     
@@ -1661,6 +1661,12 @@
                     deleteCategory(categoryId);
                     hideContextMenu();
                 }
+            });
+            
+            // Обработчик для ссылки "создайте новый" в пустом состоянии
+            document.getElementById('createNewTemplateLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                openTemplateModal();
             });
             
             // Закрытие контекстного меню при клике вне его
