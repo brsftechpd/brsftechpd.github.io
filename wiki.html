@@ -1072,8 +1072,8 @@
             loadInitialData();
             setupEventListeners();
             
-            // Запускаем проверку обновлений каждый 1 час
-            updateCheckInterval = setInterval(checkForUpdates, 3600000);
+            // Запускаем проверку обновлений каждый 10 минут
+            updateCheckInterval = setInterval(checkForUpdates, 600000);
         });
 
         // Загрузка начальных данных
