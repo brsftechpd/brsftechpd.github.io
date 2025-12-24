@@ -1080,11 +1080,24 @@
         function loadInitialData() {
             const savedCategories = localStorage.getItem('support-kb-categories');
             const savedTemplates = localStorage.getItem('support-kb-templates');
-
+            
             if (savedCategories && savedTemplates) {
+                // Сначала загружаем текущие данные из localStorage
+                try {
+                    categories = JSON.parse(savedCategories);
+                    templates = JSON.parse(savedTemplates);
+                    console.log('Данные загружены из localStorage');
+                } catch (error) {
+                    console.error('Ошибка при загрузке данных из localStorage:', error);
+                    // Если данные повреждены, загружаем с сервера
+                    loadDataFromServer();
+                    return;
+                }
+                
                 // Данные есть в localStorage, обновляем их
+                console.log('Обновление данных с сервера...');
                 updateLocalDataFromServer();
-                console.log('Данные обновлены');
+                console.log('Запущено обновление данных');
             } else {
                 // Данных нет в localStorage, загружаем из data.js
                 console.log('Данных нет в localStorage, загружаем из data.js');
@@ -1092,15 +1105,15 @@
                 // После загрузки данных с сервера функция сама вызовет инициализацию
                 return;
             }
-
+            
             // Загружаем состояние боковой панели
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
             isSidebarCollapsed = savedSidebarState === 'true';
             if (isSidebarCollapsed) {
                 document.getElementById('leftColumn').classList.add('collapsed');
             }
-
-            // Инициализируем интерфейс
+            
+           // Инициализируем интерфейс
             initApp();
         }
 
