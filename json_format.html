@@ -1397,8 +1397,7 @@
                 // Условия для отображения кнопки "Исправить на 5 статус"
                 const shouldShowInvalidBtn = 
                     (this.currentRegStatus === 6 && (this.currentStatusMessageCode === 6 || this.currentStatusMessageCode === null)) ||
-                    (this.currentRegStatus === 10 && this.currentStatusMessageCode === 8) ||
-                    (this.currentRegStatus === 10 && this.currentStatusMessageCode === null);
+                    (this.currentRegStatus === 10 && (this.currentStatusMessageCode === 8 || this.currentStatusMessageCode === 9 || this.currentStatusMessageCode === null));
                 
                 // Не показываем кнопки для статусов 1, 4 и 5, так как они уже в правильном состоянии
                 if (this.currentRegStatus === 1 || this.currentRegStatus === 4 || this.currentRegStatus === 5) {
@@ -1446,34 +1445,40 @@
                             
                             obj.residenceRegistration.regStatus = newStatus;
                             
-                            if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3) && newStatus === 1) {
-                                obj.residenceRegistration.unregistrationReasonId = null;
-                            }
-                            
-                            // Если меняем на статус 5, сохраняем statusMessageCode
-                            if (newStatus === 5 && oldMessageCode !== undefined) {
-                                obj.residenceRegistration.statusMessageCode = oldMessageCode;
+                            if (newStatus === 1) {
+                                // Исправляем на статус 1
+                                if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
+                                    obj.residenceRegistration.unregistrationReasonId = null;
+                                    this.showNotification(
+                                        `regStatus изменен с ${oldStatus} на 1, unregistrationReasonId изменен на null`, 
+                                        false, 
+                                        'info'
+                                    );
+                                } else if (oldStatus === 3) {
+                                    this.showNotification(
+                                        `regStatus изменен с ${oldStatus} на 1`, 
+                                        false, 
+                                        'info'
+                                    );
+                                }
+                            } else if (newStatus === 5) {
+                                // Исправляем на статус 5 и устанавливаем statusMessageCode в null
+                                obj.residenceRegistration.statusMessageCode = null;
+                                
+                                let message = `regStatus изменен с ${oldStatus} на 5`;
+                                if (oldMessageCode !== null && oldMessageCode !== undefined) {
+                                    message += `, statusMessageCode изменен с ${oldMessageCode} на null`;
+                                } else {
+                                    message += `, statusMessageCode установлен в null`;
+                                }
+                                
+                                this.showNotification(message, false, 'info');
                             }
                             
                             this.residenceRegistrationBlock = obj.residenceRegistration;
                             this.currentRegStatus = newStatus;
                             this.currentUnregistrationReasonId = obj.residenceRegistration.unregistrationReasonId;
                             this.currentStatusMessageCode = obj.residenceRegistration.statusMessageCode;
-                            
-                            let message = '';
-                            if (newStatus === 1) {
-                                message = `regStatus изменен с ${oldStatus} на 1 (Process МСО)`;
-                                if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
-                                    message += ', unregistrationReasonId изменен на null';
-                                }
-                            } else if (newStatus === 5) {
-                                message = `regStatus изменен с ${oldStatus} на 5 (Невалидные данные МСО)`;
-                                if (oldMessageCode !== undefined) {
-                                    message += `, statusMessageCode сохранен: ${oldMessageCode}`;
-                                }
-                            }
-                            
-                            this.showNotification(message, false, 'info');
                             
                             return true;
                         }
