@@ -35,15 +35,14 @@
             --sidebar-width: 280px;
             --sidebar-collapsed: 70px;
             --text-placeholder: #94a3b8;
-            --theme-icon: '🌙';
-            --theme-label: 'Темная тема';
+            --header-height: 60px;
         }
 
         /* Светлая тема */
         .light-theme {
             --bg-primary: #f8fafc;
-            --bg-secondary: #e2e8f0;
-            --bg-tertiary: #cbd5e1;
+            --bg-secondary: #f5f5f5;
+            --bg-tertiary: #ededed;
             --bg-accent: #4f46e5;
             --bg-accent-light: rgba(79, 70, 229, 0.08);
             --bg-success: #10b981;
@@ -62,8 +61,6 @@
             --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             --gradient-secondary: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
             --text-placeholder: #94a3b8;
-            --theme-icon: '☀️';
-            --theme-label: 'Светлая тема';
         }
 
         * {
@@ -77,14 +74,137 @@
             background: var(--gradient-secondary);
             color: var(--text-primary);
             height: 100vh;
-            display: flex;
             overflow: hidden;
             transition: var(--transition);
         }
 
+        /* Шапка */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Кнопка домой */
+        .home-btn {
+            background: var(--bg-accent);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .home-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Название приложения */
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-title i {
+            color: var(--bg-accent);
+            font-size: 20px;
+        }
+
+        /* Кнопка переключения темы в шапке */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--bg-accent);
+        }
+
+        .light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle .theme-icon {
+            font-size: 16px;
+        }
+
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        .light-theme .theme-toggle .sun-icon {
+            display: block;
+            color: #f59e0b;
+        }
+
+        .light-theme .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+            overflow: hidden;
+        }
+
         /* Основные колонки */
         .column {
-            height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -251,70 +371,6 @@
             padding: 4px 8px;
             font-size: 12px;
             min-width: auto;
-        }
-
-        /* Кнопка темы */
-        .theme-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            margin-right: 4px;
-            position: relative;
-        }
-
-        .theme-btn::before {
-            content: var(--theme-icon);
-            font-size: 14px;
-        }
-
-        .theme-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .light-theme .theme-btn:hover {
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-btn .theme-tooltip {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            margin-top: 4px;
-            pointer-events: none;
-        }
-
-        .theme-btn:hover .theme-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .left-column.collapsed .theme-btn .theme-tooltip {
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            margin-left: 4px;
-            margin-top: 0;
         }
 
         /* Кнопка сворачивания */
@@ -573,7 +629,7 @@
             display: none;
         }
 
-        /* Импорт/Экспорт панель - УДАЛЕНА, заменена на кнопку обновления */
+        /* Импорт/Экспорт панель */
         .data-actions-panel {
             background: var(--bg-tertiary);
             border-top: 1px solid var(--border-light);
@@ -1104,8 +1160,9 @@
         }
 
         @media (max-width: 992px) {
-            body {
+            .main-container {
                 flex-direction: column;
+                height: auto;
             }
 
             .column {
@@ -1133,97 +1190,118 @@
 </head>
 
 <body>
-    <!-- Левый блок - Категории -->
-    <div class="column left-column" id="leftColumn">
-        <div class="block-header">
-            <span><i class="fas fa-folder"></i> Категории</span>
-            <div style="display: flex; align-items: center;">
-                <button class="theme-btn" id="themeToggleBtn" title="Переключить тему">
-                    <span class="theme-tooltip">Переключить тему</span>
-                </button>
+    <!-- Шапка -->
+    <header class="main-header">
+        <div class="header-left">
+            <button class="home-btn" id="homeBtn" title="Главная">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+        
+        <div class="header-center">
+            <div class="app-title">
+                <i class="fas fa-book"></i>
+                <span>База знаний тех.поддержки</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+                <i class="fas fa-moon theme-icon moon-icon"></i>
+                <i class="fas fa-sun theme-icon sun-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Основной контейнер -->
+    <div class="main-container">
+        <!-- Левый блок - Категории -->
+        <div class="column left-column" id="leftColumn">
+            <div class="block-header">
+                <span><i class="fas fa-folder"></i> Категории</span>
                 <button class="collapse-btn" id="collapseBtn">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
-        </div>
 
-        <div class="categories-list" id="categoriesList">
-            <!-- Категории будут добавляться здесь динамически -->
-        </div>
+            <div class="categories-list" id="categoriesList">
+                <!-- Категории будут добавляться здесь динамически -->
+            </div>
 
-        <div class="data-actions-panel" id="dataActionsPanel">
-            <button class="btn btn-success btn-sm" id="refreshDataBtn">
-                <i class="fas fa-sync-alt"></i>
-                <span>Обновить данные</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Центральный блок - Функции и Шаблоны -->
-    <div class="column center-column">
-        <div class="functions-block">
-            <div class="function-item">
-                <div class="function-header">
-                    <div class="function-label">Копировать при клике</div>
-                    <label class="switch">
-                        <input type="checkbox" id="copyOnClickToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="function-description">
-                    Автоматически копировать шаблон при клике
-                </div>
+            <div class="data-actions-panel" id="dataActionsPanel">
+                <button class="btn btn-success btn-sm" id="refreshDataBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Обновить данные</span>
+                </button>
             </div>
         </div>
 
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Поиск по названию, тегам, описанию...">
-        </div>
-
-        <div class="templates-list" id="templatesList">
-            <!-- Шаблоны будут добавляться здесь динамически -->
-        </div>
-    </div>
-
-    <!-- Правый блок - Переработанный дизайн без вкладок -->
-    <div class="column right-column">
-        <div id="templateDetailView" class="template-detail-view">
-            <div class="template-header-section">
-                <!-- Оверлей для копирования -->
-                <div class="template-header-copy-overlay" id="templateHeaderCopyOverlay">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Скопировано в буфер обмена для ответа</span>
-                </div>
-
-                <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
-
-                <div id="templateMetaGrid" class="template-meta-grid">
-                    <!-- Мета-информация будет добавлена динамически -->
-                </div>
-
-                <div id="tagsContainer" class="tags-container">
-                    <!-- Теги будут добавлены динамически -->
-                </div>
-
-                <!-- Кнопка "Скопировать для ответа" теперь находится внизу и на всю ширину -->
-                <div class="template-header-actions" id="templateHeaderActions">
-                    <button class="btn btn-copy" id="copyAnswerBtn">
-                        <i class="fas fa-copy"></i> Скопировать для ответа
-                    </button>
+        <!-- Центральный блок - Функции и Шаблоны -->
+        <div class="column center-column">
+            <div class="functions-block">
+                <div class="function-item">
+                    <div class="function-header">
+                        <div class="function-label">Копировать при клике</div>
+                        <label class="switch">
+                            <input type="checkbox" id="copyOnClickToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="function-description">
+                        Автоматически копировать шаблон при клике
+                    </div>
                 </div>
             </div>
 
-            <div class="template-content-container">
-                <div class="template-content-view" id="templateContentView">
-                    <!-- Содержимое шаблона будет отображаться здесь -->
-                </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по названию, тегам, описанию...">
+            </div>
+
+            <div class="templates-list" id="templatesList">
+                <!-- Шаблоны будут добавляться здесь динамически -->
             </div>
         </div>
 
-        <div id="emptyStateView" class="empty-state" style="display: none;">
-            <i class="fas fa-file-alt"></i>
-            <h3>Шаблон не выбран</h3>
-            <p>Выберите шаблон из списка</p>
+        <!-- Правый блок - Переработанный дизайн без вкладок -->
+        <div class="column right-column">
+            <div id="templateDetailView" class="template-detail-view">
+                <div class="template-header-section">
+                    <!-- Оверлей для копирования -->
+                    <div class="template-header-copy-overlay" id="templateHeaderCopyOverlay">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Скопировано в буфер обмена для ответа</span>
+                    </div>
+
+                    <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
+
+                    <div id="templateMetaGrid" class="template-meta-grid">
+                        <!-- Мета-информация будет добавлена динамически -->
+                    </div>
+
+                    <div id="tagsContainer" class="tags-container">
+                        <!-- Теги будут добавлены динамически -->
+                    </div>
+
+                    <!-- Кнопка "Скопировать для ответа" теперь находится внизу и на всю ширину -->
+                    <div class="template-header-actions" id="templateHeaderActions">
+                        <button class="btn btn-copy" id="copyAnswerBtn">
+                            <i class="fas fa-copy"></i> Скопировать для ответа
+                        </button>
+                    </div>
+                </div>
+
+                <div class="template-content-container">
+                    <div class="template-content-view" id="templateContentView">
+                        <!-- Содержимое шаблона будет отображаться здесь -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="emptyStateView" class="empty-state" style="display: none;">
+                <i class="fas fa-file-alt"></i>
+                <h3>Шаблон не выбран</h3>
+                <p>Выберите шаблон из списка</p>
+            </div>
         </div>
     </div>
 
@@ -1262,15 +1340,8 @@
 
         // Обновление иконки темы
         function updateThemeIcon() {
-            const themeBtn = document.getElementById('themeToggleBtn');
-            if (themeBtn) {
-                // CSS переменные уже обновляются через :root и .light-theme
-                // Просто обновим tooltip
-                const tooltip = themeBtn.querySelector('.theme-tooltip');
-                if (tooltip) {
-                    tooltip.textContent = isLightTheme ? 'Темная тема' : 'Светлая тема';
-                }
-            }
+            // CSS переменные уже обновляются через :root и .light-theme
+            // Ничего дополнительно делать не нужно
         }
 
         // Переключение темы
@@ -1284,8 +1355,6 @@
                 document.body.classList.remove('light-theme');
                 localStorage.setItem('support-kb-theme', 'dark');
             }
-            
-            updateThemeIcon();
         }
 
         // Загрузка начальных данных
@@ -1493,6 +1562,11 @@
             // Переключение темы
             document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
 
+            // Кнопка "Домой"
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = '../';
+            });
+
             // Копирование ответа
             document.getElementById('copyAnswerBtn').addEventListener('click', copyAnswerToClipboard);
 
@@ -1518,6 +1592,12 @@
                 if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
                     e.preventDefault();
                     toggleTheme();
+                }
+                
+                // Ctrl+H для кнопки "Домой"
+                if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+                    e.preventDefault();
+                    document.getElementById('homeBtn').click();
                 }
             });
         }
