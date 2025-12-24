@@ -600,8 +600,49 @@
             background: var(--gradient-danger);
         }
         
+        .reg-status.reg-status-10 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
         .reg-status.reg-status-other {
             background: #334155;
+        }
+        
+        .reg-status-description {
+            display: inline-block;
+            margin-left: 12px;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border-left: 3px solid var(--color-primary);
+            max-width: 400px;
+        }
+        
+        .reg-status-description.status-3 {
+            border-left-color: var(--color-info);
+            background: rgba(59, 130, 246, 0.15);
+        }
+        
+        .reg-status-description.status-4 {
+            border-left-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.15);
+        }
+        
+        .reg-status-description.status-6 {
+            border-left-color: var(--color-warning);
+            background: rgba(245, 158, 11, 0.15);
+        }
+        
+        .reg-status-description.status-7 {
+            border-left-color: var(--color-danger);
+            background: rgba(239, 68, 68, 0.15);
+        }
+        
+        .reg-status-description.status-10 {
+            border-left-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.15);
         }
     </style>
 </head>
@@ -684,6 +725,7 @@
                 <i class="fas fa-home"></i>
                 Блок residenceRegistration
                 <span id="regStatusBadge" class="reg-status"></span>
+                <span id="regStatusDescription" class="reg-status-description"></span>
             </h3>
         </div>
         <div class="residence-content" id="residenceBlockDisplay"></div>
@@ -712,6 +754,7 @@
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
+                this.currentStatusMessageCode = null;
                 
                 this.jsonBlocks = {
                     'residenceAddress': `"residenceAddress": {
@@ -1155,6 +1198,7 @@
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
+                this.currentStatusMessageCode = null;
                 
                 const search = (currentObj) => {
                     if (!currentObj || typeof currentObj !== 'object') return;
@@ -1166,6 +1210,7 @@
                         if (this.residenceRegistrationBlock) {
                             this.currentRegStatus = this.residenceRegistrationBlock.regStatus;
                             this.currentUnregistrationReasonId = this.residenceRegistrationBlock.unregistrationReasonId;
+                            this.currentStatusMessageCode = this.residenceRegistrationBlock.statusMessageCode;
                         }
                         
                         this.displayResidencePanel();
@@ -1190,10 +1235,77 @@
                 }
             }
             
+            getStatusDescription(regStatus, statusMessageCode, reasonId) {
+                let description = '';
+                
+                switch (regStatus) {
+                    case 3:
+                        description = 'В процессе';
+                        break;
+                    case 4:
+                        description = 'На учете';
+                        break;
+                    case 6:
+                        description = 'Ошибка постановки на учет';
+                        // Добавляем расшифровку для statusMessageCode 6 или null
+                        if (statusMessageCode === 6 || statusMessageCode === null) {
+                            description += ' - Ошибка данных пользователя';
+                        }
+                        break;
+                    case 7:
+                        description = 'Снят с учета';
+                        if (reasonId !== null && reasonId !== undefined) {
+                            let reasonText = '';
+                            switch (reasonId) {
+                                case 1:
+                                    reasonText = 'Выезд за пределы РФ';
+                                    break;
+                                case 2:
+                                    reasonText = 'Отсутствие геоданных';
+                                    break;
+                                case 3:
+                                    reasonText = 'Постановка на учет в другом субъекте РФ';
+                                    break;
+                                case 4:
+                                    reasonText = 'Данные ЗАГС (смерть)';
+                                    break;
+                                case 5:
+                                    reasonText = 'Решение суда (безвестно отсутствующий)';
+                                    break;
+                                case 6:
+                                    reasonText = 'Не является участником эксперимента';
+                                    break;
+                                default:
+                                    reasonText = `Неизвестная причина (${reasonId})`;
+                            }
+                            description += `, причина: ${reasonText}`;
+                        }
+                        break;
+                    case 10:
+                        description = 'Не подлежит учету';
+                        // Добавляем расшифровку для различных statusMessageCode
+                        if (statusMessageCode === 8) {
+                            description += ' - Цель въезда не связана с работой';
+                        } else if (statusMessageCode === 9) {
+                            description += ' - Наличие вида на жительство или временное проживание';
+                        } else if (statusMessageCode === 10) {
+                            description += ' - Гражданство не распространяется в рамках эксперимента';
+                        } else if (statusMessageCode === null) {
+                            description += ' - На пользователя не распространяются новые правила учета через МП';
+                        }
+                        break;
+                    default:
+                        description = `Неизвестный статус (${regStatus})`;
+                }
+                
+                return description;
+            }
+            
             displayResidencePanel() {
                 const panel = document.getElementById('residencePanel');
                 const display = document.getElementById('residenceBlockDisplay');
                 const statusBadge = document.getElementById('regStatusBadge');
+                const statusDescription = document.getElementById('regStatusDescription');
                 const processBtn = document.getElementById('processMsoBtn');
                 const invalidBtn = document.getElementById('invalidMsoBtn');
                 
@@ -1210,6 +1322,9 @@
                     if (this.currentUnregistrationReasonId !== null) {
                         statusText += `, reasonId: ${this.currentUnregistrationReasonId}`;
                     }
+                    if (this.currentStatusMessageCode !== null) {
+                        statusText += `, msgCode: ${this.currentStatusMessageCode}`;
+                    }
                     statusBadge.textContent = statusText;
                     
                     statusBadge.className = 'reg-status';
@@ -1222,20 +1337,40 @@
                         statusBadge.classList.add('reg-status-4');
                     } else if (this.currentRegStatus === 7) {
                         statusBadge.classList.add('reg-status-7');
+                    } else if (this.currentRegStatus === 10) {
+                        statusBadge.classList.add('reg-status-10');
                     } else {
                         statusBadge.classList.add('reg-status-other');
                     }
+                    
+                    // Получаем расшифровку статуса
+                    const description = this.getStatusDescription(
+                        this.currentRegStatus, 
+                        this.currentStatusMessageCode, 
+                        this.currentUnregistrationReasonId
+                    );
+                    statusDescription.textContent = description;
+                    statusDescription.className = 'reg-status-description';
+                    statusDescription.classList.add(`status-${this.currentRegStatus}`);
+                    
                 } else {
                     statusBadge.textContent = 'regStatus: не найден';
                     statusBadge.className = 'reg-status reg-status-other';
+                    statusDescription.textContent = '';
+                    statusDescription.className = 'reg-status-description';
                 }
                 
+                // Условия для отображения кнопки "Исправить на 1 статус"
                 const shouldShowProcessBtn = 
                     this.currentRegStatus === 3 || 
                     (this.currentRegStatus === 7 && 
                      (this.currentUnregistrationReasonId === 1 || this.currentUnregistrationReasonId === 3));
                 
-                const shouldShowInvalidBtn = this.currentRegStatus === 6;
+                // Условия для отображения кнопки "Исправить на 5 статус"
+                const shouldShowInvalidBtn = 
+                    (this.currentRegStatus === 6 && (this.currentStatusMessageCode === 6 || this.currentStatusMessageCode === null)) ||
+                    (this.currentRegStatus === 10 && this.currentStatusMessageCode === 8) ||
+                    (this.currentRegStatus === 10 && this.currentStatusMessageCode === null);
                 
                 processBtn.style.display = shouldShowProcessBtn ? 'flex' : 'none';
                 invalidBtn.style.display = shouldShowInvalidBtn ? 'flex' : 'none';
@@ -1251,6 +1386,7 @@
                 this.residenceRegistrationBlock = null;
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
+                this.currentStatusMessageCode = null;
             }
             
             fixResidenceRegistration(newStatus) {
@@ -1272,6 +1408,7 @@
                             
                             const oldStatus = obj.residenceRegistration.regStatus;
                             const oldReasonId = obj.residenceRegistration.unregistrationReasonId;
+                            const oldMessageCode = obj.residenceRegistration.statusMessageCode;
                             
                             obj.residenceRegistration.regStatus = newStatus;
                             
@@ -1282,10 +1419,19 @@
                             this.residenceRegistrationBlock = obj.residenceRegistration;
                             this.currentRegStatus = newStatus;
                             this.currentUnregistrationReasonId = obj.residenceRegistration.unregistrationReasonId;
+                            this.currentStatusMessageCode = obj.residenceRegistration.statusMessageCode;
                             
-                            let message = `regStatus изменен с ${oldStatus} на ${newStatus === 1 ? '1 (Process МСО)' : '5 (Невалидные данные МСО)'}`;
-                            if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
-                                message += ', unregistrationReasonId изменен на null';
+                            let message = '';
+                            if (newStatus === 1) {
+                                message = `regStatus изменен с ${oldStatus} на 1 (Process МСО)`;
+                                if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
+                                    message += ', unregistrationReasonId изменен на null';
+                                }
+                            } else if (newStatus === 5) {
+                                message = `regStatus изменен с ${oldStatus} на 5 (Невалидные данные МСО)`;
+                                if (oldMessageCode !== undefined) {
+                                    message += `, statusMessageCode сохранен: ${oldMessageCode}`;
+                                }
                             }
                             
                             this.showNotification(message, false, 'info');
