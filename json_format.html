@@ -425,12 +425,14 @@
         }
         
         .editor-footer-btn[data-action="copy-input"],
-        .editor-footer-btn[data-action="copy-output"] {
+        .editor-footer-btn[data-action="copy-output"],
+        .editor-footer-btn[data-action="fix-json"] {
             background: var(--gradient-success);
         }
         
         .editor-footer-btn[data-action="copy-input"]:hover,
-        .editor-footer-btn[data-action="copy-output"]:hover {
+        .editor-footer-btn[data-action="copy-output"]:hover,
+        .editor-footer-btn[data-action="fix-json"]:hover {
             background: var(--gradient-success);
             filter: brightness(0.9);
             border-color: transparent;
@@ -636,6 +638,9 @@
             <div class="editor-footer">
                 <button class="editor-footer-btn" data-action="clear-all">
                     <i class="fas fa-trash"></i> Очистить
+                </button>
+                <button class="editor-footer-btn" data-action="fix-json">
+                    <i class="fas fa-wrench"></i> Исправить
                 </button>
                 <button class="editor-footer-btn" data-action="copy-input">
                     <i class="fas fa-copy"></i> Копировать
@@ -853,12 +858,221 @@
                     case 'copy-output':
                         this.copyToClipboard('outputEditor');
                         break;
+                    case 'fix-json':
+                        this.fixJsonStructure();
+                        break;
                     case 'copy-residence-address':
                         this.copyJsonBlock('residenceAddress');
                         break;
                     case 'copy-residence-registration':
                         this.copyJsonBlock('residenceRegistration');
                         break;
+                }
+            }
+            
+            fixJsonStructure() {
+                try {
+                    const input = document.getElementById('inputEditor').value;
+                    if (!input.trim()) {
+                        this.showNotification('Введите JSON для исправления', true);
+                        return;
+                    }
+                    
+                    const json = JSON.parse(input);
+                    const template = {
+                        "uuid": null,
+                        "graphNumber": null,
+                        "issueDate": null,
+                        "expirationDate": null,
+                        "surname": "",
+                        "name": "",
+                        "patronymic": "",
+                        "citizenship": "",
+                        "language": "ru",
+                        "galleryId": null,
+                        "timestamp": null,
+                        "receivedDate": null,
+                        "status": {
+                            "statusUser": null,
+                            "authEndDate": null,
+                            "authHash": null,
+                            "idIdn": null,
+                            "statusIdn": null,
+                            "statusIdnChangeDate": null,
+                            "dateIdn": null,
+                            "untilIdn": null,
+                            "dateResult": null
+                        },
+                        "residenceAddress": {
+                            "addressName": null,
+                            "flat": null,
+                            "city": null,
+                            "street": null,
+                            "house": null,
+                            "province": null,
+                            "point": {
+                                "lat": null,
+                                "lon": null
+                            },
+                            "timestamp": null,
+                            "changeDate": null,
+                            "vegetation": null,
+                            "district": null,
+                            "locality": null,
+                            "residenceStatus": null,
+                            "residenceMessageCode": null,
+                            "residenceUnblockedDate": null
+                        },
+                        "residenceRegistration": {
+                            "regStatus": 4,
+                            "unregistrationReasonId": null,
+                            "statusMessageCode": null,
+                            "receiveDate": "2025-11-13T23:03:13.335Z",
+                            "expirationDate": "2029-09-01T00:00:00",
+                            "changeDate": "2025-11-13T01:09:55Z"
+                        },
+                        "residenceReply": {
+                            "residenceRegistrationStatus": null,
+                            "regDate": null
+                        },
+                        "verification": {
+                            "number": null,
+                            "isVerified": null,
+                            "verificationDate": null,
+                            "timeoutDate": null,
+                            "changeDate": null
+                        },
+                        "rkl": {
+                            "isRkl": null,
+                            "receiveDate": null
+                        }
+                    };
+                    
+                    // Удаляем блоки foreignCards и mobile если они есть
+                    if (json.foreignCards) delete json.foreignCards;
+                    if (json.mobile) delete json.mobile;
+                    
+                    // Исправляем language если он пустой
+                    if (json.language === "") {
+                        json.language = "ru";
+                    }
+                    
+                    // Убираем galleryId если его нет в исходном
+                    if (!json.hasOwnProperty('galleryId')) {
+                        delete template.galleryId;
+                    }
+                    
+                    // Создаем исправленный JSON
+                    const fixedJson = {};
+                    
+                    // Копируем поля верхнего уровня из template
+                    Object.keys(template).forEach(key => {
+                        if (key === 'galleryId' && !json.hasOwnProperty('galleryId')) {
+                            return;
+                        }
+                        
+                        if (json.hasOwnProperty(key)) {
+                            if (typeof template[key] === 'object' && template[key] !== null && !Array.isArray(template[key])) {
+                                // Для вложенных объектов обрабатываем отдельно
+                                if (key === 'status' && json.status) {
+                                    fixedJson.status = {};
+                                    Object.keys(template.status).forEach(subKey => {
+                                        if (json.status.hasOwnProperty(subKey)) {
+                                            fixedJson.status[subKey] = json.status[subKey];
+                                        }
+                                    });
+                                } else if (key === 'residenceAddress' && json.residenceAddress) {
+                                    fixedJson.residenceAddress = {};
+                                    Object.keys(template.residenceAddress).forEach(subKey => {
+                                        if (json.residenceAddress.hasOwnProperty(subKey)) {
+                                            fixedJson.residenceAddress[subKey] = json.residenceAddress[subKey];
+                                        }
+                                    });
+                                    // Добавляем regDate только если он есть
+                                    if (json.residenceAddress.regDate !== undefined) {
+                                        fixedJson.residenceAddress.regDate = json.residenceAddress.regDate;
+                                    }
+                                } else if (key === 'residenceRegistration' && json.residenceRegistration) {
+                                    fixedJson.residenceRegistration = {
+                                        "regStatus": 4,
+                                        "unregistrationReasonId": null,
+                                        "statusMessageCode": null,
+                                        "receiveDate": "2025-11-13T23:03:13.335Z",
+                                        "expirationDate": "2029-09-01T00:00:00",
+                                        "changeDate": "2025-11-13T01:09:55Z"
+                                    };
+                                    
+                                    // Копируем существующие значения, но только те, которые есть в template
+                                    Object.keys(template.residenceRegistration).forEach(subKey => {
+                                        if (json.residenceRegistration[subKey] !== undefined) {
+                                            fixedJson.residenceRegistration[subKey] = json.residenceRegistration[subKey];
+                                        }
+                                    });
+                                } else if (key === 'residenceReply' && json.residenceReply) {
+                                    fixedJson.residenceReply = {};
+                                    Object.keys(template.residenceReply).forEach(subKey => {
+                                        if (json.residenceReply.hasOwnProperty(subKey)) {
+                                            fixedJson.residenceReply[subKey] = json.residenceReply[subKey];
+                                        }
+                                    });
+                                } else if (key === 'verification' && json.verification) {
+                                    fixedJson.verification = {};
+                                    Object.keys(template.verification).forEach(subKey => {
+                                        if (json.verification.hasOwnProperty(subKey)) {
+                                            fixedJson.verification[subKey] = json.verification[subKey];
+                                        }
+                                    });
+                                } else if (key === 'rkl') {
+                                    // Обрабатываем блок rkl согласно новым требованиям
+                                    // Если есть isRkl и receiveDate в residenceRegistration, создаем блок rkl
+                                    if (json.residenceRegistration && 
+                                        json.residenceRegistration.isRkl !== undefined && 
+                                        json.residenceRegistration.receiveDate !== undefined) {
+                                        
+                                        fixedJson.rkl = {
+                                            "isRkl": json.residenceRegistration.isRkl,
+                                            "receiveDate": json.residenceRegistration.receiveDate
+                                        };
+                                    } else if (json.rkl) {
+                                        // Если исходный JSON уже содержит блок rkl, копируем его
+                                        fixedJson.rkl = {};
+                                        Object.keys(template.rkl).forEach(subKey => {
+                                            if (json.rkl.hasOwnProperty(subKey)) {
+                                                fixedJson.rkl[subKey] = json.rkl[subKey];
+                                            }
+                                        });
+                                    } else {
+                                        // Иначе оставляем значения по умолчанию
+                                        fixedJson.rkl = { ...template.rkl };
+                                    }
+                                } else {
+                                    fixedJson[key] = json[key];
+                                }
+                            } else {
+                                fixedJson[key] = json[key];
+                            }
+                        } else {
+                            fixedJson[key] = template[key];
+                        }
+                    });
+                    
+                    // Копируем остальные поля из исходного JSON (которые не в template)
+                    Object.keys(json).forEach(key => {
+                        if (!template.hasOwnProperty(key) && key !== 'foreignCards' && key !== 'mobile') {
+                            fixedJson[key] = json[key];
+                        }
+                    });
+                    
+                    // Форматируем и обновляем редактор
+                    const formatted = JSON.stringify(fixedJson, null, 2);
+                    document.getElementById('inputEditor').value = formatted;
+                    
+                    // Обновляем состояние
+                    this.processInput();
+                    this.showNotification('JSON исправлен согласно эталонной структуре');
+                    
+                } catch (error) {
+                    this.showNotification(`Ошибка при исправлении JSON: ${error.message}`, true);
                 }
             }
             
