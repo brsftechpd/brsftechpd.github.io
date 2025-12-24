@@ -1081,11 +1081,7 @@
             const savedCategories = localStorage.getItem('support-kb-categories');
             const savedTemplates = localStorage.getItem('support-kb-templates');
 
-            if (savedCategories && savedTemplates) {
-                // Данные есть в localStorage, загружаем их
-                updateLocalDataFromServer();
-                console.log('Данные обновлены');
-            } else {
+            if (!savedCategories && !savedTemplates) {
                 // Данных нет в localStorage, загружаем из data.js
                 console.log('Данных нет в localStorage, загружаем из data.js');
                 loadDataFromServer();
