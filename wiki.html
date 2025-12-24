@@ -1078,21 +1078,8 @@
 
         // Загрузка начальных данных
         function loadInitialData() {
-            const savedCategories = localStorage.getItem('support-kb-categories');
-            const savedTemplates = localStorage.getItem('support-kb-templates');
-
-            if (savedCategories && savedTemplates) {
-                // Данные есть в localStorage, загружаем их
-                categories = JSON.parse(savedCategories);
-                templates = JSON.parse(savedTemplates);
-                console.log('Данные загружены из localStorage');
-            } else {
-                // Данных нет в localStorage, загружаем из data.js
-                console.log('Данных нет в localStorage, загружаем из data.js');
-                loadDataFromServer();
-                // После загрузки данных с сервера функция сама вызовет инициализацию
-                return;
-            }
+            // Всегда загружаем данные с сервера
+            loadDataFromServer();
 
             // Загружаем состояние боковой панели
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
@@ -1164,7 +1151,7 @@
                 });
         }
 
-        // Проверка обновлений данных - вызывается каждые 10 секунд
+        // Проверка обновлений данных - вызывается каждые 10 минут
         function checkForUpdates() {
             console.log('Проверка обновлений...');
             
