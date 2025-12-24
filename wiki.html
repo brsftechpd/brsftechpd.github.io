@@ -1564,7 +1564,7 @@
 
             // Кнопка "Домой"
             document.getElementById('homeBtn').addEventListener('click', function() {
-                window.location.href = '../';
+                window.location.href = '/';
             });
 
             // Копирование ответа
@@ -1581,25 +1581,6 @@
             // Переключатель функций
             document.getElementById('copyOnClickToggle').addEventListener('change', updateCopyOnClick);
 
-            // Обработка клавиш
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    e.preventDefault();
-                    document.getElementById('searchInput').focus();
-                }
-                
-                // Ctrl+Shift+T для переключения темы
-                if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-                
-                // Ctrl+H для кнопки "Домой"
-                if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
-                    e.preventDefault();
-                    document.getElementById('homeBtn').click();
-                }
-            });
         }
 
         // Обновление локальных данных из серверных данных

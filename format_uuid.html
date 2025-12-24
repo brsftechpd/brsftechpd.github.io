@@ -8,17 +8,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-primary: #0f172a;
+      /* Основные переменные для темной темы */
+      --bg-primary: #0f1629;
       --bg-secondary: #1e293b;
       --bg-tertiary: #334155;
       --bg-hover: #475569;
-      --text-primary: #f8fafc;
+      --text-primary: #f3f4f9;
       --text-white: #ffffff;
-      --text-secondary: #e2e8f0;
+      --text-secondary: #c7d2fe;
       --text-muted: #94a3b8;
       --text-placeholder: #64748b;
-      --border-color: #334155;
+      --border-color: #2a3655;
       --border-focus: #475569;
+      --border-light: rgba(255, 255, 255, 0.05);
       --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
       --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
       --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -48,6 +50,7 @@
       --transition-normal: 0.4s;
       --transition-slow: 0.5s;
       --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      --header-height: 60px;
     }
     
     * {
@@ -60,12 +63,161 @@
     body {
       background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: var(--spacing-md);
       color: var(--text-secondary);
       line-height: 1.5;
+      transition: var(--transition-normal);
+    }
+    
+    .light-theme {
+      /* Переменные для светлой темы */
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --bg-hover: #e2e8f0;
+      --text-primary: #1e293b;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-placeholder: #94a3b8;
+      --border-color: #cbd5e1;
+      --border-focus: #94a3b8;
+      --border-light: rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    body.light-theme .result,
+    body.light-theme .utc-result {
+      background: #f8fafc;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+    }
+    
+    body.light-theme .result:hover,
+    body.light-theme .utc-result:hover {
+      background: #f1f5f9;
+    }
+    
+    /* Шапка */
+    .main-header {
+      height: var(--header-height);
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .header-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    /* Кнопка домой */
+    .home-btn {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    
+    .home-btn:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      transform: translateY(-2px);
+    }
+    
+    .home-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Название приложения */
+    .app-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .app-title i {
+      color: #4f46e5;
+      font-size: 20px;
+    }
+    
+    /* Кнопка переключения темы в шапке */
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #4f46e5;
+    }
+    
+    .light-theme .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    .theme-toggle .theme-icon {
+      font-size: 16px;
+    }
+    
+    .theme-toggle .sun-icon {
+      display: none;
+    }
+    
+    .theme-toggle .moon-icon {
+      display: block;
+    }
+    
+    .light-theme .theme-toggle .sun-icon {
+      display: block;
+      color: #f59e0b;
+    }
+    
+    .light-theme .theme-toggle .moon-icon {
+      display: none;
+    }
+    
+    .content-wrapper {
+      padding: 20px;
+      padding-top: 10px;
     }
     
     .main-container {
@@ -73,6 +225,7 @@
       gap: var(--spacing-lg);
       max-width: 1000px;
       width: 100%;
+      margin: 0 auto;
     }
     
     .container {
@@ -226,24 +379,9 @@
       font-style: italic;
     }
     
-    h1 {
-      color: var(--text-primary);
-      text-align: center;
-      margin-bottom: var(--spacing-xs);
-      font-weight: 700;
-      font-size: 1.75rem;
-    }
-    
-    .description {
-      text-align: center;
-      color: var(--text-muted);
-      margin-bottom: var(--spacing-lg);
-      font-size: 0.875rem;
-    }
-    
     .notification-container {
       position: fixed;
-      top: 20px;
+      top: 80px;
       right: 20px;
       z-index: 1000;
       display: flex;
@@ -1050,35 +1188,6 @@
       transform: translateY(-1px);
     }
     
-    .theme-switcher {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 5px;
-      display: flex;
-      gap: 5px;
-      z-index: 10;
-    }
-    
-    .theme-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      border-radius: 15px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      transition: all var(--transition-fast);
-    }
-    
-    .theme-btn.active {
-      background: var(--gradient-primary);
-      color: white;
-    }
-    
     .history-group {
       margin-bottom: var(--spacing-md);
     }
@@ -1150,34 +1259,6 @@
       left: 100%;
     }
     
-    body.light-theme {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #f1f5f9;
-      --bg-hover: #e2e8f0;
-      --text-primary: #1e293b;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --text-placeholder: #94a3b8;
-      --border-color: #cbd5e1;
-      --border-focus: #94a3b8;
-      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
-      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    body.light-theme .result,
-    body.light-theme .utc-result {
-      background: #f8fafc;
-      color: #1e293b;
-      border: 1px solid #e2e8f0;
-    }
-    
-    body.light-theme .result:hover,
-    body.light-theme .utc-result:hover {
-      background: #f1f5f9;
-    }
-    
     @media (max-width: 900px) {
       .main-container {
         flex-direction: column;
@@ -1193,8 +1274,12 @@
       }
       .notification-container {
         right: 10px;
-        top: 10px;
+        top: 70px;
         max-width: calc(100% - 20px);
+      }
+      .content-wrapper {
+        padding: 15px;
+        padding-top: calc(var(--header-height) + 15px);
       }
     }
     
@@ -1267,7 +1352,7 @@
       }
       .notification-container {
         width: calc(100% - 20px);
-        top: 10px;
+        top: 70px;
       }
       .result,
       .utc-result {
@@ -1292,13 +1377,6 @@
         width: 100%;
         min-width: auto;
       }
-      .theme-switcher {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin-bottom: var(--spacing-md);
-        align-self: center;
-      }
       .quick-templates {
         flex-direction: column;
       }
@@ -1316,6 +1394,15 @@
       }
       .mso-status-btn {
         min-height: 50px;
+      }
+      .main-header {
+        padding: 0 15px;
+      }
+      .app-title {
+        font-size: 16px;
+      }
+      .app-title i {
+        font-size: 18px;
       }
     }
     
@@ -1337,168 +1424,180 @@
 </head>
 
 <body>
-  <div class="main-container">
-    <div class="container">
-      <div class="theme-switcher" id="themeSwitcher">
-        <button class="theme-btn active" data-theme="dark">
-          <i class="fas fa-moon"></i>
-        </button>
-        <button class="theme-btn" data-theme="light">
-          <i class="fas fa-sun"></i>
-        </button>
-      </div>
-
-      <h1>Форма для работы с UUID</h1>
-      <p class="description">Введите число длиной 23 символа для форматирования</p>
-
-      <div class="quick-templates" id="quickTemplates">
-        <!-- Шаблоны будут добавляться динамически -->
-      </div>
-
-      <div class="toggle-container" id="toggleContainer">
-        <div class="toggle-option active" data-value="profile">
-          <i class="fas fa-user toggle-icon"></i>
-          <span>Профиль</span>
-        </div>
-        <div class="toggle-option" data-value="photo">
-          <i class="fas fa-image toggle-icon"></i>
-          <span>Фото</span>
-        </div>
-        <div class="toggle-slider"></div>
-      </div>
-
-      <div class="input-with-button">
-        <div class="input-group">
-          <input type="tel" id="numberInput" placeholder="Введите UUID" maxlength="23" pattern="[0-9]*" inputmode="numeric">
-          <div class="input-icon">
-            <i class="fas fa-hashtag"></i>
-          </div>
-        </div>
-        <button class="format-btn-compact" id="formatBtn" title="Форматировать">
-          <i class="fas fa-wand-magic-sparkles"></i>
-        </button>
-      </div>
-
-      <div class="result-container" id="resultContainer">
-        <div class="result-label">Отформатированный результат:</div>
-        <div class="result-wrapper">
-          <div class="result" id="formattedResult">Каталог для s3</div>
-          <button class="copy-btn" id="copyBtn" title="Копировать">
-            <i class="fas fa-copy"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="button-group">
-        <div class="group-title">Сервисы мобильного приложения</div>
-        <div class="check-buttons" id="mobileAppButtons">
-          <!-- Кнопки будут добавляться автоматически из конфигурации -->
-        </div>
-      </div>
-
-      <div class="button-group">
-        <div class="group-title">Запросы в ММЦ</div>
-        <div class="additional-buttons" id="mmcButtons">
-          <!-- Будут добавляться динамически -->
-        </div>
-      </div>
-
-      <!-- Новый раздел: Статус постановки на учет -->
-      <div class="mso-status-section">
-        <div class="mso-status-title">Статус постановки на учет</div>
-        <button class="mso-status-btn" id="checkMsoStatusBtn">
-          <i class="fas fa-search"></i> Проверить статус МСО
-        </button>
-      </div>
-
-      <div class="passport-section">
-        <div class="passport-title">Проверка паспорта</div>
-        <div class="passport-input-group">
-          <div class="input-group">
-            <input type="text" id="passportInput" placeholder="Введите номер паспорта">
-            <div class="input-icon">
-              <i class="fas fa-passport"></i>
-            </div>
-          </div>
-        </div>
-        <div class="passport-buttons">
-          <button class="passport-btn passport-registered-btn" id="passportRegisteredBtn" title="Проверить регистрацию">
-            <i class="fas fa-check-circle"></i> Зарегистрирован
-          </button>
-          <button class="passport-btn passport-profile-btn" id="passportProfileBtn" title="Найти профиль по паспорту">
-            <i class="fas fa-search"></i> Найти профиль
-          </button>
-          <button class="passport-btn passport-missing-btn" id="passportMissingBtn" title="Проверить отсутствие">
-            <i class="fas fa-times-circle"></i> Отсутствует
-          </button>
-        </div>
-      </div>
-
-      <div class="kig-search-section">
-        <div class="kig-title">Поиск UUID по КИГ</div>
-        <div class="kig-input-with-button">
-          <div class="input-group">
-            <input type="text" id="kigInput" placeholder="Введите номер КИГ" maxlength="9">
-            <div class="input-icon">
-              <i class="fas fa-id-card"></i>
-            </div>
-          </div>
-          <button class="kig-search-btn" id="searchKigBtn" title="Найти UUID">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="utc-time-section">
-        <div class="utc-title">Текущее время в формате UTC</div>
-        <button class="utc-btn" id="utcTimeBtn">
-          <i class="fas fa-clock"></i> Получить UTC время
-        </button>
-
-        <div class="utc-input-group">
-          <div class="format-label">С миллисекундами:</div>
-          <div class="utc-result-wrapper">
-            <div class="utc-result" id="utcTimeResult">Время в UTC формате</div>
-            <button class="utc-copy-btn" id="utcCopyBtn" title="Копировать">
-              <i class="fas fa-copy"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="utc-input-group">
-          <div class="format-label">Без миллисекунд:</div>
-          <div class="utc-result-wrapper">
-            <div class="utc-result" id="utcTimeResultSimple">Время в UTC формате</div>
-            <button class="utc-copy-btn" id="utcCopyBtnSimple" title="Копировать">
-              <i class="fas fa-copy"></i>
-            </button>
-          </div>
-        </div>
+  <header class="main-header">
+    <div class="header-left">
+      <button class="home-btn" id="homeBtn" title="Главная страница">
+        <i class="fas fa-home"></i>
+      </button>
+    </div>
+    
+    <div class="header-center">
+      <div class="app-title">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span>Форма для работы с UUID</span>
       </div>
     </div>
+    
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+        <i class="fas fa-moon theme-icon moon-icon"></i>
+        <i class="fas fa-sun theme-icon sun-icon"></i>
+      </button>
+    </div>
+  </header>
 
-    <div class="history-container">
-      <div class="history-title">
-        <span>История UUID</span>
-        <span id="historyCount">0/20</span>
-      </div>
+  <div class="content-wrapper">
+    <div class="main-container">
+      <div class="container">
+        <div class="quick-templates" id="quickTemplates">
+          <!-- Шаблоны будут добавляться динамически -->
+        </div>
 
-      <div class="history-search">
-        <div class="input-group">
-          <input type="text" id="historySearch" placeholder="Поиск в истории...">
-          <div class="input-icon">
-            <i class="fas fa-search"></i>
+        <div class="toggle-container" id="toggleContainer">
+          <div class="toggle-option active" data-value="profile">
+            <i class="fas fa-user toggle-icon"></i>
+            <span>Профиль</span>
+          </div>
+          <div class="toggle-option" data-value="photo">
+            <i class="fas fa-image toggle-icon"></i>
+            <span>Фото</span>
+          </div>
+          <div class="toggle-slider"></div>
+        </div>
+
+        <div class="input-with-button">
+          <div class="input-group">
+            <input type="tel" id="numberInput" placeholder="Введите UUID" maxlength="23" pattern="[0-9]*" inputmode="numeric">
+            <div class="input-icon">
+              <i class="fas fa-hashtag"></i>
+            </div>
+          </div>
+          <button class="format-btn-compact" id="formatBtn" title="Форматировать">
+            <i class="fas fa-wand-magic-sparkles"></i>
+          </button>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+          <div class="result-label">Отформатированный результат:</div>
+          <div class="result-wrapper">
+            <div class="result" id="formattedResult">Каталог для s3</div>
+            <button class="copy-btn" id="copyBtn" title="Копировать">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <div class="group-title">Сервисы мобильного приложения</div>
+          <div class="check-buttons" id="mobileAppButtons">
+            <!-- Кнопки будут добавляться автоматически из конфигурации -->
+          </div>
+        </div>
+
+        <div class="button-group">
+          <div class="group-title">Запросы в ММЦ</div>
+          <div class="additional-buttons" id="mmcButtons">
+            <!-- Будут добавляться динамически -->
+          </div>
+        </div>
+
+        <!-- Новый раздел: Статус постановки на учет -->
+        <div class="mso-status-section">
+          <div class="mso-status-title">Статус постановки на учет</div>
+          <button class="mso-status-btn" id="checkMsoStatusBtn">
+            <i class="fas fa-search"></i> Проверить статус МСО
+          </button>
+        </div>
+
+        <div class="passport-section">
+          <div class="passport-title">Проверка паспорта</div>
+          <div class="passport-input-group">
+            <div class="input-group">
+              <input type="text" id="passportInput" placeholder="Введите номер паспорта">
+              <div class="input-icon">
+                <i class="fas fa-passport"></i>
+              </div>
+            </div>
+          </div>
+          <div class="passport-buttons">
+            <button class="passport-btn passport-registered-btn" id="passportRegisteredBtn" title="Проверить регистрацию">
+              <i class="fas fa-check-circle"></i> Зарегистрирован
+            </button>
+            <button class="passport-btn passport-profile-btn" id="passportProfileBtn" title="Найти профиль по паспорту">
+              <i class="fas fa-search"></i> Найти профиль
+            </button>
+            <button class="passport-btn passport-missing-btn" id="passportMissingBtn" title="Проверить отсутствие">
+              <i class="fas fa-times-circle"></i> Отсутствует
+            </button>
+          </div>
+        </div>
+
+        <div class="kig-search-section">
+          <div class="kig-title">Поиск UUID по КИГ</div>
+          <div class="kig-input-with-button">
+            <div class="input-group">
+              <input type="text" id="kigInput" placeholder="Введите номер КИГ" maxlength="9">
+              <div class="input-icon">
+                <i class="fas fa-id-card"></i>
+              </div>
+            </div>
+            <button class="kig-search-btn" id="searchKigBtn" title="Найти UUID">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="utc-time-section">
+          <div class="utc-title">Текущее время в формате UTC</div>
+          <button class="utc-btn" id="utcTimeBtn">
+            <i class="fas fa-clock"></i> Получить UTC время
+          </button>
+
+          <div class="utc-input-group">
+            <div class="format-label">С миллисекундами:</div>
+            <div class="utc-result-wrapper">
+              <div class="utc-result" id="utcTimeResult">Время в UTC формате</div>
+              <button class="utc-copy-btn" id="utcCopyBtn" title="Копировать">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="utc-input-group">
+            <div class="format-label">Без миллисекунд:</div>
+            <div class="utc-result-wrapper">
+              <div class="utc-result" id="utcTimeResultSimple">Время в UTC формате</div>
+              <button class="utc-copy-btn" id="utcCopyBtnSimple" title="Копировать">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <ul class="history-list" id="historyList">
-        <li class="history-empty">История пуста</li>
-      </ul>
+      <div class="history-container">
+        <div class="history-title">
+          <span>История UUID</span>
+          <span id="historyCount">0/20</span>
+        </div>
 
-      <button class="clear-history-btn" id="clearHistoryBtn">
-        <i class="fas fa-trash"></i> Очистить историю
-      </button>
+        <div class="history-search">
+          <div class="input-group">
+            <input type="text" id="historySearch" placeholder="Поиск в истории...">
+            <div class="input-icon">
+              <i class="fas fa-search"></i>
+            </div>
+          </div>
+        </div>
+
+        <ul class="history-list" id="historyList">
+          <li class="history-empty">История пуста</li>
+        </ul>
+
+        <button class="clear-history-btn" id="clearHistoryBtn">
+          <i class="fas fa-trash"></i> Очистить историю
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1610,6 +1709,7 @@
           msoStatus: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply),type:phrase),query:(match_phrase:(http.request.uri:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22uuid%22:%22{userId}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22uuid%22:%22{userId}%22')))),query:(language:kuery,query:''))"
         }
       };
+      
       const elements = {
         numberInput: document.getElementById('numberInput'),
         formatBtn: document.getElementById('formatBtn'),
@@ -1635,16 +1735,19 @@
         kigInput: document.getElementById('kigInput'),
         searchKigBtn: document.getElementById('searchKigBtn'),
         quickTemplates: document.getElementById('quickTemplates'),
-        themeSwitcher: document.getElementById('themeSwitcher'),
         historySearch: document.getElementById('historySearch'),
-        checkMsoStatusBtn: document.getElementById('checkMsoStatusBtn')
+        checkMsoStatusBtn: document.getElementById('checkMsoStatusBtn'),
+        homeBtn: document.getElementById('homeBtn'),
+        themeToggleBtn: document.getElementById('themeToggleBtn')
       };
+      
       const state = {
         selectedType: 'profile',
         messageTimeout: null,
         history: [],
         currentTheme: 'dark'
       };
+      
       const utils = {
         cleanNumber: (number) => number.replace(/\D/g, ''),
         isValidUserId: (userId) => utils.cleanNumber(userId).length === CONFIG.maxInputLength,
@@ -1792,6 +1895,7 @@
           };
         }
       };
+      
       const formatter = {
         formatNumber: (number, type) => {
           const cleanNumber = utils.cleanNumber(number);
@@ -1803,6 +1907,7 @@
           return prefix + formattedNumber;
         }
       };
+      
       const timeUtils = {
         getCurrentUTCTimeWithMs: () => {
           const now = new Date();
@@ -1827,6 +1932,7 @@
           return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
         }
       };
+      
       const ui = {
         showNotification: (text, isError = false) => {
           if (state.messageTimeout) {
@@ -1910,6 +2016,7 @@
           });
         }
       };
+      
       const historyUI = {
         updateHistoryDisplay: () => {
           elements.historyList.innerHTML = '';
@@ -2007,25 +2114,34 @@
           }, 300));
         }
       };
+      
       const themeUI = {
         applyTheme: (theme) => {
           state.currentTheme = theme;
-          document.body.className = theme === 'light' ? 'light-theme' : '';
-          document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
-          });
+          if (theme === 'light') {
+            document.body.classList.add('light-theme');
+          } else {
+            document.body.classList.remove('light-theme');
+          }
+          utils.saveTheme(theme);
         },
-        initThemeSwitcher: () => {
-          document.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-              const theme = this.getAttribute('data-theme');
-              themeUI.applyTheme(theme);
-              utils.saveTheme(theme);
-            });
-          });
+        toggleTheme: () => {
+          const newTheme = state.currentTheme === 'dark' ? 'light' : 'dark';
+          themeUI.applyTheme(newTheme);
         }
       };
+      
       const setupEventListeners = () => {
+        // Кнопка "Домой"
+        elements.homeBtn.addEventListener('click', function() {
+          window.location.href = '/';
+        });
+        
+        // Переключение темы
+        elements.themeToggleBtn.addEventListener('click', function() {
+          themeUI.toggleTheme();
+        });
+        
         elements.formatBtn.addEventListener('click', () => {
           const inputValue = elements.numberInput.value.trim();
           try {
@@ -2052,7 +2168,6 @@
           window.open(url, '_blank');
         });
         
-        // НОВЫЙ ОБРАБОТЧИК ДЛЯ КНОПКИ "НАЙТИ ПРОФИЛЬ"
         elements.passportProfileBtn.addEventListener('click', () => {
           const passportValue = elements.passportInput.value.trim();
           if (!passportValue) {
@@ -2284,11 +2399,10 @@
         setupEventListeners();
         ui.initCheckButtons();
         ui.initQuickTemplates();
-        themeUI.initThemeSwitcher();
-        utils.loadTheme();
         historyUI.setupSearch();
         utils.loadHistory();
         historyUI.updateHistoryDisplay();
+        utils.loadTheme();
       };
       
       init();

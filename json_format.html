@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* Основные переменные для темной темы */
             --bg-primary: #0f172a;
             --bg-secondary: #1e293b;
             --bg-tertiary: #334155;
@@ -39,6 +40,36 @@
             --spacing-lg: 20px;
             --spacing-xl: 30px;
             --transition-fast: 0.3s;
+            
+            /* Переменные для header */
+            --header-height: 60px;
+            --bg-accent: #4f46e5;
+            --border-light: rgba(255, 255, 255, 0.05);
+        }
+        
+        .light-theme {
+            /* Переменные для светлой темы */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #e2e8f0;
+            --bg-tertiary: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-white: #ffffff;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --border-focus: #94a3b8;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --bg-accent: #4f46e5;
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            
+            /* Градиенты для светлой темы - делаем менее насыщенными */
+            --gradient-primary: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+            --gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            --gradient-waiting: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --gradient-info: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
         }
         
         * {
@@ -52,31 +83,130 @@
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
             padding: var(--spacing-md);
+            padding-top: calc(var(--header-height) + var(--spacing-md));
             color: var(--text-secondary);
             line-height: 1.5;
+            transition: background-color var(--transition-fast), color var(--transition-fast);
         }
         
-        .app-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-            padding-top: var(--spacing-lg);
+        /* Шапка */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
         }
         
-        .app-header h1 {
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        /* Кнопка домой */
+        .home-btn {
+            background: var(--bg-accent);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+        
+        .home-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+        .home-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Название приложения */
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
             color: var(--text-primary);
-            font-size: 2rem;
-            margin-bottom: var(--spacing-sm);
-            background: var(--gradient-primary);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .app-header p {
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 0.95rem;
+        .app-title i {
+            color: var(--bg-accent);
+            font-size: 20px;
+        }
+        
+        /* Кнопка переключения темы в шапке */
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--bg-accent);
+        }
+        
+        .light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .theme-toggle .theme-icon {
+            font-size: 16px;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+        }
+        
+        .light-theme .theme-toggle .sun-icon {
+            display: block;
+            color: #f59e0b;
+        }
+        
+        .light-theme .theme-toggle .moon-icon {
+            display: none;
         }
         
         .json-blocks-panel {
@@ -145,6 +275,14 @@
                 flex-direction: column;
                 align-items: center;
             }
+            
+            .main-header {
+                padding: 0 12px;
+            }
+            
+            .app-title span {
+                font-size: 16px;
+            }
         }
         
         .editor-section {
@@ -157,6 +295,7 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             min-width: 200px;
+            transition: all var(--transition-fast);
         }
         
         .splitter {
@@ -320,6 +459,7 @@
             position: relative;
             overflow: hidden;
             background: var(--bg-tertiary);
+            transition: all var(--transition-fast);
         }
         
         .line-numbers {
@@ -337,6 +477,7 @@
             user-select: none;
             flex-shrink: 0;
             white-space: pre;
+            transition: all var(--transition-fast);
         }
         
         .line-numbers::-webkit-scrollbar {
@@ -356,10 +497,11 @@
             resize: none;
             outline: none;
             overflow: auto;
+            transition: all var(--transition-fast);
         }
         
         .editor-content::placeholder {
-            color: #64748b;
+            color: var(--text-muted);
             opacity: 0.7;
         }
         
@@ -398,6 +540,7 @@
             gap: var(--spacing-sm);
             justify-content: flex-end;
             flex-wrap: wrap;
+            transition: all var(--transition-fast);
         }
         
         .editor-footer-btn {
@@ -440,7 +583,7 @@
         
         .notification {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--border-radius);
@@ -485,6 +628,7 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             display: none;
+            transition: all var(--transition-fast);
         }
         
         .residence-header {
@@ -516,6 +660,7 @@
             overflow-x: auto;
             overflow-y: auto;
             max-height: 300px;
+            transition: all var(--transition-fast);
         }
         
         .residence-content::-webkit-scrollbar {
@@ -543,6 +688,7 @@
             justify-content: center;
             flex-wrap: wrap;
             border-top: 1px solid var(--border-color);
+            transition: all var(--transition-fast);
         }
         
         .residence-btn {
@@ -613,7 +759,7 @@
         }
         
         .reg-status.reg-status-other {
-            background: #334155;
+            background: var(--bg-tertiary);
         }
         
         .reg-status-description {
@@ -626,6 +772,7 @@
             color: var(--text-secondary);
             border-left: 3px solid var(--color-primary);
             max-width: 100%;
+            transition: all var(--transition-fast);
         }
         
         .reg-status-description.status-1 {
@@ -662,13 +809,62 @@
             border-left-color: var(--color-warning);
             background: rgba(245, 158, 11, 0.15);
         }
+        
+        .light-theme .reg-status-description {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .light-theme .reg-status-description.status-1 {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-3 {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-4 {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-5 {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-6 {
+            background: rgba(245, 158, 11, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-7 {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .light-theme .reg-status-description.status-10 {
+            background: rgba(245, 158, 11, 0.1);
+        }
     </style>
 </head>
 <body>
-    <div class="app-header">
-        <h1>JSON Editor</h1>
-        <p>Редактор для работы с JSON файлом профиля S3</p>
-    </div>
+    <header class="main-header">
+        <div class="header-left">
+            <button class="home-btn" id="homeBtn" title="Главная страница">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+        
+        <div class="header-center">
+            <div class="app-title">
+                <i class="fas fa-code"></i>
+                <span>JSON Editor</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+                <i class="fas fa-moon theme-icon moon-icon"></i>
+                <i class="fas fa-sun theme-icon sun-icon"></i>
+            </button>
+        </div>
+    </header>
     
     <div class="json-blocks-panel">
         <button class="json-block-btn" data-action="copy-residence-address">
@@ -1646,8 +1842,40 @@
             }
         }
         
+        // Функция переключения темы
+        function toggleTheme() {
+            const isLightTheme = document.body.classList.contains('light-theme');
+            
+            if (isLightTheme) {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             window.processor = new JSONProcessor();
+            
+            // Кнопка "Домой" - переход на главную страницу
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = '/';
+            });
+            
+            // Переключение темы
+            document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+            
+            // Загрузка предпочтения темы
+            function loadThemePreference() {
+                const savedTheme = localStorage.getItem('theme');
+                
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                }
+            }
+            
+            loadThemePreference();
         });
     </script>
 </body>
