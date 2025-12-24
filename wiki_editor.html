@@ -1210,10 +1210,16 @@
                     <span>Экспорт</span>
                 </button>
             </div>
-            <button class="btn btn-danger btn-sm" id="clearDataBtn">
-                <i class="fas fa-trash-alt"></i>
-                <span>Удалить данные</span>
-            </button>
+            <div class="data-actions-row" style="margin-top: 8px;">
+                <button class="btn btn-outline btn-sm" id="loadDefaultBtn">
+                    <i class="fas fa-redo"></i>
+                    <span>Загрузить начальные данные</span>
+                </button>
+                <button class="btn btn-danger btn-sm" id="clearDataBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Удалить данные</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1463,10 +1469,8 @@
     <script>
         // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
-            // Используем функцию из data.js для инициализации данных
-            const data = initAppDataEditor();
-            categories = data.categories;
-            templates = data.templates;
+            // Загружаем данные из localStorage или из data.js
+            loadAppData();
 
             initApp();
             initEditor();
@@ -1474,7 +1478,7 @@
             loadData();
         });
 
-        // Переменные приложения (без тестовых данных)
+        // Переменные приложения
         let categories = [];
         let templates = [];
         let currentCategoryId = 'all';
@@ -1485,7 +1489,29 @@
         let pendingAction = null;
         let contextMenuCategoryId = null;
 
-        // Инициализация приложения (без тестовых данных)
+        // Загрузка данных приложения
+        function loadAppData() {
+            // Проверяем, есть ли сохраненные данные в localStorage
+            const savedCategories = localStorage.getItem('support-kb-categories');
+            const savedTemplates = localStorage.getItem('support-kb-templates');
+
+            if (savedCategories && savedTemplates) {
+                // Если есть сохраненные данные, используем их
+                categories = JSON.parse(savedCategories);
+                templates = JSON.parse(savedTemplates);
+            } else {
+                // Если нет сохраненных данных, используем данные из data.js
+                const data = initAppDataEditor();
+                categories = data.categories || [];
+                templates = data.templates || [];
+
+                // Сохраняем начальные данные в localStorage
+                saveCategories();
+                saveTemplates();
+            }
+        }
+
+        // Инициализация приложения
         function initApp() {
             // Загрузка данных из localStorage
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
@@ -1580,6 +1606,7 @@
             document.getElementById('importBtn').addEventListener('click', importData);
             document.getElementById('exportBtn').addEventListener('click', exportData);
             document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
+            document.getElementById('loadDefaultBtn').addEventListener('click', loadDefaultData);
             document.getElementById('importFileInput').addEventListener('change', handleFileImport);
 
             // Поиск
@@ -1626,7 +1653,7 @@
             // Закрытие контекстного меню при клике вне его
             document.addEventListener('click', function(e) {
                 const contextMenu = document.getElementById('categoryContextMenu');
-                if (!contextMenu.contains(e.target) && contextMenu.classList.contains('active')) {
+                if (contextMenu && !contextMenu.contains(e.target) && contextMenu.classList.contains('active')) {
                     hideContextMenu();
                 }
             });
@@ -1668,6 +1695,35 @@
             renderCategories();
             renderTemplates();
             showEmptyStateView();
+        }
+
+        // Загрузка данных по умолчанию из data.js
+        function loadDefaultData() {
+            showConfirmModal(
+                'Загрузка начальных данных',
+                'Вы уверены, что хотите загрузить начальные данные из data.js? Текущие данные будут заменены.',
+                () => {
+                    const data = initAppDataEditor();
+                    categories = data.categories || [];
+                    templates = data.templates || [];
+
+                    // Сохраняем в localStorage
+                    saveCategories();
+                    saveTemplates();
+
+                    // Обновляем интерфейс
+                    renderCategories();
+                    renderTemplates();
+                    initCategorySelect();
+
+                    // Выбираем первый шаблон, если есть
+                    if (templates.length > 0) {
+                        selectTemplate(templates[0].id);
+                    } else {
+                        showEmptyStateView();
+                    }
+                }
+            );
         }
 
         // Рендеринг категорий
@@ -2711,6 +2767,8 @@
                     renderTemplates();
                     initCategorySelect();
                     showEmptyStateView();
+                    
+                    console.log('Все данные удалены из localStorage');
                 }
             );
         }
@@ -2742,6 +2800,17 @@
                 month: '2-digit',
                 year: 'numeric'
             });
+        }
+
+        // Вспомогательная функция для склонения слов
+        function pluralizeTemplates(count) {
+            if (count % 10 === 1 && count % 100 !== 11) {
+                return 'шаблон';
+            } else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+                return 'шаблона';
+            } else {
+                return 'шаблонов';
+            }
         }
 
         // Показ модального окна подтверждения
