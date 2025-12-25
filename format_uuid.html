@@ -35,6 +35,7 @@
       --gradient-amber: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       --gradient-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
       --gradient-violet: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      --gradient-yandex: linear-gradient(135deg, #FFCC00 0%, #FF6600 100%);
       --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
       --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -84,6 +85,7 @@
       --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
       --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --gradient-yandex: linear-gradient(135deg, #FFCC00 0%, #FF6600 100%);
     }
     
     body.light-theme .result,
@@ -840,6 +842,14 @@
       background: linear-gradient(135deg, #059669 0%, #10b981 100%);
     }
     
+    .yandex-service-btn {
+      background: var(--gradient-yandex);
+    }
+    
+    .yandex-service-btn:hover {
+      background: linear-gradient(135deg, #FF6600 0%, #FFCC00 100%);
+    }
+    
     .utc-time-section {
       margin-top: var(--spacing-xl);
       padding-top: var(--spacing-lg);
@@ -1111,11 +1121,6 @@
       gap: 6px;
     }
     
-    .kig-input-info i {
-      color: var(--text-placeholder);
-      font-size: 0.875rem;
-    }
-    
     .kig-input-with-button {
       display: flex;
       gap: 10px;
@@ -1205,14 +1210,14 @@
       margin-bottom: var(--spacing-md);
     }
     
-    /* Новый раздел: Статус постановки на учет */
-    .mso-status-section {
+    /* Новый раздел: Остальные проверки */
+    .other-checks-section {
       margin-top: var(--spacing-xl);
       padding-top: var(--spacing-lg);
       border-top: 1px solid var(--border-color);
     }
     
-    .mso-status-title {
+    .other-checks-title {
       color: var(--text-primary);
       font-size: 1.125rem;
       font-weight: 600;
@@ -1220,8 +1225,14 @@
       text-align: center;
     }
     
-    .mso-status-btn {
-      background: var(--gradient-danger);
+    .other-checks-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .other-checks-btn {
+      flex: 1;
       color: white;
       border: none;
       padding: 12px 20px;
@@ -1236,15 +1247,14 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      width: 100%;
       min-height: 52px;
     }
     
-    .mso-status-btn:hover {
+    .other-checks-btn:hover {
       transform: translateY(-2px);
     }
     
-    .mso-status-btn::after {
+    .other-checks-btn::after {
       content: '';
       position: absolute;
       top: 0;
@@ -1255,7 +1265,7 @@
       transition: left 0.7s;
     }
     
-    .mso-status-btn:hover::after {
+    .other-checks-btn:hover::after {
       left: 100%;
     }
     
@@ -1300,7 +1310,8 @@
         font-size: 1rem;
         margin-bottom: 3px;
       }
-      .passport-buttons {
+      .passport-buttons,
+      .other-checks-buttons {
         gap: 8px;
       }
     }
@@ -1363,10 +1374,12 @@
       .utc-copy-btn {
         height: 44px;
       }
-      .passport-buttons {
+      .passport-buttons,
+      .other-checks-buttons {
         flex-direction: column;
       }
-      .passport-btn {
+      .passport-btn,
+      .other-checks-btn {
         width: 100%;
         min-width: auto;
       }
@@ -1388,11 +1401,11 @@
       .utc-copy-btn,
       .passport-btn,
       .kig-search-btn,
-      .mso-status-btn {
+      .other-checks-btn {
         width: 100%;
         min-width: auto;
       }
-      .mso-status-btn {
+      .other-checks-btn {
         min-height: 50px;
       }
       .main-header {
@@ -1501,12 +1514,17 @@
           </div>
         </div>
 
-        <!-- Новый раздел: Статус постановки на учет -->
-        <div class="mso-status-section">
-          <div class="mso-status-title">Статус постановки на учет</div>
-          <button class="mso-status-btn" id="checkMsoStatusBtn">
-            <i class="fas fa-search"></i> Проверить статус МСО
-          </button>
+        <!-- Обновленный раздел: Остальные проверки -->
+        <div class="other-checks-section">
+          <div class="other-checks-title">Остальные проверки</div>
+          <div class="other-checks-buttons">
+            <button class="other-checks-btn mso-group-btn" id="checkMsoStatusBtn">
+              <i class="fas fa-search"></i> Проверить статус МСО
+            </button>
+            <button class="other-checks-btn yandex-service-btn" id="yandexServiceBtn">
+              <i class="fas fa-map-marker-alt"></i> Сервис яндекс
+            </button>
+          </div>
         </div>
 
         <div class="passport-section">
@@ -1583,7 +1601,7 @@
 
         <div class="history-search">
           <div class="input-group">
-            <input type="text" id="historySearch" placeholder="Поиск в истории...">
+            <input type="text" id="historySearch" placeholder="Поиск в истории..." maxlength="23">
             <div class="input-icon">
               <i class="fas fa-search"></i>
             </div>
@@ -1706,7 +1724,8 @@
           passportRegistered: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.uri,http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fpassport%2Fstatus),type:phrase),query:(match_phrase:(http.request.uri:%2Fauth%2Fapi%2Fv2%2Fmobile%2Fregistration%2Fpassport%2Fstatus))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22doc%22:%22{pasport}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22doc%22:%22{pasport}%22')))),query:(language:kuery,query:''))",
           passportMissing: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:'getting%20uuid'),type:phrase),query:(match_phrase:(message:'getting%20uuid'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!f,params:(query:{pasport}),type:phrase),query:(match_phrase:(message:{pasport})))),query:(language:kuery,query:''))",
           passportProfile: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version,x_clientId),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fmmc-proxy%2Fapi%2Fv2%2Fmmc%2Fadapter%2Fprofile%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!f,params:(query:'%22number%22:%22{pasport}%22'),type:phrase),query:(match_phrase:(resp_body:'%22number%22:%22{pasport}%22')))),query:(language:kuery,query:''))",
-          msoStatus: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply),type:phrase),query:(match_phrase:(http.request.uri:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22uuid%22:%22{userId}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22uuid%22:%22{userId}%22')))),query:(language:kuery,query:''))"
+          msoStatus: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(http.request.body,http.response.status_code),isDirty:!t,sort:!()),metadata:(indexPattern:'409c1530-76e3-11f0-92fe-999019c9b28f',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.uri,negate:!f,params:(query:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply),type:phrase),query:(match_phrase:(http.request.uri:%2Fmmc-adapter%2Fapi%2Fmmc%2Fadapter%2Fresidence-reply))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.response.status_code,negate:!f,params:(query:200),type:phrase),query:(match_phrase:(http.response.status_code:200))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'409c1530-76e3-11f0-92fe-999019c9b28f',key:http.request.body,negate:!f,params:(query:'%22uuid%22:%22{userId}%22'),type:phrase),query:(match_phrase:(http.request.body:'%22uuid%22:%22{userId}%22')))),query:(language:kuery,query:''))",
+          yandexService: "http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=__user__#?_a=(discover:(columns:!(app,http.request.uri,response_status,request,errcode,message,url,x_clientId,request_body,resp_body,properties.uuid),isDirty:!t,sort:!()),metadata:(indexPattern:bcd68890-76e5-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-7d,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:bcd68890-76e5-11f0-8ccc-413df0814dca,key:request,negate:!f,params:(query:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:bcd68890-76e5-11f0-8ccc-413df0814dca,key:resp_body,negate:!f,params:(query:'Bad%20request%0A'),type:phrase),query:(match_phrase:(resp_body:'Bad%20request%0A'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:bcd68890-76e5-11f0-8ccc-413df0814dca,key:x_clientId,negate:!f,params:(query:'{userId}'),type:phrase),query:(match_phrase:(x_clientId:'{userId}')))),query:(language:kuery,query:''))"
         }
       };
       
@@ -1737,6 +1756,7 @@
         quickTemplates: document.getElementById('quickTemplates'),
         historySearch: document.getElementById('historySearch'),
         checkMsoStatusBtn: document.getElementById('checkMsoStatusBtn'),
+        yandexServiceBtn: document.getElementById('yandexServiceBtn'),
         homeBtn: document.getElementById('homeBtn'),
         themeToggleBtn: document.getElementById('themeToggleBtn')
       };
@@ -1974,6 +1994,16 @@
           const url = CONFIG.urlTemplates.msoStatus.replace(/{userId}/g, cleanUserId);
           window.open(url, '_blank');
         },
+        openYandexServiceUrl: (userId) => {
+          if (!utils.isValidUserId(userId)) {
+            ui.showNotification(`Число должно содержать ровно ${CONFIG.maxInputLength} цифр`, true);
+            elements.numberInput.classList.add('error');
+            return;
+          }
+          const cleanUserId = utils.cleanNumber(userId);
+          const url = CONFIG.urlTemplates.yandexService.replace(/{userId}/g, cleanUserId);
+          window.open(url, '_blank');
+        },
         createCheckButton: (config) => {
           const button = document.createElement('button');
           button.className = `check-btn ${config.gradient}`;
@@ -2208,6 +2238,12 @@
         elements.checkMsoStatusBtn.addEventListener('click', () => {
           const inputValue = elements.numberInput.value.trim();
           ui.openMsoStatusUrl(inputValue);
+        });
+        
+        // Обработчик для кнопки "Сервис яндекс"
+        elements.yandexServiceBtn.addEventListener('click', () => {
+          const inputValue = elements.numberInput.value.trim();
+          ui.openYandexServiceUrl(inputValue);
         });
         
         // Обработчики для поля ввода КИГ
