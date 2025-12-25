@@ -1435,11 +1435,8 @@
                     case 6:
                         description = 'Отказ в постановке на учет';
                         // Добавляем расшифровку для statusMessageCode 6 или null
-                        if (statusMessageCode === 6) {
+                        if (statusMessageCode === 6 || statusMessageCode === null) {
                             description += ' по причине: В данных пользователя на стороне ММЦ обнаружена ошибка (ошибки ФИО, истек срок документов и т.д.).';
-                        }
-                        if (statusMessageCode === null) {
-                            description += ' по причине: На пользователя не распространяются новые правила учета через мобильное приложение "Амина".';
                         }
                         break;
                     case 7:
