@@ -259,16 +259,14 @@
             max-width: 1400px;
             margin: 0 auto 40px;
             position: relative;
+            gap: 20px;
         }
         
         @media (max-width: 768px) {
             .editors-container {
                 flex-direction: column;
                 height: auto;
-            }
-            
-            .splitter {
-                display: none;
+                gap: 0;
             }
             
             .json-blocks-panel {
@@ -296,34 +294,6 @@
             overflow: hidden;
             min-width: 200px;
             transition: all var(--transition-fast);
-        }
-        
-        .splitter {
-            width: 12px;
-            cursor: col-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: background-color var(--transition-fast);
-            margin: 0 4px;
-            flex-shrink: 0;
-        }
-                
-        .splitter-handle {
-            width: 4px;
-            height: 40px;
-            background: var(--border-color);
-            border-radius: 2px;
-            transition: background-color var(--transition-fast);
-        }
-        
-        .splitter:hover .splitter-handle {
-            background: var(--color-primary);
-        }
-        
-        .splitter:active .splitter-handle {
-            background: var(--text-primary);
         }
         
         .editor-header {
@@ -773,6 +743,29 @@
             border-left: 3px solid var(--color-primary);
             max-width: 100%;
             transition: all var(--transition-fast);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .reg-status-description:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .reg-status-description:hover::after {
+            opacity: 1;
+        }
+        
+        .reg-status-description.copied {
+            background: var(--gradient-success);
+            color: white;
+            animation: copyPulse 0.5s ease;
+        }
+        
+        @keyframes copyPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         .reg-status-description.status-1 {
@@ -812,6 +805,10 @@
         
         .light-theme .reg-status-description {
             background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .light-theme .reg-status-description:hover {
+            background: rgba(0, 0, 0, 0.1);
         }
         
         .light-theme .reg-status-description.status-1 {
@@ -903,10 +900,6 @@
             </div>
         </div>
         
-        <div class="splitter" id="splitter">
-            <div class="splitter-handle"></div>
-        </div>
-        
         <div class="editor-section">
             <div class="editor-header waiting" id="outputHeader">
                 <div class="editor-title">
@@ -962,7 +955,6 @@
                 this.debounceTimer = null;
                 this.unicodeOutput = '';
                 this.textOutput = '';
-                this.splitterActive = false;
                 this.isJsonValid = false;
                 this.residenceRegistrationFound = false;
                 this.residenceRegistrationBlock = null;
@@ -1008,63 +1000,8 @@
             
             init() {
                 this.bindEvents();
-                this.initSplitter();
                 this.processInput();
                 document.getElementById('inputEditor').focus();
-            }
-            
-            initSplitter() {
-                const splitter = document.getElementById('splitter');
-                const container = document.querySelector('.editors-container');
-                const leftPanel = document.querySelector('.editor-section:first-child');
-                const rightPanel = document.querySelector('.editor-section:last-child');
-                
-                let startX, startLeftWidth, startRightWidth;
-                
-                splitter.addEventListener('mousedown', (e) => {
-                    this.splitterActive = true;
-                    startX = e.clientX;
-                    startLeftWidth = leftPanel.offsetWidth;
-                    startRightWidth = rightPanel.offsetWidth;
-                    
-                    document.body.style.cursor = 'col-resize';
-                    
-                    const handleMouseMove = (e) => {
-                        if (!this.splitterActive) return;
-                        
-                        const containerWidth = container.offsetWidth;
-                        const splitterWidth = splitter.offsetWidth;
-                        const deltaX = e.clientX - startX;
-                        
-                        let newLeftWidth = startLeftWidth + deltaX;
-                        let newRightWidth = startRightWidth - deltaX;
-                        
-                        const minWidth = 500;
-                        const maxWidth = containerWidth - splitterWidth - minWidth;
-                        
-                        newLeftWidth = Math.max(minWidth, Math.min(maxWidth, newLeftWidth));
-                        newRightWidth = containerWidth - splitterWidth - newLeftWidth;
-                        
-                        leftPanel.style.width = `${newLeftWidth}px`;
-                        leftPanel.style.flex = `0 0 ${newLeftWidth}px`;
-                        rightPanel.style.width = `${newRightWidth}px`;
-                        rightPanel.style.flex = `0 0 ${newRightWidth}px`;
-                    };
-                    
-                    const handleMouseUp = () => {
-                        this.splitterActive = false;
-                        document.body.style.cursor = '';
-                        
-                        document.removeEventListener('mousemove', handleMouseMove);
-                        document.removeEventListener('mouseup', handleMouseUp);
-                        
-                        this.updateLineNumbers('inputLineNumbers', 'inputEditor');
-                        this.updateLineNumbers('outputLineNumbers', 'outputEditor');
-                    };
-                    
-                    document.addEventListener('mousemove', handleMouseMove);
-                    document.addEventListener('mouseup', handleMouseUp);
-                });
             }
             
             bindEvents() {
@@ -1088,6 +1025,13 @@
                     }
                 });
                 
+                // Обработчик клика для копирования описания статуса
+                document.addEventListener('click', (e) => {
+                    if (e.target.id === 'regStatusDescription') {
+                        this.copyStatusDescription(e.target);
+                    }
+                });
+                
                 document.getElementById('processMsoBtn').addEventListener('click', () => {
                     this.fixResidenceRegistration(1);
                 });
@@ -1102,6 +1046,29 @@
                 
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                 this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+            }
+            
+            // Метод для копирования описания статуса
+            copyStatusDescription(element) {
+                const textToCopy = element.textContent;
+                
+                if (!textToCopy.trim()) {
+                    this.showNotification('Нет текста для копирования', true);
+                    return;
+                }
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Визуальный фидбек
+                    element.classList.add('copied');
+                    this.showNotification('Описание статуса скопировано в буфер обмена');
+                    
+                    // Удаляем класс через 1 секунду
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                    }, 1000);
+                }).catch(() => {
+                    this.showNotification('Ошибка копирования', true);
+                });
             }
             
             handleAction(action) {
@@ -1454,64 +1421,64 @@
                 
                 switch (regStatus) {
                     case 1:
-                        description = 'Требований не требуется, пользователь видит кнопку "Начать"';
+                        description = 'Действий не требуется, пользователь видит кнопку "Начать".';
                         break;
                     case 3:
-                        description = 'В процессе';
+                        description = 'В процессе.';
                         break;
                     case 4:
-                        description = 'На учете';
+                        description = 'Состоит на учете.';
                         break;
                     case 5:
-                        description = 'Требований не требуется, пользователь видит кнопку "Повторить"';
+                        description = 'Действий не требуется, пользователь видит кнопку "Повторить".';
                         break;
                     case 6:
-                        description = 'Ошибка постановки на учет';
+                        description = 'Отказ в постановке на учет';
                         // Добавляем расшифровку для statusMessageCode 6 или null
                         if (statusMessageCode === 6 || statusMessageCode === null) {
-                            description += ' - На пользователя не распространяются новые правила учета через МП';
+                            description += ' по причине: На пользователя не распространяются новые правила учета через мобильное приложение "Амина".';
                         }
                         break;
                     case 7:
-                        description = 'Снят с учета';
+                        description = 'Снятие с миграционного учета по причине: ';
                         if (reasonId !== null && reasonId !== undefined) {
                             let reasonText = '';
                             switch (reasonId) {
                                 case 1:
-                                    reasonText = 'Выезд за пределы РФ';
+                                    reasonText = 'Пересечения границы Российской Федерации.';
                                     break;
                                 case 2:
-                                    reasonText = 'Отсутствие геоданных';
+                                    reasonText = 'Отсутствие геоданных.';
                                     break;
                                 case 3:
-                                    reasonText = 'Постановка на учет в другом субъекте РФ';
+                                    reasonText = 'Постановка на учет в другом субъекте РФ.';
                                     break;
                                 case 4:
-                                    reasonText = 'Данные ЗАГС (смерть)';
+                                    reasonText = 'Данные ЗАГС (смерть).';
                                     break;
                                 case 5:
-                                    reasonText = 'Решение суда (безвестно отсутствующий)';
+                                    reasonText = 'Решение суда (безвестно отсутствующий).';
                                     break;
                                 case 6:
-                                    reasonText = 'Не является участником эксперимента';
+                                    reasonText = 'Вам необходимо встать на миграционный учет по действующим правилам (ФЗ от 18.07.2006 № 109-ФЗ).';
                                     break;
                                 default:
                                     reasonText = `Неизвестная причина (${reasonId})`;
                             }
-                            description += `, причина: ${reasonText}`;
+                            description += ` ${reasonText}`;
                         }
                         break;
                     case 10:
-                        description = 'Не подлежит учету';
+                        description = 'На Вас не распространяются новые правила учета через мобильное приложение «Амина», по причине:';
                         // Добавляем расшифровку для различных statusMessageCode
                         if (statusMessageCode === 8) {
-                            description += ' - Цель въезда не связана с работой';
+                            description += 'Цель въезда в страну не связана с осуществлением трудовой деятельности.';
                         } else if (statusMessageCode === 9) {
-                            description += ' - Наличие вида на жительство или временное проживание';
+                            description += 'Наличие вида на жительство или разрешения на временное проживание.';
                         } else if (statusMessageCode === 10) {
-                            description += ' - Гражданство не распространяется в рамках эксперимента';
+                            description += 'Ваше гражданство не соответствует требованиям.';
                         } else if (statusMessageCode === null) {
-                            description += ' - На пользователя не распространяются новые правила учета через МП';
+                            description += 'Вам необходимо встать на миграционный учет по действующим правилам (ФЗ от 18.07.2006 № 109-ФЗ).';
                         }
                         break;
                     default:
