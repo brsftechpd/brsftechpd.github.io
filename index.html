@@ -1,417 +1,908 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Инструменты тех.поддержки</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --bg-hover: #475569;
-            --text-primary: #f8fafc;
-            --text-white: #ffffff;
-            --text-secondary: #e2e8f0;
-            --text-muted: #94a3b8;
-            --text-placeholder: #64748b;
-            --border-color: #334155;
-            --border-focus: #475569;
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Инструменты тех.поддержки</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <style>
+         :root {
+         --bg-primary: #0f172a;
+         --bg-secondary: #1e293b;
+         --bg-tertiary: #334155;
+         --bg-hover: #475569;
+         --text-primary: #f8fafc;
+         --text-white: #ffffff;
+         --text-secondary: #e2e8f0;
+         --text-muted: #94a3b8;
+         --text-placeholder: #64748b;
+         --border-color: #334155;
+         --border-focus: #475569;
+         --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+         --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+         --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+         --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+         --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+         --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+         --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+         --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+         --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+         --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+         --gradient-newyear: linear-gradient(135deg, #dc2626 0%, #ea580c 20%, #eab308 40%, #16a34a 60%, #0891b2 80%, #7c3aed 100%);
+         --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+         --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+         --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+         --border-radius: 12px;
+         --border-radius-sm: 10px;
+         --border-radius-lg: 16px;
+         --spacing-xs: 8px;
+         --spacing-sm: 12px;
+         --spacing-md: 16px;
+         --spacing-lg: 20px;
+         --spacing-xl: 30px;
+         --transition-fast: 0.3s;
+         --transition-normal: 0.4s;
+         --transition-slow: 0.5s;
+         --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+         }
+         * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Segoe UI', system-ui, sans-serif;
+         }
+         body {
+         background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+         min-height: 100vh;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: var(--spacing-md);
+         color: var(--text-secondary);
+         line-height: 1.5;
+         overflow-x: hidden;
+         }
+         .container {
+         background: var(--bg-secondary);
+         border-radius: var(--border-radius-lg);
+         box-shadow: var(--shadow-lg);
+         padding: var(--spacing-xl);
+         max-width: 900px;
+         width: 100%;
+         border: 1px solid var(--border-color);
+         position: relative;
+         text-align: center;
+         z-index: 10;
+         }
+         h1 {
+         color: var(--text-primary);
+         text-align: center;
+         margin-bottom: var(--spacing-xs);
+         font-weight: 700;
+         font-size: 2rem;
+         background: var(--gradient-primary);
+         background-clip: text;
+         }
+         .description {
+         text-align: center;
+         color: var(--text-muted);
+         margin-bottom: var(--spacing-xl);
+         font-size: 1rem;
+         max-width: 600px;
+         margin-left: auto;
+         margin-right: auto;
+         }
+         .tools-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+         gap: var(--spacing-lg);
+         margin-top: var(--spacing-xl);
+         }
+         .tool-card {
+         background: var(--bg-tertiary);
+         border-radius: var(--border-radius);
+         padding: var(--spacing-lg);
+         border: 1px solid var(--border-color);
+         transition: all var(--transition-normal);
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         text-align: center;
+         position: relative;
+         overflow: hidden;
+         height: 100%;
+         }
+         .tool-card:hover {
+         transform: translateY(-8px);
+         border-color: var(--border-focus);
+         box-shadow: var(--shadow-md);
+         }
+         .tool-card::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+         opacity: 0;
+         transition: opacity var(--transition-normal);
+         z-index: 1;
+         }
+         .tool-card:hover::before {
+         opacity: 1;
+         }
+         .tool-icon {
+         width: 80px;
+         height: 80px;
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         margin-bottom: var(--spacing-md);
+         font-size: 2rem;
+         color: white;
+         z-index: 2;
+         position: relative;
+         }
+         .tool-icon.uuid {
+         background: var(--gradient-primary);
+         }
+         .tool-icon.mp {
+         background: var(--gradient-success);
+         }
+         .tool-icon.duble {
+         background: var(--gradient-warning);
+         }
+         .tool-icon.format {
+         background: var(--gradient-purple);
+         }
+         .tool-icon.json {
+         background: var(--gradient-cyan);
+         }
+         .tool-icon.wiki {
+         background: var(--gradient-teal);
+         }
+         .tool-title {
+         color: var(--text-primary);
+         font-size: 1.25rem;
+         font-weight: 600;
+         margin-bottom: var(--spacing-sm);
+         z-index: 2;
+         position: relative;
+         }
+         .tool-description {
+         color: var(--text-muted);
+         font-size: 0.875rem;
+         margin-bottom: var(--spacing-lg);
+         z-index: 2;
+         position: relative;
+         flex-grow: 1;
+         }
+         .tool-link {
+         display: inline-block;
+         background: var(--gradient-info);
+         color: white;
+         text-decoration: none;
+         padding: 12px 24px;
+         border-radius: var(--border-radius-sm);
+         font-weight: 600;
+         transition: all var(--transition-fast);
+         z-index: 2;
+         position: relative;
+         width: 100%;
+         max-width: 200px;
+         overflow: hidden;
+         border: none;
+         cursor: pointer;
+         outline: none;
+         }
+         .tool-link:hover {
+         box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+         }
+         .tool-link::after {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: -100%;
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+         transition: left 0.7s;
+         z-index: 1;
+         }
+         .tool-link:hover::after {
+         left: 100%;
+         }
+         .tool-link span {
+         position: relative;
+         z-index: 2;
+         }
+         .footer {
+         margin-top: var(--spacing-xl);
+         color: var(--text-muted);
+         font-size: 0.875rem;
+         text-align: center;
+         padding-top: var(--spacing-md);
+         border-top: 1px solid var(--border-color);
+         }
+         /* Стили для обычной ссылки на Telegram */
+         .footer a {
+         color: #94a3b8;
+         text-decoration: none;
+         transition: color 0.3s;
+         }
+         .footer a:hover {
+         color: #bfccde;
+         text-decoration: underline;
+         }
+         /* Исправление для всплывающих эффектов */
+         .tool-link:focus-visible {
+         outline: 2px solid #6366f1;
+         outline-offset: 2px;
+         }
+         /* Новогоднее поздравление */
+         .newyear-overlay {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: rgba(15, 23, 42, 0.95);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         z-index: 9999;
+         opacity: 0;
+         visibility: hidden;
+         transition: opacity 0.5s, visibility 0.5s;
+         }
+         .newyear-overlay.active {
+         opacity: 1;
+         visibility: visible;
+         }
+         .newyear-card {
+         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+         border-radius: var(--border-radius-lg);
+         padding: var(--spacing-xl);
+         max-width: 900px;
+         width: 90%;
+         border: 1px solid var(--border-color);
+         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+         text-align: center;
+         position: relative;
+         overflow: hidden;
+         transform: scale(0.8);
+         transition: transform 0.5s var(--ease-bounce);
+         }
+         .newyear-overlay.active .newyear-card {
+         transform: scale(1);
+         }
+         .newyear-title {
+         color: white;
+         font-size: 2.5rem;
+         font-weight: 700;
+         margin-bottom: var(--spacing-lg);
+         background: var(--gradient-cyan);
+         background-clip: text;
+         -webkit-background-clip: text;
+         -webkit-text-fill-color: transparent;
+         position: relative;
+         }
+         .newyear-title::after {
+         content: '';
+         position: absolute;
+         bottom: -10px;
+         left: 50%;
+         transform: translateX(-50%);
+         width: 100px;
+         height: 3px;
+         background: var(--gradient-cyan);
+         border-radius: 2px;
+         }
+         .newyear-message {
+         color: var(--text-secondary);
+         font-size: 1.1rem;
+         line-height: 1.6;
+         margin-bottom: var(--spacing-xl);
+         }
+         /* Стили для этапов поздравления */
+         .main-greeting {
+         transition: all 0.5s ease;
+         }
+         .main-greeting.hidden {
+         opacity: 0;
+         visibility: hidden;
+         height: 0;
+         margin: 0;
+         padding: 0;
+         }
+         .wishes-stage {
+         opacity: 0;
+         visibility: hidden;
+         height: 0;
+         margin: 0;
+         padding: 0;
+         transition: all 0.5s ease;
+         }
+         .wishes-stage.active {
+         opacity: 1;
+         visibility: visible;
+         height: auto;
+         margin-bottom: var(--spacing-xl);
+         }
+         .wishes-stage-title {
+         color: var(--text-primary);
+         font-size: 1.5rem;
+         font-weight: 600;
+         margin-bottom: var(--spacing-lg);
+         }
+         .wishes-container {
+         max-height: 250px;
+         overflow: hidden;
+         transition: max-height 0.5s ease, overflow 0.3s;
+         margin-bottom: var(--spacing-lg);
+         position: relative;
+         }
+         .wishes-container.all-wishes {
+         max-height: 600px;
+         overflow-y: auto;
+         padding-right: 10px;
+         }
+         .wishes-container.all-wishes::-webkit-scrollbar {
+         width: 8px;
+         }
+         .wishes-container.all-wishes::-webkit-scrollbar-track {
+         background: rgba(255, 255, 255, 0.05);
+         border-radius: 4px;
+         }
+         .wishes-container.all-wishes::-webkit-scrollbar-thumb {
+         background: var(--gradient-cyan);
+         border-radius: 4px;
+         }
+         .wishes-container.all-wishes::-webkit-scrollbar-thumb:hover {
+         background: linear-gradient(135deg, #ef4444 0%, #ea580c 100%);
+         }
+         .wish-item {
+         background: rgba(255, 255, 255, 0.05);
+         border-radius: var(--border-radius);
+         padding: var(--spacing-md);
+         margin-bottom: var(--spacing-sm);
+         border-left: 4px solid #06b6d4;
+         text-align: left;
+         opacity: 0;
+         transform: translateY(20px);
+         transition: opacity 0.5s, transform 0.5s, border-color 0.3s;
+         display: none;
+         }
+         .wish-item.active {
+         display: block;
+         opacity: 1;
+         transform: translateY(0);
+         }
+         .wish-item.all-show {
+         display: block;
+         opacity: 1;
+         transform: translateY(0);
+         }
+         .wish-number {
+         display: inline-block;
+         width: 24px;
+         height: 24px;
+         background: rgba(255, 255, 255, 0.1);
+         border-radius: 50%;
+         text-align: center;
+         line-height: 24px;
+         margin-right: var(--spacing-sm);
+         font-size: 0.8rem;
+         font-weight: bold;
+         }
+         .newyear-button {
+         background: var(--gradient-cyan);
+         color: white;
+         border: none;
+         padding: 14px 32px;
+         font-size: 1rem;
+         font-weight: 600;
+         border-radius: var(--border-radius-sm);
+         cursor: pointer;
+         transition: all 0.3s;
+         position: relative;
+         overflow: hidden;
+         margin-top: var(--spacing-md);
+         }
+         .newyear-button:hover {
+         transform: translateY(-3px);
+         }
+         .newyear-button:active {
+         transform: translateY(-1px);
+         }
+         .newyear-button::after {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: -100%;
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+         transition: left 0.7s;
+         }
+         .newyear-button:hover::after {
+         left: 100%;
+         }
+         .wish-counter {
+         color: var(--text-muted);
+         font-size: 0.9rem;
+         margin-top: var(--spacing-sm);
+         margin-bottom: var(--spacing-md);
+         }
+         /* Снежинки */
+         .snowflake {
+         position: fixed;
+         top: -20px;
+         color: white;
+         font-size: 1.2rem;
+         pointer-events: none;
+         z-index: 10000;
+         opacity: 0.8;
+         animation: fall linear infinite;
+         }
+         @keyframes fall {
+         to {
+         transform: translateY(100vh) rotate(360deg);
+         }
+         }
+         /* Частицы для салюта */
+         .particle {
+         position: fixed;
+         width: 10px;
+         height: 10px;
+         border-radius: 50%;
+         pointer-events: none;
+         z-index: 10001;
+         opacity: 0;
+         }
+         /* Финальный салют */
+         .final-fireworks {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         pointer-events: none;
+         z-index: 10002;
+         opacity: 0;
+         visibility: hidden;
+         transition: opacity 0.5s;
+         }
+         .final-fireworks.active {
+         opacity: 1;
+         visibility: visible;
+         }
+         @media (max-width: 768px) {
+         .tools-grid {
+         grid-template-columns: 1fr;
+         }
+         .container {
+         padding: var(--spacing-lg);
+         }
+         h1 {
+         font-size: 1.75rem;
+         }
+         .newyear-card {
+         padding: var(--spacing-lg);
+         width: 95%;
+         }
+         .newyear-title {
+         font-size: 2rem;
+         }
+         .newyear-message {
+         font-size: 1rem;
+         }
+         .wishes-container.all-wishes {
+         max-height: 250px;
+         }
+         }
+         @media (max-width: 480px) {
+         .container {
+         padding: var(--spacing-md);
+         border-radius: var(--border-radius);
+         }
+         h1 {
+         font-size: 1.5rem;
+         }
+         .tool-card {
+         padding: var(--spacing-md);
+         }
+         .tool-icon {
+         width: 60px;
+         height: 60px;
+         font-size: 1.5rem;
+         }
+         .tool-link {
+         padding: 10px 20px;
+         max-width: 100%;
+         }
+         .newyear-card {
+         padding: var(--spacing-md);
+         }
+         .newyear-title {
+         font-size: 1.7rem;
+         }
+         .newyear-button {
+         padding: 12px 24px;
+         font-size: 0.9rem;
+         }
+         .wishes-container.all-wishes {
+         max-height: 200px;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <!-- Новогоднее поздравление -->
+      <div class="newyear-overlay" id="newyearOverlay">
+         <div class="newyear-card">
+            <h1 class="newyear-title">С Новым 2026 годом!</h1>
             
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
-            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            <!-- Основное поздравление -->
+            <div class="main-greeting" id="mainGreeting">
+               <p class="newyear-message">
+                  Дорогие друзья и коллеги неотложной помощи мобильного приложения «Амина»!
+               </p>
+               <p class="newyear-message">
+                  Пусть в новом, наступившем 2026 году, вас не пугают слова «У меня ничего не работает» в заявке от первой линии. А вы легко и без лишних усилий расшифровываете заявки в стиле «эта штука не работает там» и находите корень проблемы где-то между «кэшем» и космосом.
+               </p>
+               <p class="newyear-message">
+                  Пусть в наступившем новом 2026 году вы будете волшебниками, психологами и гуру терпения. А ваши магические силы лишь крепнут.
+               </p>
+               <p class="newyear-message">
+                  Желаю, чтобы львиная доля обращений была от тех, кто хоть раз пробовал «погуглить», чтобы каждый сложный случай делал вас ещё круче, а не старше, и чтобы в ваших личных чатах всегда были смешные скриншоты вместо паничных «SOS!».
+               </p>
+               <p class="newyear-message">
+                  Спасибо каждому из вас, что держите наш цифровой фронт. Горжусь, что работаю с вами!
+               </p>
+            </div>
             
-            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
-            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            <!-- Этап с пожеланиями -->
+            <div class="wishes-stage" id="wishesStage">
+               <h3 class="wishes-stage-title">Искренне желаю каждому из вас в новом году:</h3>
+               <div class="wishes-container" id="wishesContainer">
+                  <div class="wish-item active" id="wish1">
+                     <span class="wish-number">1</span>
+                     Пусть сложные пользователи дарят вам не стресс, а самые смешные истории для корпоративного фольклора.
+                  </div>
+                  <div class="wish-item" id="wish2">
+                     <span class="wish-number">2</span>
+                     Чтобы кофе в вашей кружке обладал магическим свойством — не заканчивался до конца смены.
+                  </div>
+                  <div class="wish-item" id="wish3">
+                     <span class="wish-number">3</span>
+                     Пусть твоя мудрость растёт по логарифмической шкале, а уровень стресса стремится к нулю, как трафик на сервере в Новогоднюю ночь.
+                  </div>
+                  <div class="wish-item" id="wish4">
+                     <span class="wish-number">4</span>
+                     Желаю находить изящные костыли для жизненных проблем и элегантные патчи для всех недочётов. А на сложные вопросы всегда находился простой ответ — хоть в работе, хоть в жизни.
+                  </div>
+                  <div class="wish-item" id="wish5">
+                     <span class="wish-number">5</span>
+                     Желаю синхронизироваться с диваном чаще, чем сервера между собой.
+                  </div>
+                  <div class="wish-item" id="wish6">
+                     <span class="wish-number">6</span>
+                     Пусть твоё железо (здоровье) никогда не перегревается, софт (настроение) не глючит, а пропускная способность канала для радости будет гигабитной.
+                  </div>
+               </div>
+            </div>
             
-            --border-radius: 12px;
-            --border-radius-sm: 10px;
-            --border-radius-lg: 16px;
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-md: 16px;
-            --spacing-lg: 20px;
-            --spacing-xl: 30px;
-            
-            --transition-fast: 0.3s;
-            --transition-normal: 0.4s;
-            --transition-slow: 0.5s;
-            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: var(--spacing-md);
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .container {
-            background: var(--bg-secondary);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-lg);
-            padding: var(--spacing-xl);
-            max-width: 900px;
-            width: 100%;
-            border: 1px solid var(--border-color);
-            position: relative;
-            text-align: center;
-        }
-
-        h1 {
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: var(--spacing-xs);
-            font-weight: 700;
-            font-size: 2rem;
-            background: var(--gradient-primary);
-            background-clip: text;
-        }
-
-        .description {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: var(--spacing-xl);
-            font-size: 1rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-xl);
-        }
-
-        .tool-card {
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-lg);
-            border: 1px solid var(--border-color);
-            transition: all var(--transition-normal);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--border-focus);
-            box-shadow: var(--shadow-md);
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-            z-index: 1;
-        }
-
-        .tool-card:hover::before {
-            opacity: 1;
-        }
-
-        .tool-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-md);
-            font-size: 2rem;
-            color: white;
-            z-index: 2;
-            position: relative;
-        }
-
-        .tool-icon.uuid {
-            background: var(--gradient-primary);
-        }
-
-        .tool-icon.mp {
-            background: var(--gradient-success);
-        }
-
-        .tool-icon.duble {
-            background: var(--gradient-warning);
-        }
-
-        .tool-icon.format {
-            background: var(--gradient-purple);
-        }
-
-        .tool-icon.json {
-            background: var(--gradient-cyan);
-        }
-
-        .tool-icon.wiki {
-            background: var(--gradient-teal);
-        }
-
-        .tool-title {
-            color: var(--text-primary);
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: var(--spacing-sm);
-            z-index: 2;
-            position: relative;
-        }
-
-        .tool-description {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            margin-bottom: var(--spacing-lg);
-            z-index: 2;
-            position: relative;
-            flex-grow: 1;
-        }
-
-        .tool-link {
-            display: inline-block;
-            background: var(--gradient-info);
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius-sm);
-            font-weight: 600;
-            transition: all var(--transition-fast);
-            z-index: 2;
-            position: relative;
-            width: 100%;
-            max-width: 200px;
-            overflow: hidden;
-            border: none;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .tool-link:hover {
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-        }
-
-        .tool-link::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s;
-            z-index: 1;
-        }
-
-        .tool-link:hover::after {
-            left: 100%;
-        }
-
-        .tool-link span {
-            position: relative;
-            z-index: 2;
-        }
-
-        .footer {
-            margin-top: var(--spacing-xl);
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            text-align: center;
-            padding-top: var(--spacing-md);
-            border-top: 1px solid var(--border-color);
-        }
-        
-        /* Стили для обычной ссылки на Telegram */
-        .footer a {
-            color: #94a3b8;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer a:hover {
-            color: #bfccde;
-            text-decoration: underline;
-        }
-
-        /* Исправление для всплывающих эффектов */
-        .tool-link:focus-visible {
-            outline: 2px solid #6366f1;
-            outline-offset: 2px;
-        }
-
-        @media (max-width: 768px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .container {
-                padding: var(--spacing-lg);
-            }
-            
-            h1 {
-                font-size: 1.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: var(--spacing-md);
-                border-radius: var(--border-radius);
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            .tool-card {
-                padding: var(--spacing-md);
-            }
-            
-            .tool-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-            
-            .tool-link {
-                padding: 10px 20px;
-                max-width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Инструменты тех.поддержки</h1>
-        <p class="description">
+            <button class="newyear-button" id="nextButton">
+            <i class="fas fa-gift"></i> Далее
+            </button>
+         </div>
+      </div>
+      
+      <!-- Финальный салют -->
+      <div class="final-fireworks" id="finalFireworks"></div>
+      
+      <!-- Основной контент -->
+      <div class="container">
+         <h1>Инструменты тех.поддержки</h1>
+         <p class="description">
             Набор полезных инструментов для работы тех.поддержки
-        </p>
-        
-        <div class="tools-grid">
+         </p>
+         <div class="tools-grid">
             <!-- UUID Форма -->
             <div class="tool-card">
-                <div class="tool-icon uuid">
-                    <i class="fas fa-fingerprint"></i>
-                </div>
-                <h3 class="tool-title">UUID Форма</h3>
-                <p class="tool-description">
-                    Форматирование 23-значного uuid в путь для S3, поиск по паспорту и получение UTC времени
-                </p>
-                <a href="https://brsftechpd.github.io/format_uuid" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon uuid">
+                  <i class="fas fa-fingerprint"></i>
+               </div>
+               <h3 class="tool-title">UUID Форма</h3>
+               <p class="tool-description">
+                  Форматирование 23-значного uuid в путь для S3, поиск по паспорту и получение UTC времени
+               </p>
+               <a href="https://brsftechpd.github.io/format_uuid" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-            
             <!-- Проверка МП -->
             <div class="tool-card">
-                <div class="tool-icon mp">
-                    <i class="fas fa-mobile-alt"></i>
-                </div>
-                <h3 class="tool-title">Проверка МП</h3>
-                <p class="tool-description">
-                    Инструмент для проверки мобильного приложения на работоспособность и поиск ошибок
-                </p>
-                <a href="https://brsftechpd.github.io/check_mp" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon mp">
+                  <i class="fas fa-mobile-alt"></i>
+               </div>
+               <h3 class="tool-title">Проверка МП</h3>
+               <p class="tool-description">
+                  Инструмент для проверки мобильного приложения на работоспособность и поиск ошибок
+               </p>
+               <a href="https://brsftechpd.github.io/check_mp" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-            
             <!-- Поиск дублей 4me -->
             <div class="tool-card">
-                <div class="tool-icon duble">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h3 class="tool-title">Поиск дублей 4me</h3>
-                <p class="tool-description">
-                    Поиск и анализ дублирующихся записей в системе 4me для оптимизации трудозатрат
-                </p>
-                <a href="https://brsftechpd.github.io/duble_search_4me" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon duble">
+                  <i class="fas fa-search"></i>
+               </div>
+               <h3 class="tool-title">Поиск дублей 4me</h3>
+               <p class="tool-description">
+                  Поиск и анализ дублирующихся записей в системе 4me для оптимизации трудозатрат
+               </p>
+               <a href="https://brsftechpd.github.io/duble_search_4me" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-            
             <!-- Формат сообщений -->
             <div class="tool-card">
-                <div class="tool-icon format">
-                    <i class="fas fa-comment-alt"></i>
-                </div>
-                <h3 class="tool-title">Формат сообщений</h3>
-                <p class="tool-description">
-                    Форматирование сообщений для отправки их в телеграм чат
-                </p>
-                <a href="https://brsftechpd.github.io/format_messages" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon format">
+                  <i class="fas fa-comment-alt"></i>
+               </div>
+               <h3 class="tool-title">Формат сообщений</h3>
+               <p class="tool-description">
+                  Форматирование сообщений для отправки их в телеграм чат
+               </p>
+               <a href="https://brsftechpd.github.io/format_messages" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-            
             <!-- JSON Редактор -->
             <div class="tool-card">
-                <div class="tool-icon json">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h3 class="tool-title">JSON Редактор</h3>
-                <p class="tool-description">
-                    Редактор для работы с JSON файлом профиля S3
-                </p>
-                <a href="https://brsftechpd.github.io/json_format" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon json">
+                  <i class="fas fa-code"></i>
+               </div>
+               <h3 class="tool-title">JSON Редактор</h3>
+               <p class="tool-description">
+                  Редактор для работы с JSON файлом профиля S3
+               </p>
+               <a href="https://brsftechpd.github.io/json_format" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-            
             <!-- База знаний -->
             <div class="tool-card">
-                <div class="tool-icon wiki">
-                    <i class="fas fa-book"></i>
-                </div>
-                <h3 class="tool-title">База знаний</h3>
-                <p class="tool-description">
-                    Удобная база знаний тех.поддержки с разделением на категории и возможностью быстрого копирования ответа
-                </p>
-                <a href="https://brsftechpd.github.io/wiki" class="tool-link" target="_blank">
-                    <span><i class="fas fa-external-link-alt"></i> Открыть</span>
-                </a>
+               <div class="tool-icon wiki">
+                  <i class="fas fa-book"></i>
+               </div>
+               <h3 class="tool-title">База знаний</h3>
+               <p class="tool-description">
+                  Удобная база знаний тех.поддержки с разделением на категории и возможностью быстрого копирования ответа
+               </p>
+               <a href="https://brsftechpd.github.io/wiki" class="tool-link" target="_blank">
+               <span><i class="fas fa-external-link-alt"></i> Открыть</span>
+               </a>
             </div>
-        </div>
-        
-        <div class="footer">
+         </div>
+         <div class="footer">
             <p>Инструменты разработаны для упрощения рабочих процессов тех.поддержки</p>
             <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.7;">
-                По любым вопросам по работе с инструментами пишите в телеграм 
-                <a href="https://t.me/shilov_dv" target="_blank">@shilov_dv</a>
+               По любым вопросам по работе с инструментами пишите в телеграм 
+               <a href="https://t.me/shilov_dv" target="_blank">@shilov_dv</a>
             </p>
-        </div>
-    </div>
-</body>
+         </div>
+      </div>
+      <script>
+         // Новогоднее поздравление
+         document.addEventListener('DOMContentLoaded', function() {
+             // Проверка даты (с 01.01.2026 по 11.01.2026)
+             const currentDate = new Date();
+             const startDate = new Date('2026-01-01');
+             const endDate = new Date('2026-01-18');
+             
+             // Проверка, было ли уже показано поздравление
+             const hasShownNewYear = localStorage.getItem('newYear2026Shown');
+             
+             // Если в периоде и еще не показывали - показываем
+             if (currentDate >= startDate && currentDate <= endDate && !hasShownNewYear) {
+                 // Создаем снежинки
+                 createSnowflakes();
+                 
+                 // Показываем поздравление с небольшой задержкой
+                 setTimeout(() => {
+                     document.getElementById('newyearOverlay').classList.add('active');
+                 }, 500);
+                 
+                 // Инициализация
+                 initNewYearGreeting();
+             }
+         });
+         
+         // Создание снежинок
+         function createSnowflakes() {
+             const snowflakes = ['❄', '❅', '❆', '★', '☆'];
+             const container = document.body;
+             
+             for (let i = 0; i < 50; i++) {
+                 const snowflake = document.createElement('div');
+                 snowflake.className = 'snowflake';
+                 snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                 snowflake.style.left = Math.random() * 100 + 'vw';
+                 snowflake.style.animationDuration = Math.random() * 5 + 5 + 's';
+                 snowflake.style.animationDelay = Math.random() * 5 + 's';
+                 snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+                 snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+                 container.appendChild(snowflake);
+             }
+         }
+         
+         // Функция для создания частиц (салюта)
+         function createParticles(x, y, count = 30, colors = ['#ff416c', '#2193b0', '#834d9b', '#11998e', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']) {
+             for (let i = 0; i < count; i++) {
+                 const particle = document.createElement('div');
+                 particle.classList.add('particle');
+                 particle.style.left = `${x}px`;
+                 particle.style.top = `${y}px`;
+                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                 
+                 const angle = Math.random() * Math.PI * 2;
+                 const speed = Math.random() * 4 + 2;
+                 const size = Math.random() * 8 + 4;
+                 
+                 particle.style.width = `${size}px`;
+                 particle.style.height = `${size}px`;
+                 
+                 document.body.appendChild(particle);
+                 
+                 const animation = particle.animate([
+                     { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+                     { transform: `translate(${Math.cos(angle) * speed * 50}px, ${Math.sin(angle) * speed * 50}px) scale(0)`, opacity: 0 }
+                 ], {
+                     duration: Math.random() * 800 + 700,
+                     easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                 });
+                 
+                 animation.onfinish = () => {
+                     particle.remove();
+                 };
+             }
+         }
+         
+         // Функция для создания фейерверка
+         function createFireworks(duration = 3000) {
+             const container = document.getElementById('finalFireworks');
+             container.classList.add('active');
+             
+             const interval = setInterval(() => {
+                 const x = Math.random() * window.innerWidth;
+                 const y = Math.random() * window.innerHeight;
+                 createParticles(x, y, 40);
+             }, 100);
+             
+             setTimeout(() => {
+                 clearInterval(interval);
+                 setTimeout(() => {
+                     container.classList.remove('active');
+                 }, 1000);
+             }, duration);
+         }
+         
+         // Инициализация новогоднего поздравления
+         function initNewYearGreeting() {
+             const nextButton = document.getElementById('nextButton');
+             const mainGreeting = document.getElementById('mainGreeting');
+             const wishesStage = document.getElementById('wishesStage');
+             const wishesContainer = document.getElementById('wishesContainer');
+             const wishItems = document.querySelectorAll('.wish-item');
+             
+             let currentWish = 1;
+             const totalWishes = wishItems.length;
+             let stage = 1; // 1 - основное поздравление, 2 - пожелания
+             
+             // Функция для показа следующего пожелания
+             function showNextWish() {
+                 // Запускаем салют при каждом нажатии
+                 const rect = nextButton.getBoundingClientRect();
+                 const x = rect.left + rect.width / 2;
+                 const y = rect.top + rect.height / 2;
+                 createParticles(x, y, 15);
+                 
+                 // Скрываем текущее пожелание
+                 if (currentWish > 0) {
+                     document.getElementById(`wish${currentWish}`).classList.remove('active');
+                 }
+                 
+                 // Если это не последнее пожелание
+                 if (currentWish < totalWishes) {
+                     currentWish++;
+                     
+                     // Показываем следующее пожелание
+                     document.getElementById(`wish${currentWish}`).classList.add('active');
+         
+                     // Если это последнее пожелание
+                     if (currentWish === totalWishes) {
+                         nextButton.disabled = true;
+                         
+                         // Ждем 1 секунду
+                         setTimeout(() => {
+                             // Показываем все пожелания
+                             wishItems.forEach(item => {
+                                 item.classList.remove('active');
+                                 item.classList.add('all-show');
+                             });
+                             
+                             // Добавляем скролл к контейнеру
+                             wishesContainer.classList.add('all-wishes');
+                             
+                             // Меняем кнопку
+                             nextButton.innerHTML = '<i class="fas fa-fireworks"></i> Запустить салют';
+                             nextButton.disabled = false;
+                             
+                             // Меняем обработчик
+                             nextButton.onclick = finishGreeting;
+                         }, 1000);
+                     }
+                 }
+             }
+             
+             // Функция завершения поздравления
+             function finishGreeting() {
+                 // Запускаем фейерверк
+                 createFireworks(3000);
+                 
+                 // Меняем текст кнопки
+                 nextButton.disabled = true;
+                 nextButton.innerHTML = '<i class="fas fa-check-circle"></i> Салют запущен!';
+                 
+                 // Закрываем поздравление через 3 секунды
+                 setTimeout(() => {
+                     document.getElementById('newyearOverlay').classList.remove('active');
+                     
+                     // Сохраняем информацию о том, что поздравление было показано
+                     localStorage.setItem('newYear2026Shown', 'true');
+                     
+                     // Удаляем снежинки
+                     const snowflakes = document.querySelectorAll('.snowflake');
+                     snowflakes.forEach(snowflake => {
+                         snowflake.remove();
+                     });
+                     
+                     // Убираем оверлей через еще секунду
+                     setTimeout(() => {
+                         document.getElementById('newyearOverlay').style.display = 'none';
+                     }, 1000);
+                 }, 3000);
+             }
+             
+             // Назначаем обработчик на кнопку
+             nextButton.onclick = function() {
+                 if (stage === 1) {
+                     // Переходим от основного поздравления к пожеланиям
+                     mainGreeting.classList.add('hidden');
+                     wishesStage.classList.add('active');
+                     stage = 2;
+                     
+                     // Запускаем салют
+                     const rect = nextButton.getBoundingClientRect();
+                     const x = rect.left + rect.width / 2;
+                     const y = rect.top + rect.height / 2;
+                     createParticles(x, y, 20);
+                     
+                     // Показываем первое пожелание
+                     currentWish = 1;
+                     document.getElementById(`wish${currentWish}`).classList.add('active');
+                 } else if (stage === 2) {
+                     // Показываем следующее пожелание
+                     showNextWish();
+                 }
+             };
+         }
+      </script>
+   </body>
 </html>
