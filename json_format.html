@@ -752,10 +752,6 @@
             transform: translateY(-1px);
         }
         
-        .reg-status-description:hover::after {
-            opacity: 1;
-        }
-        
         .reg-status-description.copied {
             background: var(--gradient-success);
             color: white;
@@ -961,6 +957,7 @@
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
                 this.currentStatusMessageCode = null;
+                this.currentReceiveDate = null;
                 
                 this.jsonBlocks = {
                     'residenceAddress': `"residenceAddress": {
@@ -1046,6 +1043,26 @@
                 
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                 this.updateLineNumbers('outputLineNumbers', 'outputEditor');
+            }
+            
+            // Метод для проверки, прошло ли более 4 суток с receiveDate
+            isReceiveDateMoreThan4DaysOld() {
+                if (!this.currentReceiveDate) {
+                    return false;
+                }
+                
+                try {
+                    const receiveDate = new Date(this.currentReceiveDate);
+                    const currentDate = new Date();
+                    const diffInMs = currentDate - receiveDate;
+                    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+                    
+                    // Проверяем, прошло ли более 4 суток (больше 4 дней)
+                    return diffInDays > 4;
+                } catch (e) {
+                    console.error('Ошибка при обработке даты:', e);
+                    return false;
+                }
             }
             
             // Метод для копирования описания статуса
@@ -1380,6 +1397,7 @@
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
                 this.currentStatusMessageCode = null;
+                this.currentReceiveDate = null;
                 
                 const search = (currentObj) => {
                     if (!currentObj || typeof currentObj !== 'object') return;
@@ -1392,6 +1410,7 @@
                             this.currentRegStatus = this.residenceRegistrationBlock.regStatus;
                             this.currentUnregistrationReasonId = this.residenceRegistrationBlock.unregistrationReasonId;
                             this.currentStatusMessageCode = this.residenceRegistrationBlock.statusMessageCode;
+                            this.currentReceiveDate = this.residenceRegistrationBlock.receiveDate;
                         }
                         
                         this.displayResidencePanel();
@@ -1512,6 +1531,9 @@
                     if (this.currentStatusMessageCode !== null) {
                         statusText += `, msgCode: ${this.currentStatusMessageCode}`;
                     }
+                    if (this.currentReceiveDate) {
+                        statusText += `, receiveDate: ${this.currentReceiveDate}`;
+                    }
                     statusBadge.textContent = statusText;
                     
                     statusBadge.className = 'reg-status';
@@ -1555,7 +1577,10 @@
                 const shouldShowProcessBtn = 
                     (this.currentRegStatus === 3) || 
                     (this.currentRegStatus === 7 && 
-                     (this.currentUnregistrationReasonId === 1 || this.currentUnregistrationReasonId === 3));
+                     (this.currentUnregistrationReasonId === 1 || this.currentUnregistrationReasonId === 3)) ||
+                    (this.currentRegStatus === 7 && 
+                     this.currentUnregistrationReasonId === 2 && 
+                     this.isReceiveDateMoreThan4DaysOld());
                 
                 // Условия для отображения кнопки "Исправить на 5 статус"
                 const shouldShowInvalidBtn = 
@@ -1583,6 +1608,7 @@
                 this.currentRegStatus = null;
                 this.currentUnregistrationReasonId = null;
                 this.currentStatusMessageCode = null;
+                this.currentReceiveDate = null;
             }
             
             fixResidenceRegistration(newStatus) {
@@ -1605,18 +1631,22 @@
                             const oldStatus = obj.residenceRegistration.regStatus;
                             const oldReasonId = obj.residenceRegistration.unregistrationReasonId;
                             const oldMessageCode = obj.residenceRegistration.statusMessageCode;
+                            const oldReceiveDate = obj.residenceRegistration.receiveDate;
                             
                             obj.residenceRegistration.regStatus = newStatus;
                             
                             if (newStatus === 1) {
                                 // Исправляем на статус 1
-                                if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3)) {
+                                if (oldStatus === 7 && (oldReasonId === 1 || oldReasonId === 3 || oldReasonId === 2)) {
                                     obj.residenceRegistration.unregistrationReasonId = null;
-                                    this.showNotification(
-                                        `regStatus изменен с ${oldStatus} на 1, unregistrationReasonId изменен на null`, 
-                                        false, 
-                                        'info'
-                                    );
+                                    let message = `regStatus изменен с ${oldStatus} на 1, unregistrationReasonId изменен на null`;
+                                    
+                                    // Если было отсутствие геоданных (reasonId=2), добавляем информацию о дате
+                                    if (oldReasonId === 2 && oldReceiveDate) {
+                                        message += ` (было отсутствие геоданных с ${oldReceiveDate})`;
+                                    }
+                                    
+                                    this.showNotification(message, false, 'info');
                                 } else if (oldStatus === 3) {
                                     this.showNotification(
                                         `regStatus изменен с ${oldStatus} на 1`, 
@@ -1642,6 +1672,7 @@
                             this.currentRegStatus = newStatus;
                             this.currentUnregistrationReasonId = obj.residenceRegistration.unregistrationReasonId;
                             this.currentStatusMessageCode = obj.residenceRegistration.statusMessageCode;
+                            this.currentReceiveDate = obj.residenceRegistration.receiveDate;
                             
                             return true;
                         }
