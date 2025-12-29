@@ -601,20 +601,148 @@
             transition: all var(--transition-fast);
         }
         
+        /* Обновленная структура residence-header */
         .residence-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: var(--spacing-sm);
             padding: var(--spacing-lg);
             background: var(--gradient-waiting);
             color: var(--text-white);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .residence-header h3 {
+        .residence-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .residence-header-top h3 {
             display: flex;
             align-items: center;
             gap: var(--spacing-sm);
+        }
+        
+        .reg-status-badge {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+        
+        .reg-status-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .reg-status-item.reg-status {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .reg-status-item.reason-id,
+        .reg-status-item.msg-code {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Цвета для различных статусов */
+        .reg-status-item.reg-status-1 {
+            background: var(--gradient-success);
+        }
+        
+        .reg-status-item.reg-status-3 {
+            background: var(--gradient-info);
+        }
+        
+        .reg-status-item.reg-status-4 {
+            background: var(--gradient-success);
+        }
+        
+        .reg-status-item.reg-status-5 {
+            background: var(--gradient-success);
+        }
+        
+        .reg-status-item.reg-status-6 {
+            background: var(--gradient-warning);
+        }
+        
+        .reg-status-item.reg-status-7 {
+            background: var(--gradient-danger);
+        }
+        
+        .reg-status-item.reg-status-10 {
+            background: var(--gradient-warning);
+        }
+        
+        .residence-header-description {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid var(--color-primary);
+            margin-top: 4px;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+        
+        .residence-header-description:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+        
+        .residence-header-description.copied {
+            background: var(--gradient-success);
+            color: white;
+            animation: copyPulse 0.5s ease;
+        }
+        
+        .residence-header-description.status-1 {
+            border-left-color: var(--color-success);
+        }
+        
+        .residence-header-description.status-3 {
+            border-left-color: var(--color-info);
+        }
+        
+        .residence-header-description.status-4 {
+            border-left-color: var(--color-success);
+        }
+        
+        .residence-header-description.status-5 {
+            border-left-color: var(--color-success);
+        }
+        
+        .residence-header-description.status-6 {
+            border-left-color: var(--color-warning);
+        }
+        
+        .residence-header-description.status-7 {
+            border-left-color: var(--color-danger);
+        }
+        
+        .residence-header-description.status-10 {
+            border-left-color: var(--color-warning);
+        }
+        
+        .light-theme .residence-header-description {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .light-theme .residence-header-description:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes copyPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
         
         .residence-content {
@@ -687,152 +815,6 @@
         
         .residence-btn.invalid {
             background: var(--gradient-warning);
-        }
-        
-        .reg-status {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-left: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        
-        .reg-status.reg-status-1 {
-            background: var(--gradient-success);
-        }
-        
-        .reg-status.reg-status-3 {
-            background: var(--gradient-info);
-        }
-        
-        .reg-status.reg-status-4 {
-            background: var(--gradient-success);
-        }
-        
-        .reg-status.reg-status-5 {
-            background: var(--gradient-success);
-        }
-        
-        .reg-status.reg-status-6 {
-            background: var(--gradient-warning);
-        }
-        
-        .reg-status.reg-status-7 {
-            background: var(--gradient-danger);
-        }
-        
-        .reg-status.reg-status-10 {
-            background: var(--gradient-warning);
-        }
-        
-        .reg-status.reg-status-other {
-            background: var(--bg-tertiary);
-        }
-        
-        .reg-status-description {
-            display: inline-block;
-            margin-left: 12px;
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            border-left: 3px solid var(--color-primary);
-            max-width: 100%;
-            transition: all var(--transition-fast);
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .reg-status-description:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-1px);
-        }
-        
-        .reg-status-description.copied {
-            background: var(--gradient-success);
-            color: white;
-            animation: copyPulse 0.5s ease;
-        }
-        
-        @keyframes copyPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .reg-status-description.status-1 {
-            border-left-color: var(--color-success);
-            background: rgba(16, 185, 129, 0.15);
-        }
-        
-        .reg-status-description.status-3 {
-            border-left-color: var(--color-info);
-            background: rgba(59, 130, 246, 0.15);
-        }
-        
-        .reg-status-description.status-4 {
-            border-left-color: var(--color-success);
-            background: rgba(16, 185, 129, 0.15);
-        }
-        
-        .reg-status-description.status-5 {
-            border-left-color: var(--color-success);
-            background: rgba(16, 185, 129, 0.15);
-        }
-        
-        .reg-status-description.status-6 {
-            border-left-color: var(--color-warning);
-            background: rgba(245, 158, 11, 0.15);
-        }
-        
-        .reg-status-description.status-7 {
-            border-left-color: var(--color-danger);
-            background: rgba(239, 68, 68, 0.15);
-        }
-        
-        .reg-status-description.status-10 {
-            border-left-color: var(--color-warning);
-            background: rgba(245, 158, 11, 0.15);
-        }
-        
-        .light-theme .reg-status-description {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        
-        .light-theme .reg-status-description:hover {
-            background: rgba(0, 0, 0, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-1 {
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-3 {
-            background: rgba(59, 130, 246, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-4 {
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-5 {
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-6 {
-            background: rgba(245, 158, 11, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-7 {
-            background: rgba(239, 68, 68, 0.1);
-        }
-        
-        .light-theme .reg-status-description.status-10 {
-            background: rgba(245, 158, 11, 0.1);
         }
     </style>
 </head>
@@ -924,12 +906,18 @@
     
     <div class="residence-panel" id="residencePanel">
         <div class="residence-header">
-            <h3>
-                <i class="fas fa-home"></i>
-                Блок residenceRegistration
-                <span id="regStatusBadge" class="reg-status"></span>
-                <span id="regStatusDescription" class="reg-status-description"></span>
-            </h3>
+            <div class="residence-header-top">
+                <h3>
+                    <i class="fas fa-home"></i>
+                    Блок residenceRegistration
+                </h3>
+                <div class="reg-status-badge" id="regStatusBadge">
+                    <!-- Бейджи будут добавлены динамически -->
+                </div>
+            </div>
+            <div class="residence-header-description" id="regStatusDescription">
+                <!-- Описание статуса будет добавлено динамически -->
+            </div>
         </div>
         <div class="residence-content" id="residenceBlockDisplay"></div>
         <div class="residence-buttons">
@@ -1523,37 +1511,30 @@
                 const formattedBlock = JSON.stringify(this.residenceRegistrationBlock, null, 2);
                 display.textContent = formattedBlock;
                 
+                // Очищаем бейдж перед добавлением новых элементов
+                statusBadge.innerHTML = '';
+                
                 if (this.currentRegStatus !== null) {
-                    let statusText = `regStatus: ${this.currentRegStatus}`;
+                    // Создаем бейдж для regStatus
+                    const regStatusEl = document.createElement('span');
+                    regStatusEl.className = `reg-status-item reg-status reg-status-${this.currentRegStatus}`;
+                    regStatusEl.textContent = `regStatus: ${this.currentRegStatus}`;
+                    statusBadge.appendChild(regStatusEl);
+                    
+                    // Создаем бейдж для unregistrationReasonId, если есть
                     if (this.currentUnregistrationReasonId !== null) {
-                        statusText += `, reasonId: ${this.currentUnregistrationReasonId}`;
+                        const reasonIdEl = document.createElement('span');
+                        reasonIdEl.className = 'reg-status-item reason-id';
+                        reasonIdEl.textContent = `reasonId: ${this.currentUnregistrationReasonId}`;
+                        statusBadge.appendChild(reasonIdEl);
                     }
+                    
+                    // Создаем бейдж для statusMessageCode, если есть
                     if (this.currentStatusMessageCode !== null) {
-                        statusText += `, msgCode: ${this.currentStatusMessageCode}`;
-                    }
-                    if (this.currentReceiveDate) {
-                        statusText += `, receiveDate: ${this.currentReceiveDate}`;
-                    }
-                    statusBadge.textContent = statusText;
-                    
-                    statusBadge.className = 'reg-status';
-                    
-                    if (this.currentRegStatus === 1) {
-                        statusBadge.classList.add('reg-status-1');
-                    } else if (this.currentRegStatus === 3) {
-                        statusBadge.classList.add('reg-status-3');
-                    } else if (this.currentRegStatus === 4) {
-                        statusBadge.classList.add('reg-status-4');
-                    } else if (this.currentRegStatus === 5) {
-                        statusBadge.classList.add('reg-status-5');
-                    } else if (this.currentRegStatus === 6) {
-                        statusBadge.classList.add('reg-status-6');
-                    } else if (this.currentRegStatus === 7) {
-                        statusBadge.classList.add('reg-status-7');
-                    } else if (this.currentRegStatus === 10) {
-                        statusBadge.classList.add('reg-status-10');
-                    } else {
-                        statusBadge.classList.add('reg-status-other');
+                        const msgCodeEl = document.createElement('span');
+                        msgCodeEl.className = 'reg-status-item msg-code';
+                        msgCodeEl.textContent = `msgCode: ${this.currentStatusMessageCode}`;
+                        statusBadge.appendChild(msgCodeEl);
                     }
                     
                     // Получаем расшифровку статуса
@@ -1563,14 +1544,18 @@
                         this.currentUnregistrationReasonId
                     );
                     statusDescription.textContent = description;
-                    statusDescription.className = 'reg-status-description';
+                    statusDescription.className = 'residence-header-description';
                     statusDescription.classList.add(`status-${this.currentRegStatus}`);
                     
                 } else {
-                    statusBadge.textContent = 'regStatus: не найден';
-                    statusBadge.className = 'reg-status reg-status-other';
+                    // Если статус не найден
+                    const regStatusEl = document.createElement('span');
+                    regStatusEl.className = 'reg-status-item reg-status';
+                    regStatusEl.textContent = 'regStatus: не найден';
+                    statusBadge.appendChild(regStatusEl);
+                    
                     statusDescription.textContent = '';
-                    statusDescription.className = 'reg-status-description';
+                    statusDescription.className = 'residence-header-description';
                 }
                 
                 // Условия для отображения кнопки "Исправить на 1 статус"
