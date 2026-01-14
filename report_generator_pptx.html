@@ -638,30 +638,40 @@
                 return `${day}${month}`;
             }
             
-            // Функция форматирования чисел (без округления)
+            // Функция форматирования чисел (без округления, с сохранением точности)
             function formatNumber(num, isGrowth = false) {
-                const numValue = parseFloat(num);
-                if (isNaN(numValue)) return isGrowth ? "0" : "0";
+                if (!num && num !== 0) return isGrowth ? "0" : "0";
                 
-                // Разделяем целую и дробную части
-                const parts = numValue.toString().split('.');
+                // Получаем строковое значение
+                const numStr = num.toString().trim();
+                
+                // Разделяем целую и дробную части (используем точку как разделитель)
+                let [integerPart, decimalPart] = numStr.split('.');
+                
+                // Если использовалась запятая как разделитель
+                if (!decimalPart && numStr.includes(',')) {
+                    [integerPart, decimalPart] = numStr.split(',');
+                }
+                
+                // Удаляем все пробелы из целой части
+                integerPart = integerPart.replace(/\s/g, '');
                 
                 // Форматируем целую часть с пробелами для тысяч
-                if (parts[0]) {
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                if (integerPart) {
+                    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                 }
                 
                 // Формируем результат
-                let result = parts.join(',');
+                let result = decimalPart !== undefined ? `${integerPart},${decimalPart}` : integerPart;
                 
                 // Добавляем знак для прироста
                 if (isGrowth) {
+                    const numValue = parseFloat(numStr.replace(',', '.'));
                     if (numValue > 0) {
                         result = `+ ${result}`;
                     } else if (numValue < 0) {
-                        result = `- ${Math.abs(numValue).toString().split('.').map((part, i) => 
-                            i === 0 ? part.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : part
-                        ).join(',')}`;
+                        // Для отрицательных чисел показываем со знаком минус
+                        result = result.replace(/^-?\s*/, '- ');
                     }
                 }
                 
@@ -670,18 +680,29 @@
             
             // Функция форматирования процентов (без округления)
             function formatPercent(percent) {
-                const percentValue = parseFloat(percent);
-                if (isNaN(percentValue)) return "0";
+                if (!percent && percent !== 0) return "0";
+                
+                // Получаем строковое значение
+                const percentStr = percent.toString().trim();
                 
                 // Разделяем целую и дробную части
-                const parts = percentValue.toString().split('.');
+                let [integerPart, decimalPart] = percentStr.split('.');
                 
-                // Форматируем целую часть с пробелами для тысяч
-                if (parts[0]) {
-                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                // Если использовалась запятая как разделитель
+                if (!decimalPart && percentStr.includes(',')) {
+                    [integerPart, decimalPart] = percentStr.split(',');
                 }
                 
-                return parts.join(',');
+                // Удаляем все пробелы из целой части
+                integerPart = integerPart.replace(/\s/g, '');
+                
+                // Форматируем целую часть с пробелами для тысяч
+                if (integerPart) {
+                    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                }
+                
+                // Формируем результат
+                return decimalPart !== undefined ? `${integerPart},${decimalPart}` : integerPart;
             }
             
             // Обработчик загрузки файла
