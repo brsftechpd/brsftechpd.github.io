@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Темная тема - основной вариант */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            
+            --border-color: #475569;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-focus: #6366f1;
+            
+            --color-primary: #6366f1;
+            --color-primary-hover: #4f46e5;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-info: #3b82f6;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 24px;
+            --spacing-2xl: 32px;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            --header-height: 64px;
+            --sidebar-width: 280px;
+            --editor-min-height: 300px;
+        }
+        
+        .light-theme {
+            /* Светлая тема */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-tertiary: #e2e8f0;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-white: #ffffff;
+            
+            --border-color: #cbd5e1;
+            --border-light: rgba(0, 0, 0, 0.05);
+            --border-focus: #6366f1;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: background-color var(--transition-base), color var(--transition-base);
+            overflow-x: hidden;
+        }
+        
+        /* Шапка */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .home-btn {
+            background: var(--color-primary);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .home-btn:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .app-title i {
+            color: var(--color-primary);
+            font-size: 20px;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: inline-block;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+        
+        .light-theme .theme-toggle .moon-icon {
+            display: none;
+        }
+        
+        .light-theme .theme-toggle .sun-icon {
+            display: inline-block;
+            color: #f59e0b;
+        }
+        
+        /* Основной контейнер */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
+            padding-top: var(--header-height);
+        }
+        
+        /* Боковая панель с инструментами */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-light);
+            padding: var(--spacing-xl);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+            overflow-y: auto;
+            transition: all var(--transition-base);
+        }
+        
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .action-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            text-align: left;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            transform: translateX(4px);
+        }
+        
+        .action-btn i {
+            color: var(--color-primary);
+            font-size: 14px;
+            width: 20px;
+        }
+        
+        .json-blocks {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-sm);
+        }
+        
+        .block-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .block-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .block-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .block-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        
+        .block-btn i {
+            color: var(--color-primary);
+            font-size: 12px;
+        }
+        
+        /* Основное содержимое */
+        .content {
+            flex: 1;
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            background: var(--bg-primary);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .content-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .content-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* Основная область с редактором и блоками */
+        .editor-and-blocks {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        @media (max-width: 1200px) {
+            .editor-and-blocks {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Редактор */
+        .editor-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            min-height: var(--editor-min-height);
+            transition: all var(--transition-base);
+        }
+        
+        .editor-card:hover {
+            box-shadow: var(--shadow-xl);
+            border-color: var(--border-color);
+        }
+        
+        .editor-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-base);
+        }
+        
+        .editor-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        
+        .editor-title i {
+            color: var(--color-primary);
+        }
+        
+        .editor-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .status-badge {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-badge.waiting {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+        
+        .status-badge.valid {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-badge.invalid {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .unicode-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+        
+        .unicode-toggle:hover {
+            background: var(--bg-secondary);
+            border-color: var(--color-primary);
+        }
+        
+        .unicode-toggle-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--border-color);
+            transition: var(--transition-base);
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background: white;
+            transition: var(--transition-base);
+            border-radius: 50%;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        input:checked + .toggle-slider {
+            background: var(--color-primary);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(16px);
+        }
+        
+        .editor-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-input);
+        }
+        
+        .line-numbers {
+            width: 50px;
+            padding: var(--spacing-lg);
+            background: var(--bg-tertiary);
+            border-right: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: right;
+            overflow-y: auto;
+            user-select: none;
+            flex-shrink: 0;
+            white-space: pre;
+        }
+        
+        .editor-content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            overflow: auto;
+            transition: all var(--transition-base);
+        }
+        
+        .editor-content::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        
+        .editor-footer {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: space-between;
+        }
+        
+        .editor-btn {
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .editor-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .editor-btn i {
+            font-size: 12px;
+        }
+        
+        .editor-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .editor-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-danger);
+        }
+        
+        .editor-btn.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .editor-btn.success:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--color-success);
+        }
+        
+        /* Блоки справа */
+        .blocks-column {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+        
+        /* Панели информации */
+        .info-panels {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+        
+        @media (max-width: 1200px) {
+            .info-panels {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .info-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-base);
+        }
+        
+        .info-card:hover {
+            box-shadow: var(--shadow-xl);
+            border-color: var(--border-color);
+        }
+        
+        .info-card-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+            transition: all var(--transition-base);
+        }
+        
+        .info-card-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        
+        .info-card-title i {
+            color: var(--color-primary);
+        }
+        
+        .info-badges {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+        
+        .info-badge {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .info-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        
+        .info-badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .info-badge.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-info);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .info-description {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+        
+        .info-description:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        .info-description.copied {
+            background: var(--color-success);
+            color: white;
+        }
+        
+        .copy-hint {
+            position: absolute;
+            right: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+        
+        .info-description:hover .copy-hint {
+            opacity: 1;
+        }
+        
+        .info-content {
+            padding: var(--spacing-xl);
+            background: var(--bg-input);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            flex: 1;
+            min-height: 200px;
+        }
+        
+        .info-actions {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            background: var(--bg-secondary);
+        }
+        
+        .info-btn {
+            border: none;
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-weight: 500;
+            font-size: 13px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .info-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .info-btn.primary {
+            background: var(--color-primary);
+        }
+        
+        .info-btn.primary:hover {
+            background: var(--color-primary-hover);
+        }
+        
+        .info-btn.warning {
+            background: var(--color-warning);
+        }
+        
+        .info-btn.warning:hover {
+            background: #d97706;
+        }
+        
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: calc(var(--header-height) + var(--spacing-md));
+            right: var(--spacing-xl);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 320px;
+            border-left: 4px solid var(--color-success);
+            transform: translateX(100%);
+        }
+        
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        .notification.hide {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+        
+        .notification.error {
+            border-left-color: var(--color-danger);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--color-warning);
+        }
+        
+        .notification.info {
+            border-left-color: var(--color-info);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+        }
+        
+        .notification-icon {
+            font-size: 18px;
+            margin-top: 1px;
+        }
+        
+        .notification.success .notification-icon {
+            color: var(--color-success);
+        }
+        
+        .notification.error .notification-icon {
+            color: var(--color-danger);
+        }
+        
+        .notification.warning .notification-icon {
+            color: var(--color-warning);
+        }
+        
+        .notification.info .notification-icon {
+            color: var(--color-info);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: var(--header-height);
+                bottom: 0;
+                z-index: 90;
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .content {
+                padding-left: var(--spacing-xl);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 var(--spacing-lg);
+            }
+            
+            .content {
+                padding: var(--spacing-lg);
+            }
+            
+            .editor-and-blocks, .info-panels {
+                gap: var(--spacing-lg);
+            }
+            
+            .info-panels {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Специальные стили для скроллбаров */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+        
+        /* Анимации */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Скрытие элементов при отсутствии данных */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Прогресс-бар */
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Счетчики */
+        .char-counter {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
+        }
+        
+        /* Подсказки */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 10;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xs);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <button class="home-btn" id="homeBtn" title="Главная страница">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+        
+        <div class="header-center">
+            <div class="app-title">
+                <i class="fas fa-code"></i>
+                <span>JSON Editor</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+                <i class="fas fa-moon moon-icon"></i>
+                <i class="fas fa-sun sun-icon"></i>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- Боковая панель с инструментами -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Быстрые действия
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn" data-action="clear-all">
+                        <i class="fas fa-trash"></i>
+                        <span>Очистить все</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-copy"></i>
+                    JSON Блоки
+                </div>
+                <div class="json-blocks">
+                    <button class="block-btn" data-action="copy-residence-address">
+                        <div class="block-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            residenceAddress
+                        </div>
+                        <div class="block-desc">Адрес проживания с координатами</div>
+                    </button>
+                    <button class="block-btn" data-action="copy-residence-registration">
+                        <div class="block-title">
+                            <i class="fas fa-home"></i>
+                            residenceRegistration
+                        </div>
+                        <div class="block-desc">Регистрационные данные</div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Статистика
+                </div>
+                <div id="statsPanel">
+                    <div class="char-counter">
+                        Символов: <span id="charCount">0</span>
+                    </div>
+                    <div class="char-counter">
+                        Строк: <span id="lineCount">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="jsonValidityBar" style="width: 0%"></div>
+                    </div>
+                    <div class="char-counter">
+                        Валидность: <span id="validityText">Не проверено</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Основное содержимое -->
+        <main class="content">
+            <div class="content-header">
+                <div>
+                    <h1 class="content-title">JSON Editor</h1>
+                    <p class="content-subtitle">Обработка и анализ JSON данных профиля S3</p>
+                </div>
+            </div>
+            
+            <!-- Редактор и блоки справа -->
+            <div class="editor-and-blocks">
+                <!-- Редактор JSON -->
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <i class="fas fa-keyboard"></i>
+                            <span>Ввод JSON</span>
+                        </div>
+                        <div class="editor-status">
+                            <div class="status-badge waiting" id="inputStatus">Ожидание...</div>
+                            <div class="unicode-toggle" id="unicodeToggle">
+                                <span class="unicode-toggle-label">Unicode</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="viewSwitch">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <div class="line-numbers" id="inputLineNumbers">1</div>
+                        <textarea class="editor-content" id="inputEditor" placeholder='Вставьте JSON или текст здесь...'></textarea>
+                    </div>
+                    <div class="editor-footer">
+                        <button class="editor-btn danger" data-action="clear-all">
+                            <i class="fas fa-trash"></i>
+                            Очистить
+                        </button>
+                        <button class="editor-btn success" data-action="copy-input">
+                            <i class="fas fa-copy"></i>
+                            Копировать
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Блоки справа -->
+                <div class="blocks-column">
+                    <div class="info-card hidden" id="residencePanel">
+                        <div class="info-card-header">
+                            <div class="info-card-title">
+                                <i class="fas fa-home"></i>
+                                <span>Блок residenceRegistration</span>
+                            </div>
+                            <div class="info-badges" id="regStatusBadge">
+                                <!-- Бейджи будут добавлены динамически -->
+                            </div>
+                        </div>
+                        <div class="info-description" id="regStatusDescription">
+                            <span id="regStatusText">Загрузка описания статуса...</span>
+                            <span class="copy-hint">Кликните для копирования</span>
+                        </div>
+                        <div class="info-content" id="residenceBlockDisplay"></div>
+                        <div class="info-actions">
+                            <button class="info-btn primary hidden" id="processMsoBtn">
+                                <i class="fas fa-check-circle"></i>
+                                Исправить на статус 1
+                            </button>
+                            <button class="info-btn warning hidden" id="invalidMsoBtn">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Исправить на статус 5
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card hidden" id="residenceAddressPanel">
+                        <div class="info-card-header">
+                            <div class="info-card-title">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Блок residenceAddress</span>
+                            </div>
+                            <div class="info-badges" id="addressStatusBadge">
+                                <!-- Бейджи будут добавлены динамически -->
+                            </div>
+                        </div>
+                        <div class="info-description" id="addressStatusDescription">
+                            <span id="addressStatusText">Проверка адреса...</span>
+                            <span class="copy-hint">Кликните для копирования</span>
+                        </div>
+                        <div class="info-content" id="addressBlockDisplay"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Уведомления -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i class="fas fa-check-circle notification-icon"></i>
+            <div>
+                <div class="notification-title" id="notificationTitle">Успешно!</div>
+                <div class="notification-message" id="notificationMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class JSONEditor {
+            constructor() {
+                this.isTextViewMode = false;
+                this.debounceTimer = null;
+                this.unicodeOutput = '';
+                this.textOutput = '';
+                this.isJsonValid = false;
+                this.residenceRegistrationFound = false;
+                this.residenceAddressFound = false;
+                this.residenceRegistrationBlock = null;
+                this.residenceAddressBlock = null;
+                this.currentRegStatus = null;
+                this.currentUnregistrationReasonId = null;
+                this.currentStatusMessageCode = null;
+                this.currentReceiveDate = null;
+                this.currentAddressName = null;
+                
+                this.jsonBlocks = {
+                    'residenceAddress': `"residenceAddress": {
+    "addressName": "НЕОБХОДИМО УКАЗАТЬ АДРЕС ИЗ ФИАС https://fias.nalog.ru/",
+    "flat": null,
+    "city": "НЕОБХОДИМО УКАЗАТЬ ГОРОД",
+    "street": "НЕОБХОДИМО УКАЗАТЬ УЛИЦУ",
+    "house": "НЕОБХОДИМО УКАЗАТЬ НОМЕР ДОМА",
+    "province": "Центральный федеральный округ",
+    "point": {
+      "lat": НЕОБХОДИМО УКАЗАТЬ КООРДИНАТЫ,
+      "lon": НЕОБХОДИМО УКАЗАТЬ КООРДИНАТЫ
+    },
+    "timestamp": "2025-11-25T10:50:29Z",
+    "regDate": null,
+    "regStatus": null,
+    "changeDate": "2025-11-25T10:50:29Z",
+    "vegetation": null,
+    "district": null,
+    "locality": null,
+    "residenceStatus": 4,
+    "residenceMessageCode": null
+  }`,
+                    'residenceRegistration': `"residenceRegistration": {
+    "regStatus": 4,
+    "unregistrationReasonId": null,
+    "statusMessageCode": null,
+    "receiveDate": "2025-11-13T23:03:13.335Z",
+    "expirationDate": "2029-09-01T00:00:00",
+    "isRkl": false,
+    "changeDate": "2025-11-13T01:09:55Z"
+  }`
+                };
+                
+                this.statusDescriptions = {
+                    1: 'Действий не требуется, пользователь видит кнопку "Начать".',
+                    3: 'В процессе обработки.',
+                    4: 'Состоит на учете.',
+                    5: 'Действий не требуется, пользователь видит кнопку "Повторить".',
+                    6: 'Отказ в постановке на учет.',
+                    7: 'Снятие с миграционного учета.',
+                    10: 'На Вас не распространяются новые правила учета через мобильное приложение «Амина».'
+                };
+                
+                this.reasonDescriptions = {
+                    1: 'Пересечение границы Российской Федерации.',
+                    2: 'Отсутствие геоданных.',
+                    3: 'Постановка на учет в другом субъекте РФ.',
+                    4: 'Данные ЗАГС (смерть).',
+                    5: 'Решение суда (безвестно отсутствующий).',
+                    6: 'Вам необходимо встать на миграционный учет по действующим правилам.'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.setupTheme();
+                this.updateStatistics();
+                document.getElementById('inputEditor').focus();
+            }
+            
+            bindEvents() {
+                const inputEditor = document.getElementById('inputEditor');
+                
+                // Обработка ввода
+                inputEditor.addEventListener('input', () => {
+                    this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    this.updateStatistics();
+                    this.debounceProcess();
+                });
+                
+                inputEditor.addEventListener('scroll', () => {
+                    const lineNumbers = document.getElementById('inputLineNumbers');
+                    lineNumbers.scrollTop = inputEditor.scrollTop;
+                });
+                
+                // Обработка кнопок
+                document.addEventListener('click', (e) => {
+                    const button = e.target.closest('[data-action]');
+                    if (button) {
+                        const action = button.dataset.action;
+                        this.handleAction(action);
+                    }
+                });
+                
+                // Копирование описаний
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('#regStatusDescription')) {
+                        this.copyStatusDescription('regStatusDescription');
+                    }
+                    if (e.target.closest('#addressStatusDescription')) {
+                        this.copyStatusDescription('addressStatusDescription');
+                    }
+                });
+                
+                // Кнопки исправления
+                document.getElementById('processMsoBtn').addEventListener('click', () => {
+                    this.fixResidenceRegistration(1);
+                });
+                
+                document.getElementById('invalidMsoBtn').addEventListener('click', () => {
+                    this.fixResidenceRegistration(5);
+                });
+                
+                // Переключение режима Unicode
+                document.getElementById('viewSwitch').addEventListener('change', () => {
+                    this.toggleUnicodeMode();
+                });
+                
+                // Начальное обновление нумерации строк
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+            }
+            
+            setupTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                }
+                
+                document.getElementById('themeToggleBtn').addEventListener('click', () => {
+                    document.body.classList.toggle('light-theme');
+                    localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+                });
+            }
+            
+            handleAction(action) {
+                switch(action) {
+                    case 'clear-all':
+                        this.clearAll();
+                        break;
+                    case 'copy-input':
+                        this.copyInputWithUnicode();
+                        break;
+                    case 'copy-residence-address':
+                        this.copyJsonBlock('residenceAddress');
+                        break;
+                    case 'copy-residence-registration':
+                        this.copyJsonBlock('residenceRegistration');
+                        break;
+                }
+            }
+            
+            copyJsonBlock(blockName) {
+                const block = this.jsonBlocks[blockName];
+                if (!block) {
+                    this.showNotification(`Блок ${blockName} не найден`, 'error');
+                    return;
+                }
+                
+                navigator.clipboard.writeText(block).then(() => {
+                    this.showNotification(`Блок ${blockName} скопирован в буфер`, 'success');
+                }).catch(() => {
+                    this.showNotification('Ошибка копирования', 'error');
+                });
+            }
+            
+            copyInputWithUnicode() {
+                const input = document.getElementById('inputEditor').value.trim();
+                
+                if (!input) {
+                    this.showNotification('Нет данных для копирования', 'warning');
+                    return;
+                }
+                
+                try {
+                    // Форматируем JSON
+                    const parsed = JSON.parse(input);
+                    const formattedJson = JSON.stringify(parsed, null, 2);
+                    const minifiedJson = JSON.stringify(parsed);
+                    
+                    // Создаем Unicode представление
+                    const unicodeJson = this.textToUnicode(minifiedJson);
+                    
+                    // Копируем оба формата
+                    const textToCopy = `${unicodeJson}`;
+                    
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        this.showNotification('JSON скопирован в формате строки и Unicode', 'success');
+                    }).catch(() => {
+                        this.showNotification('Ошибка копирования', 'error');
+                    });
+                } catch (error) {
+                    this.showNotification('Невалидный JSON', 'error');
+                }
+            }
+            
+            debounceProcess() {
+                clearTimeout(this.debounceTimer);
+                this.debounceTimer = setTimeout(() => {
+                    this.processInput();
+                }, 500);
+            }
+            
+            processInput() {
+                const input = document.getElementById('inputEditor').value.trim();
+                const inputStatus = document.getElementById('inputStatus');
+                
+                if (!input) {
+                    inputStatus.textContent = 'Ожидание...';
+                    inputStatus.className = 'status-badge waiting';
+                    this.hideInfoPanels();
+                    return;
+                }
+                
+                try {
+                    const parsed = JSON.parse(input);
+                    const formatted = JSON.stringify(parsed, null, 2);
+                    
+                    // Автоматически форматируем JSON
+                    if (input !== formatted) {
+                        document.getElementById('inputEditor').value = formatted;
+                        this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                    }
+                    
+                    inputStatus.textContent = 'Валидный JSON';
+                    inputStatus.className = 'status-badge valid';
+                    
+                    this.isJsonValid = true;
+                    this.findResidenceBlocks(parsed);
+                    
+                } catch (error) {
+                    inputStatus.textContent = 'Невалидный JSON';
+                    inputStatus.className = 'status-badge invalid';
+                    
+                    this.isJsonValid = false;
+                    this.hideInfoPanels();
+                }
+            }
+            
+            findResidenceBlocks(obj) {
+                this.residenceRegistrationFound = false;
+                this.residenceAddressFound = false;
+                this.residenceRegistrationBlock = null;
+                this.residenceAddressBlock = null;
+                
+                const search = (currentObj) => {
+                    if (!currentObj || typeof currentObj !== 'object') return;
+                    
+                    if (currentObj.residenceRegistration) {
+                        this.residenceRegistrationFound = true;
+                        this.residenceRegistrationBlock = currentObj.residenceRegistration;
+                        this.currentRegStatus = currentObj.residenceRegistration.regStatus;
+                        this.currentUnregistrationReasonId = currentObj.residenceRegistration.unregistrationReasonId;
+                        this.currentStatusMessageCode = currentObj.residenceRegistration.statusMessageCode;
+                        this.currentReceiveDate = currentObj.residenceRegistration.receiveDate;
+                    }
+                    
+                    if (currentObj.residenceAddress) {
+                        this.residenceAddressFound = true;
+                        this.residenceAddressBlock = currentObj.residenceAddress;
+                        this.currentAddressName = currentObj.residenceAddress.addressName;
+                    }
+                    
+                    for (const key in currentObj) {
+                        if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
+                            search(currentObj[key]);
+                        }
+                    }
+                };
+                
+                search(obj);
+                this.displayInfoPanels();
+            }
+            
+            getFullStatusDescription() {
+                if (!this.currentRegStatus) return 'Статус не определен';
+                
+                let description = this.statusDescriptions[this.currentRegStatus] || `Статус ${this.currentRegStatus}`;
+                
+                if (this.currentRegStatus === 6 && this.currentStatusMessageCode === 6) {
+                    description += ' по причине: В данных пользователя на стороне ММЦ обнаружена ошибка.';
+                }
+                
+                if (this.currentRegStatus === 7 && this.currentUnregistrationReasonId) {
+                    description += ` Причина: ${this.reasonDescriptions[this.currentUnregistrationReasonId] || `код ${this.currentUnregistrationReasonId}`}`;
+                }
+                
+                if (this.currentRegStatus === 10) {
+                    if (this.currentStatusMessageCode === 8) {
+                        description += ' Цель въезда в страну не связана с осуществлением трудовой деятельности.';
+                    } else if (this.currentStatusMessageCode === 9) {
+                        description += ' Наличие вида на жительство или разрешения на временное проживание.';
+                    } else if (this.currentStatusMessageCode === 10) {
+                        description += ' Ваше гражданство не соответствует требованиям.';
+                    }
+                }
+                
+                return description;
+            }
+            
+            displayInfoPanels() {
+                // Панель residenceRegistration
+                const regPanel = document.getElementById('residencePanel');
+                if (this.residenceRegistrationFound && this.residenceRegistrationBlock) {
+                    this.displayRegistrationPanel();
+                    regPanel.classList.remove('hidden');
+                } else {
+                    regPanel.classList.add('hidden');
+                }
+                
+                // Панель residenceAddress
+                const addressPanel = document.getElementById('residenceAddressPanel');
+                if (this.residenceAddressFound && this.residenceAddressBlock) {
+                    this.displayAddressPanel();
+                    addressPanel.classList.remove('hidden');
+                } else {
+                    addressPanel.classList.add('hidden');
+                }
+            }
+            
+            displayRegistrationPanel() {
+                const display = document.getElementById('residenceBlockDisplay');
+                const statusBadge = document.getElementById('regStatusBadge');
+                const statusText = document.getElementById('regStatusText');
+                const processBtn = document.getElementById('processMsoBtn');
+                const invalidBtn = document.getElementById('invalidMsoBtn');
+                
+                // Отображаем блок
+                display.textContent = JSON.stringify(this.residenceRegistrationBlock, null, 2);
+                
+                // Обновляем бейджи
+                statusBadge.innerHTML = '';
+                
+                if (this.currentRegStatus !== null) {
+                    const regStatusBadge = document.createElement('div');
+                    regStatusBadge.className = `info-badge ${
+                        this.currentRegStatus === 1 || this.currentRegStatus === 4 || this.currentRegStatus === 5 ? 'success' :
+                        this.currentRegStatus === 3 ? 'info' :
+                        this.currentRegStatus === 6 || this.currentRegStatus === 10 ? 'warning' :
+                        this.currentRegStatus === 7 ? 'danger' : ''
+                    }`;
+                    regStatusBadge.textContent = `Статус: ${this.currentRegStatus}`;
+                    statusBadge.appendChild(regStatusBadge);
+                    
+                    if (this.currentUnregistrationReasonId !== null) {
+                        const reasonBadge = document.createElement('div');
+                        reasonBadge.className = 'info-badge';
+                        reasonBadge.textContent = `Причина: ${this.currentUnregistrationReasonId}`;
+                        statusBadge.appendChild(reasonBadge);
+                    }
+                    
+                    if (this.currentStatusMessageCode !== null) {
+                        const msgBadge = document.createElement('div');
+                        msgBadge.className = 'info-badge';
+                        msgBadge.textContent = `Код: ${this.currentStatusMessageCode}`;
+                        statusBadge.appendChild(msgBadge);
+                    }
+                }
+                
+                // Обновляем описание
+                statusText.textContent = this.getFullStatusDescription();
+                
+                // Показываем/скрываем кнопки исправления
+                const shouldShowProcessBtn = 
+                    this.currentRegStatus === 3 || 
+                    (this.currentRegStatus === 7 && [1, 2, 3].includes(this.currentUnregistrationReasonId));
+                
+                const shouldShowInvalidBtn = 
+                    this.currentRegStatus === 6 || 
+                    this.currentRegStatus === 10;
+                
+                processBtn.classList.toggle('hidden', !shouldShowProcessBtn);
+                invalidBtn.classList.toggle('hidden', !shouldShowInvalidBtn);
+            }
+            
+            displayAddressPanel() {
+                const display = document.getElementById('addressBlockDisplay');
+                const statusBadge = document.getElementById('addressStatusBadge');
+                const statusText = document.getElementById('addressStatusText');
+                
+                // Отображаем блок
+                display.textContent = JSON.stringify(this.residenceAddressBlock, null, 2);
+                
+                // Обновляем бейджи
+                statusBadge.innerHTML = '';
+                
+                const addressStatus = this.currentAddressName === null || this.currentAddressName === "" ? 
+                    'danger' : 'success';
+                
+                const addressBadge = document.createElement('div');
+                addressBadge.className = `info-badge ${addressStatus}`;
+                addressBadge.textContent = `addressName: ${this.currentAddressName === null ? 'null' : 
+                    this.currentAddressName === "" ? 'пустая строка' : 'указан'}`;
+                statusBadge.appendChild(addressBadge);
+                
+                // Обновляем описание
+                if (this.currentAddressName === null || this.currentAddressName === "") {
+                    statusText.textContent = 'ВНИМАНИЕ: Параметр addressName имеет значение null или пустую строку. Необходимо указать корректный адрес из ФИАС.';
+                } else {
+                    statusText.textContent = 'Адрес указан корректно.';
+                }
+            }
+            
+            hideInfoPanels() {
+                document.getElementById('residencePanel').classList.add('hidden');
+                document.getElementById('residenceAddressPanel').classList.add('hidden');
+            }
+            
+            fixResidenceRegistration(newStatus) {
+                try {
+                    const input = document.getElementById('inputEditor').value;
+                    const parsed = JSON.parse(input);
+                    
+                    const updateStatus = (obj) => {
+                        if (obj.residenceRegistration) {
+                            obj.residenceRegistration.regStatus = newStatus;
+                            
+                            if (newStatus === 1) {
+                                obj.residenceRegistration.unregistrationReasonId = null;
+                            } else if (newStatus === 5) {
+                                obj.residenceRegistration.statusMessageCode = null;
+                            }
+                            
+                            return true;
+                        }
+                        
+                        for (const key in obj) {
+                            if (typeof obj[key] === 'object' && obj[key] !== null) {
+                                if (updateStatus(obj[key])) return true;
+                            }
+                        }
+                        
+                        return false;
+                    };
+                    
+                    if (updateStatus(parsed)) {
+                        const formatted = JSON.stringify(parsed, null, 2);
+                        document.getElementById('inputEditor').value = formatted;
+                        
+                        this.showNotification(`Статус изменен на ${newStatus}`, 'success');
+                        this.processInput();
+                    }
+                } catch (error) {
+                    this.showNotification('Ошибка при изменении статуса', 'error');
+                }
+            }
+            
+            textToUnicode(text) {
+                return text.split('').map(char => {
+                    const code = char.charCodeAt(0);
+                    return code > 127 ? `\\u${code.toString(16).toUpperCase().padStart(4, '0')}` : char;
+                }).join('');
+            }
+            
+            toggleUnicodeMode() {
+                const isUnicodeMode = document.getElementById('viewSwitch').checked;
+                const editor = document.getElementById('inputEditor');
+                const input = editor.value.trim();
+                
+                if (!input) {
+                    document.getElementById('viewSwitch').checked = false;
+                    this.showNotification('Сначала введите JSON', 'warning');
+                    return;
+                }
+                
+                try {
+                    const parsed = JSON.parse(input);
+                    const minified = JSON.stringify(parsed);
+                    
+                    if (isUnicodeMode) {
+                        // Переключаем в Unicode режим
+                        const unicode = this.textToUnicode(minified);
+                        editor.value = unicode;
+                        editor.readOnly = true;
+                    } else {
+                        // Возвращаем форматированный JSON
+                        const formatted = JSON.stringify(parsed, null, 2);
+                        editor.value = formatted;
+                        editor.readOnly = false;
+                    }
+                    
+                    this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                } catch (error) {
+                    document.getElementById('viewSwitch').checked = false;
+                    this.showNotification('Невалидный JSON', 'error');
+                }
+            }
+            
+            updateLineNumbers(lineNumbersId, editorId) {
+                const editor = document.getElementById(editorId);
+                const lineNumbers = document.getElementById(lineNumbersId);
+                const lines = editor.value.split('\n').length;
+                
+                let numbers = '';
+                for (let i = 1; i <= lines; i++) {
+                    numbers += i + '\n';
+                }
+                
+                lineNumbers.innerHTML = numbers;
+                lineNumbers.scrollTop = editor.scrollTop;
+            }
+            
+            updateStatistics() {
+                const input = document.getElementById('inputEditor').value;
+                const charCount = input.length;
+                const lineCount = input.split('\n').length;
+                
+                document.getElementById('charCount').textContent = charCount;
+                document.getElementById('lineCount').textContent = lineCount;
+                
+                // Проверяем валидность JSON для прогресс-бара
+                let validity = 0;
+                let validityText = 'Не проверено';
+                
+                if (input.trim()) {
+                    try {
+                        JSON.parse(input);
+                        validity = 100;
+                        validityText = 'Валидный';
+                    } catch (e) {
+                        validity = 50;
+                        validityText = 'Невалидный';
+                    }
+                }
+                
+                document.getElementById('jsonValidityBar').style.width = `${validity}%`;
+                document.getElementById('validityText').textContent = validityText;
+            }
+            
+            clearAll() {
+                document.getElementById('inputEditor').value = '';
+                document.getElementById('inputStatus').textContent = 'Ожидание...';
+                document.getElementById('inputStatus').className = 'status-badge waiting';
+                document.getElementById('viewSwitch').checked = false;
+                
+                this.isJsonValid = false;
+                this.hideInfoPanels();
+                this.updateStatistics();
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                
+                document.getElementById('inputEditor').focus();
+                this.showNotification('Все поля очищены', 'success');
+            }
+            
+            copyStatusDescription(elementId) {
+                const element = document.getElementById(elementId);
+                const text = element.textContent.trim();
+                
+                if (!text) {
+                    this.showNotification('Нет текста для копирования', 'warning');
+                    return;
+                }
+                
+                navigator.clipboard.writeText(text).then(() => {
+                    element.classList.add('copied');
+                    this.showNotification('Описание скопировано', 'success');
+                    
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                    }, 1000);
+                }).catch(() => {
+                    this.showNotification('Ошибка копирования', 'error');
+                });
+            }
+            
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notificationMessage');
+                const notificationTitle = document.getElementById('notificationTitle');
+                
+                notificationMessage.textContent = message;
+                
+                let title = 'Успешно!';
+                let icon = 'fa-check-circle';
+                
+                switch(type) {
+                    case 'error':
+                        title = 'Ошибка!';
+                        icon = 'fa-exclamation-circle';
+                        break;
+                    case 'warning':
+                        title = 'Внимание!';
+                        icon = 'fa-exclamation-triangle';
+                        break;
+                    case 'info':
+                        title = 'Информация';
+                        icon = 'fa-info-circle';
+                        break;
+                }
+                
+                notificationTitle.textContent = title;
+                notification.querySelector('.notification-icon').className = `fas ${icon} notification-icon`;
+                notification.className = `notification ${type}`;
+                
+                notification.classList.remove('hide');
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    notification.classList.add('hide');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('hide');
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            window.jsonEditor = new JSONEditor();
+            
+            // Кнопка "Домой"
+            document.getElementById('homeBtn').addEventListener('click', function() {
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>
