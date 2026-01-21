@@ -53,7 +53,8 @@
             
             --header-height: 64px;
             --sidebar-width: 280px;
-            --editor-min-height: 300px;
+            --editor-min-height: 500px;
+            --editor-default-height: 400px;
         }
         
         .light-theme {
@@ -222,6 +223,10 @@
             gap: var(--spacing-xl);
             overflow-y: auto;
             transition: all var(--transition-base);
+            height: calc(100vh - var(--header-height));
+            position: sticky;
+            top: var(--header-height);
+            align-self: flex-start;
         }
         
         .sidebar-section {
@@ -327,6 +332,7 @@
             padding: var(--spacing-xl);
             overflow-y: auto;
             background: var(--bg-primary);
+            min-height: calc(100vh - var(--header-height));
         }
         
         .content-header {
@@ -354,6 +360,7 @@
             grid-template-columns: 2fr 1fr;
             gap: var(--spacing-xl);
             margin-bottom: var(--spacing-xl);
+            min-height: auto;
         }
         
         @media (max-width: 1200px) {
@@ -363,6 +370,11 @@
         }
         
         /* Редактор */
+        .editor-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        
         .editor-card {
             background: var(--bg-card);
             border-radius: var(--radius-xl);
@@ -371,8 +383,11 @@
             box-shadow: var(--shadow-lg);
             display: flex;
             flex-direction: column;
+            height: var(--editor-default-height);
             min-height: var(--editor-min-height);
+            position: relative;
             transition: all var(--transition-base);
+            user-select: none;
         }
         
         .editor-card:hover {
@@ -388,6 +403,7 @@
             justify-content: space-between;
             align-items: center;
             transition: all var(--transition-base);
+            flex-shrink: 0;
         }
         
         .editor-title {
@@ -504,12 +520,73 @@
             transform: translateX(16px);
         }
         
+        /* Панель кнопок под шапкой */
+        .editor-toolbar {
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: var(--spacing-sm);
+            flex-shrink: 0;
+        }
+        
+        .editor-toolbar-btn {
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .editor-toolbar-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .editor-toolbar-btn i {
+            font-size: 11px;
+        }
+        
+        .editor-toolbar-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .editor-toolbar-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-danger);
+        }
+        
+        .editor-toolbar-btn.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        
+        .editor-toolbar-btn.success:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--color-success);
+        }
+        
         .editor-container {
             flex: 1;
             display: flex;
             position: relative;
-            overflow: hidden;
+            overflow: auto;
             background: var(--bg-input);
+            min-height: 150px;
         }
         
         .line-numbers {
@@ -522,7 +599,7 @@
             font-size: 13px;
             line-height: 1.6;
             text-align: right;
-            overflow-y: auto;
+            overflow-y: hidden;
             user-select: none;
             flex-shrink: 0;
             white-space: pre;
@@ -540,6 +617,7 @@
             resize: none;
             outline: none;
             overflow: auto;
+            min-height: 150px;
             transition: all var(--transition-base);
         }
         
@@ -555,6 +633,36 @@
             display: flex;
             gap: var(--spacing-sm);
             justify-content: space-between;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        /* Элемент для изменения размера */
+        .editor-resize-handle {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            cursor: ns-resize;
+            z-index: 10;
+        }
+        
+        .editor-resize-handle:hover::after,
+        .editor-resize-handle.resizing::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: var(--color-primary);
+            border-radius: 1px;
+        }
+        
+        .editor-resize-handle.resizing {
+            cursor: ns-resize;
         }
         
         .editor-btn {
@@ -829,7 +937,7 @@
         }
         
         .notification.warning {
-            border-left-color: var(--color-warning);
+            border-left-color = var(--color-warning);
         }
         
         .notification.info {
@@ -894,6 +1002,7 @@
                 bottom: 0;
                 z-index: 90;
                 box-shadow: var(--shadow-xl);
+                height: calc(100vh - var(--header-height));
             }
             
             .sidebar.active {
@@ -960,22 +1069,6 @@
         /* Скрытие элементов при отсутствии данных */
         .hidden {
             display: none !important;
-        }
-        
-        /* Прогресс-бар */
-        .progress-bar {
-            height: 4px;
-            background: var(--bg-tertiary);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: var(--spacing-sm);
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--color-primary);
-            border-radius: 2px;
-            transition: width 0.3s ease;
         }
         
         /* Счетчики */
@@ -1070,71 +1163,60 @@
                     </button>
                 </div>
             </div>
-            
-            <div class="sidebar-section">
-                <div class="section-title">
-                    <i class="fas fa-info-circle"></i>
-                    Статистика
-                </div>
-                <div id="statsPanel">
-                    <div class="char-counter">
-                        Символов: <span id="charCount">0</span>
-                    </div>
-                    <div class="char-counter">
-                        Строк: <span id="lineCount">0</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="jsonValidityBar" style="width: 0%"></div>
-                    </div>
-                    <div class="char-counter">
-                        Валидность: <span id="validityText">Не проверено</span>
-                    </div>
-                </div>
-            </div>
         </aside>
         
         <!-- Основное содержимое -->
         <main class="content">
-            <div class="content-header">
-                <div>
-                    <h1 class="content-title">JSON Editor</h1>
-                    <p class="content-subtitle">Обработка и анализ JSON данных профиля S3</p>
-                </div>
-            </div>
-            
             <!-- Редактор и блоки справа -->
             <div class="editor-and-blocks">
                 <!-- Редактор JSON -->
-                <div class="editor-card">
-                    <div class="editor-header">
-                        <div class="editor-title">
-                            <i class="fas fa-keyboard"></i>
-                            <span>Ввод JSON</span>
-                        </div>
-                        <div class="editor-status">
-                            <div class="status-badge waiting" id="inputStatus">Ожидание...</div>
-                            <div class="unicode-toggle" id="unicodeToggle">
-                                <span class="unicode-toggle-label">Unicode</span>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="viewSwitch">
-                                    <span class="toggle-slider"></span>
-                                </label>
+                <div class="editor-wrapper">
+                    <div class="editor-card" id="editorCard">
+                        <div class="editor-header">
+                            <div class="editor-title">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Ввод JSON</span>
+                            </div>
+                            <div class="editor-status">
+                                <div class="status-badge waiting" id="inputStatus">Ожидание...</div>
+                                <div class="unicode-toggle" id="unicodeToggle">
+                                    <span class="unicode-toggle-label">Unicode</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="viewSwitch">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="editor-container">
-                        <div class="line-numbers" id="inputLineNumbers">1</div>
-                        <textarea class="editor-content" id="inputEditor" placeholder='Вставьте JSON или текст здесь...'></textarea>
-                    </div>
-                    <div class="editor-footer">
-                        <button class="editor-btn danger" data-action="clear-all">
-                            <i class="fas fa-trash"></i>
-                            Очистить
-                        </button>
-                        <button class="editor-btn success" data-action="copy-input">
-                            <i class="fas fa-copy"></i>
-                            Копировать
-                        </button>
+                        
+                        <!-- Панель кнопок под шапкой -->
+                        <div class="editor-toolbar">
+                            <button class="editor-toolbar-btn danger" data-action="clear-all" title="Очистить редактор">
+                                <i class="fas fa-trash"></i>
+                                Очистить
+                            </button>
+                            <button class="editor-toolbar-btn success" data-action="copy-input" title="Копировать JSON">
+                                <i class="fas fa-copy"></i>
+                                Копировать
+                            </button>
+                        </div>
+                        
+                        <div class="editor-container">
+                            <div class="line-numbers" id="inputLineNumbers">1</div>
+                            <textarea class="editor-content" id="inputEditor" placeholder='Вставьте JSON или текст здесь...'></textarea>
+                        </div>
+                        
+                        <div class="editor-footer">
+                            <div class="editor-resize-handle" id="resizeHandle"></div>
+                            <button class="editor-btn danger" data-action="clear-all">
+                                <i class="fas fa-trash"></i>
+                                Очистить
+                            </button>
+                            <button class="editor-btn success" data-action="copy-input">
+                                <i class="fas fa-copy"></i>
+                                Копировать
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -1216,6 +1298,14 @@
                 this.currentStatusMessageCode = null;
                 this.currentReceiveDate = null;
                 this.currentAddressName = null;
+                this.editorCard = document.getElementById('editorCard');
+                this.resizeHandle = document.getElementById('resizeHandle');
+                this.inputEditor = document.getElementById('inputEditor');
+                this.isResizing = false;
+                this.startY = 0;
+                this.startHeight = 0;
+                this.scrollInterval = null;
+                this.resizeTimeout = null;
                 
                 this.jsonBlocks = {
                     'residenceAddress': `"residenceAddress": {
@@ -1275,23 +1365,23 @@
             init() {
                 this.bindEvents();
                 this.setupTheme();
+                this.loadEditorHeight();
                 this.updateStatistics();
-                document.getElementById('inputEditor').focus();
+                this.inputEditor.focus();
             }
             
             bindEvents() {
-                const inputEditor = document.getElementById('inputEditor');
-                
                 // Обработка ввода
-                inputEditor.addEventListener('input', () => {
+                this.inputEditor.addEventListener('input', () => {
                     this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                     this.updateStatistics();
                     this.debounceProcess();
+                    // УДАЛЕНО: автоматическое изменение высоты после вставки кода
                 });
                 
-                inputEditor.addEventListener('scroll', () => {
+                this.inputEditor.addEventListener('scroll', () => {
                     const lineNumbers = document.getElementById('inputLineNumbers');
-                    lineNumbers.scrollTop = inputEditor.scrollTop;
+                    lineNumbers.scrollTop = this.inputEditor.scrollTop;
                 });
                 
                 // Обработка кнопок
@@ -1329,6 +1419,127 @@
                 
                 // Начальное обновление нумерации строк
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                
+                // Инициализация ресайза
+                this.initResize();
+            }
+            
+            initResize() {
+                const handleMouseDown = (e) => {
+                    e.preventDefault();
+                    this.isResizing = true;
+                    this.startY = e.clientY || e.touches[0].clientY;
+                    this.startHeight = this.editorCard.offsetHeight;
+                    this.resizeHandle.classList.add('resizing');
+                    
+                    // Добавляем класс для всего тела документа для лучшего UX
+                    document.body.style.cursor = 'ns-resize';
+                    document.body.style.userSelect = 'none';
+                    
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                    document.addEventListener('touchmove', handleMouseMove);
+                    document.addEventListener('touchend', handleMouseUp);
+                };
+                
+                const handleMouseMove = (e) => {
+                    if (!this.isResizing) return;
+                    
+                    e.preventDefault();
+                    const currentY = e.clientY || e.touches[0].clientY;
+                    const deltaY = currentY - this.startY;
+                    const newHeight = this.startHeight + deltaY;
+                    
+                    // Минимальная высота
+                    const minHeight = 500; // Минимальная высота 500px
+                    
+                    // Максимальная высота
+                    const maxHeight = 5000;
+                    
+                    // Ограничиваем высоту между минимальной и максимальной
+                    let finalHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                    
+                    // Применяем изменение высоты
+                    this.editorCard.style.transition = 'none';
+                    this.editorCard.style.height = `${finalHeight}px`;
+                    
+                    // Сохраняем высоту в локальное хранилище с дебаунсом
+                    this.debounceSaveHeight();
+                    
+                    // Проверяем, нужно ли скроллить страницу
+                    this.checkAndScrollPage(currentY);
+                };
+                
+                const handleMouseUp = () => {
+                    this.isResizing = false;
+                    this.resizeHandle.classList.remove('resizing');
+                    this.stopPageScroll();
+                    
+                    // Восстанавливаем стили документа
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                    
+                    // Включаем обратно transition для плавных анимаций
+                    this.editorCard.style.transition = 'all var(--transition-base)';
+                    
+                    // Сохраняем высоту окончательно
+                    this.saveEditorHeight();
+                    
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                    document.removeEventListener('touchmove', handleMouseMove);
+                    document.removeEventListener('touchend', handleMouseUp);
+                };
+                
+                // Назначаем обработчики событий
+                this.resizeHandle.addEventListener('mousedown', handleMouseDown);
+                this.resizeHandle.addEventListener('touchstart', handleMouseDown, { passive: false });
+                
+                // Добавляем визуальную обратную связь при наведении
+                this.resizeHandle.addEventListener('mouseenter', () => {
+                    this.resizeHandle.style.cursor = 'ns-resize';
+                });
+            }
+            
+            checkAndScrollPage(currentY) {
+                const windowHeight = window.innerHeight;
+                const scrollThreshold = 50;
+                
+                // Останавливаем предыдущий интервал скролла
+                this.stopPageScroll();
+                
+                // Проверяем, близко ли курсор к нижней границе окна
+                if (currentY > windowHeight - scrollThreshold) {
+                    // Скроллим страницу вниз, пока это возможно
+                    this.scrollInterval = setInterval(() => {
+                        const maxScroll = document.documentElement.scrollHeight - windowHeight;
+                        if (window.scrollY < maxScroll - 10) {
+                            window.scrollBy(0, 20);
+                        } else {
+                            this.stopPageScroll();
+                        }
+                    }, 16);
+                }
+                // Проверяем, близко ли курсор к верхней границе окна
+                else if (currentY < scrollThreshold && window.scrollY > 0) {
+                    // Скроллим страницу вверх, пока это возможно
+                    this.scrollInterval = setInterval(() => {
+                        if (window.scrollY > 10) {
+                            window.scrollBy(0, -20);
+                        } else {
+                            this.stopPageScroll();
+                        }
+                    }, 16);
+                } else {
+                    this.stopPageScroll();
+                }
+            }
+            
+            stopPageScroll() {
+                if (this.scrollInterval) {
+                    clearInterval(this.scrollInterval);
+                    this.scrollInterval = null;
+                }
             }
             
             setupTheme() {
@@ -1375,7 +1586,7 @@
             }
             
             copyInputWithUnicode() {
-                const input = document.getElementById('inputEditor').value.trim();
+                const input = this.inputEditor.value.trim();
                 
                 if (!input) {
                     this.showNotification('Нет данных для копирования', 'warning');
@@ -1411,8 +1622,15 @@
                 }, 500);
             }
             
+            debounceSaveHeight() {
+                clearTimeout(this.resizeTimeout);
+                this.resizeTimeout = setTimeout(() => {
+                    this.saveEditorHeight();
+                }, 100);
+            }
+            
             processInput() {
-                const input = document.getElementById('inputEditor').value.trim();
+                const input = this.inputEditor.value.trim();
                 const inputStatus = document.getElementById('inputStatus');
                 
                 if (!input) {
@@ -1428,8 +1646,9 @@
                     
                     // Автоматически форматируем JSON
                     if (input !== formatted) {
-                        document.getElementById('inputEditor').value = formatted;
+                        this.inputEditor.value = formatted;
                         this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+                        // УДАЛЕНО: автоматическое изменение высоты после форматирования
                     }
                     
                     inputStatus.textContent = 'Валидный JSON';
@@ -1618,7 +1837,7 @@
             
             fixResidenceRegistration(newStatus) {
                 try {
-                    const input = document.getElementById('inputEditor').value;
+                    const input = this.inputEditor.value;
                     const parsed = JSON.parse(input);
                     
                     const updateStatus = (obj) => {
@@ -1645,7 +1864,7 @@
                     
                     if (updateStatus(parsed)) {
                         const formatted = JSON.stringify(parsed, null, 2);
-                        document.getElementById('inputEditor').value = formatted;
+                        this.inputEditor.value = formatted;
                         
                         this.showNotification(`Статус изменен на ${newStatus}`, 'success');
                         this.processInput();
@@ -1664,8 +1883,7 @@
             
             toggleUnicodeMode() {
                 const isUnicodeMode = document.getElementById('viewSwitch').checked;
-                const editor = document.getElementById('inputEditor');
-                const input = editor.value.trim();
+                const input = this.inputEditor.value.trim();
                 
                 if (!input) {
                     document.getElementById('viewSwitch').checked = false;
@@ -1680,13 +1898,13 @@
                     if (isUnicodeMode) {
                         // Переключаем в Unicode режим
                         const unicode = this.textToUnicode(minified);
-                        editor.value = unicode;
-                        editor.readOnly = true;
+                        this.inputEditor.value = unicode;
+                        this.inputEditor.readOnly = true;
                     } else {
                         // Возвращаем форматированный JSON
                         const formatted = JSON.stringify(parsed, null, 2);
-                        editor.value = formatted;
-                        editor.readOnly = false;
+                        this.inputEditor.value = formatted;
+                        this.inputEditor.readOnly = false;
                     }
                     
                     this.updateLineNumbers('inputLineNumbers', 'inputEditor');
@@ -1697,7 +1915,7 @@
             }
             
             updateLineNumbers(lineNumbersId, editorId) {
-                const editor = document.getElementById(editorId);
+                const editor = this.inputEditor;
                 const lineNumbers = document.getElementById(lineNumbersId);
                 const lines = editor.value.split('\n').length;
                 
@@ -1711,44 +1929,20 @@
             }
             
             updateStatistics() {
-                const input = document.getElementById('inputEditor').value;
-                const charCount = input.length;
-                const lineCount = input.split('\n').length;
-                
-                document.getElementById('charCount').textContent = charCount;
-                document.getElementById('lineCount').textContent = lineCount;
-                
-                // Проверяем валидность JSON для прогресс-бара
-                let validity = 0;
-                let validityText = 'Не проверено';
-                
-                if (input.trim()) {
-                    try {
-                        JSON.parse(input);
-                        validity = 100;
-                        validityText = 'Валидный';
-                    } catch (e) {
-                        validity = 50;
-                        validityText = 'Невалидный';
-                    }
-                }
-                
-                document.getElementById('jsonValidityBar').style.width = `${validity}%`;
-                document.getElementById('validityText').textContent = validityText;
+                // Убрали статистику, оставляем пустым для совместимости
             }
             
             clearAll() {
-                document.getElementById('inputEditor').value = '';
+                this.inputEditor.value = '';
                 document.getElementById('inputStatus').textContent = 'Ожидание...';
                 document.getElementById('inputStatus').className = 'status-badge waiting';
                 document.getElementById('viewSwitch').checked = false;
                 
                 this.isJsonValid = false;
                 this.hideInfoPanels();
-                this.updateStatistics();
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                 
-                document.getElementById('inputEditor').focus();
+                this.inputEditor.focus();
                 this.showNotification('Все поля очищены', 'success');
             }
             
@@ -1771,6 +1965,25 @@
                 }).catch(() => {
                     this.showNotification('Ошибка копирования', 'error');
                 });
+            }
+            
+            saveEditorHeight() {
+                const height = this.editorCard.offsetHeight;
+                localStorage.setItem('editorHeight', height);
+            }
+            
+            loadEditorHeight() {
+                const savedHeight = localStorage.getItem('editorHeight');
+                if (savedHeight) {
+                    const minHeight = 500;
+                    let height = parseInt(savedHeight, 10);
+                    
+                    if (height < minHeight) {
+                        height = minHeight;
+                    }
+                    
+                    this.editorCard.style.height = `${height}px`;
+                }
             }
             
             showNotification(message, type = 'success') {
