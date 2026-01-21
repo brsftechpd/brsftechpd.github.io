@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер показателей работы с генерацией отчетов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Темная тема - основной вариант */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            
+            --border-color: #475569;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-focus: #6366f1;
+            
+            --color-primary: #6366f1;
+            --color-primary-hover: #4f46e5;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-warning: #f59e0b;
+            --color-info: #3b82f6;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 24px;
+            --spacing-2xl: 32px;
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            --header-height: 64px;
+        }
+        
+        .light-theme {
+            /* Светлая тема */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-tertiary: #e2e8f0;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-white: #ffffff;
+            
+            --border-color: #cbd5e1;
+            --border-light: rgba(0, 0, 0, 0.05);
+            --border-focus: #6366f1;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: background-color var(--transition-base), color var(--transition-base);
+            overflow-x: hidden;
+        }
+        
+        /* Шапка */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+        
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .app-title i {
+            color: var(--color-primary);
+            font-size: 20px;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: inline-block;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+        
+        .light-theme .theme-toggle .moon-icon {
+            display: none;
+        }
+        
+        .light-theme .theme-toggle .sun-icon {
+            display: inline-block;
+            color: #f59e0b;
+        }
+        
+        /* Основной контейнер */
+        .main-container {
+            min-height: calc(100vh - var(--header-height));
+            padding-top: 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Выбор недели */
+        .week-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+            background: var(--bg-card);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .week-navigation {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .nav-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+        }
+        
+        .current-week {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        /* Панель статистики */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        @media (max-width: 768px) {
+            .stats-panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+        
+        .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin: var(--spacing-sm) 0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Таблица ввода данных */
+        .data-table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .table-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        .table-title i {
+            color: var(--color-primary);
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .control-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .control-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+        }
+        
+        .control-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .control-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--color-danger);
+        }
+        
+        .control-btn.primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--color-primary);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .control-btn.primary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--color-primary);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            font-size: 13px;
+        }
+        
+        .data-table th:last-child {
+            border-right: none;
+        }
+        
+        .data-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .data-table td:last-child {
+            border-right: none;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .input-cell {
+            padding: 0;
+            position: relative;
+        }
+        
+        .number-input {
+            width: 100%;
+            height: 100%;
+            padding: var(--spacing-md);
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            color: var(--text-primary);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            transition: all var(--transition-base);
+        }
+        
+        .number-input:focus {
+            border-color: var(--color-primary);
+            background: var(--bg-card);
+            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+        
+        .number-input:hover {
+            background: var(--bg-card);
+        }
+        
+        .total-cell {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .day-total {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+        
+        .category-total {
+            font-weight: 600;
+            color: var(--color-success);
+        }
+        
+        .grand-total {
+            font-weight: 700;
+            background: var(--color-primary);
+            color: white;
+        }
+        
+        /* Кнопка отчета */
+        .report-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-info);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-base);
+        }
+        
+        .report-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--color-info);
+        }
+        
+        /* Модальное окно редактора отчета */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: var(--spacing-xl);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .modal-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .modal-footer {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+            background: var(--bg-secondary);
+        }
+        
+        /* Rich Text Editor */
+        .editor-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: var(--spacing-sm);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .editor-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+        
+        .editor-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .editor-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        
+        .editor-content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            outline: none;
+            line-height: 1.6;
+        }
+        
+        .editor-content h2 {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 18px;
+        }
+        
+        .editor-content h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        .editor-content p {
+            margin-bottom: 12px;
+        }
+        
+        .editor-content ul {
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+        
+        .editor-content a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .editor-content a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Превью отчета */
+        .report-preview {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .report-preview h4 {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: calc(var(--header-height) + var(--spacing-md));
+            right: var(--spacing-xl);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            max-width: 320px;
+            border-left: 4px solid var(--color-success);
+            transform: translateX(100%);
+        }
+        
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        .notification.hide {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+        
+        .notification.error {
+            border-left-color: var(--color-danger);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--color-warning);
+        }
+        
+        .notification.info {
+            border-left-color: var(--color-info);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+        }
+        
+        .notification-icon {
+            font-size: 18px;
+            margin-top: 1px;
+        }
+        
+        .notification.success .notification-icon {
+            color: var(--color-success);
+        }
+        
+        .notification.error .notification-icon {
+            color: var(--color-danger);
+        }
+        
+        .notification.warning .notification-icon {
+            color: var(--color-warning);
+        }
+        
+        .notification.info .notification-icon {
+            color: var(--color-info);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 var(--spacing-lg);
+            }
+            
+            .main-container {
+                padding: var(--spacing-lg);
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .data-table th,
+            .data-table td {
+                min-width: 100px;
+            }
+            
+            .modal-container {
+                max-height: 80vh;
+            }
+            
+            .editor-container {
+                height: 400px;
+            }
+        }
+        
+        /* Специальные стили для скроллбаров */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-left">
+            <div class="app-title">
+                <i class="fas fa-chart-line"></i>
+                <span>Трекер показателей работы</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+                <i class="fas fa-moon moon-icon"></i>
+                <i class="fas fa-sun sun-icon"></i>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- Выбор недели -->
+        <div class="week-selector">
+            <div class="week-navigation">
+                <button class="nav-btn" id="prevWeekBtn" title="Предыдущая неделя">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="current-week" id="currentWeekDisplay">Неделя 25, 2024</div>
+                <button class="nav-btn" id="nextWeekBtn" title="Следующая неделя">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <button class="control-btn" id="currentWeekBtn">
+                <i class="fas fa-calendar-day"></i>
+                Текущая неделя
+            </button>
+        </div>
+        
+        <!-- Панель статистики -->
+        <div class="stats-panel">
+            <div class="stat-card">
+                <i class="fas fa-users" style="color: var(--color-info); font-size: 20px;"></i>
+                <div class="stat-value" id="totalImplementation">0</div>
+                <div class="stat-label">Группа внедрения</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-headset" style="color: var(--color-warning); font-size: 20px;"></i>
+                <div class="stat-value" id="totalKTS">0</div>
+                <div class="stat-label">КЦ в 4me</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calculator" style="color: var(--color-success); font-size: 20px;"></i>
+                <div class="stat-value" id="totalWeek">0</div>
+                <div class="stat-label">Итого за неделю</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar-week" style="color: var(--color-primary); font-size: 20px;"></i>
+                <div class="stat-value" id="averageDay">0</div>
+                <div class="stat-label">Среднее в день</div>
+            </div>
+        </div>
+        
+        <!-- Таблица ввода данных -->
+        <div class="data-table-container">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-edit"></i>
+                    <span>Ежедневные показатели</span>
+                </div>
+                <div class="table-controls">
+                    <button class="control-btn" id="clearDayBtn">
+                        <i class="fas fa-trash"></i>
+                        Очистить день
+                    </button>
+                    <button class="control-btn danger" id="clearWeekBtn">
+                        <i class="fas fa-trash-alt"></i>
+                        Очистить неделю
+                    </button>
+                    <button class="control-btn primary" id="generateReportBtn">
+                        <i class="fas fa-file-alt"></i>
+                        Создать отчет за сегодня
+                    </button>
+                </div>
+            </div>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>День недели</th>
+                        <th>Обработка обращений от группы внедрения</th>
+                        <th>Обработка обращений от КЦ в 4me</th>
+                        <th>Итого за день</th>
+                        <th>Отчет</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                    <!-- Данные будут добавлены через JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Модальное окно редактора отчета -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="modalTitle">Отчет о выполненных работах</span>
+                </div>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="editor-container">
+                    <div class="editor-toolbar" id="editorToolbar">
+                        <button class="editor-btn" data-command="bold" title="Жирный">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button class="editor-btn" data-command="italic" title="Курсив">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button class="editor-btn" data-command="underline" title="Подчеркнутый">
+                            <i class="fas fa-underline"></i>
+                        </button>
+                        <div class="separator" style="width: 1px; background: var(--border-color); margin: 0 4px;"></div>
+                        <button class="editor-btn" data-command="insertUnorderedList" title="Маркированный список">
+                            <i class="fas fa-list-ul"></i>
+                        </button>
+                        <button class="editor-btn" data-command="insertOrderedList" title="Нумерованный список">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <div class="separator" style="width: 1px; background: var(--border-color); margin: 0 4px;"></div>
+                        <button class="editor-btn" data-command="createLink" title="Вставить ссылку">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button class="editor-btn" data-command="formatBlock" data-value="h2" title="Заголовок 2">
+                            H2
+                        </button>
+                        <button class="editor-btn" data-command="formatBlock" data-value="h3" title="Заголовок 3">
+                            H3
+                        </button>
+                        <div class="separator" style="width: 1px; background: var(--border-color); margin: 0 4px;"></div>
+                        <button class="editor-btn" id="insertTemplateBtn" title="Вставить шаблон">
+                            <i class="fas fa-clone"></i> Шаблон
+                        </button>
+                    </div>
+                    
+                    <div class="editor-content" id="editorContent" contenteditable="true">
+                        <!-- Содержимое будет вставляться через JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="report-preview">
+                    <h4>Предварительный просмотр:</h4>
+                    <div id="reportPreview"></div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="control-btn" id="saveReportBtn">
+                    <i class="fas fa-save"></i>
+                    Сохранить отчет
+                </button>
+                <button class="control-btn primary" id="copyReportBtn">
+                    <i class="fas fa-copy"></i>
+                    Копировать отчет
+                </button>
+                <button class="control-btn" id="closeModalBtn">
+                    <i class="fas fa-times"></i>
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Уведомления -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i class="fas fa-check-circle notification-icon"></i>
+            <div>
+                <div class="notification-title" id="notificationTitle">Успешно!</div>
+                <div class="notification-message" id="notificationMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class WorkTracker {
+            constructor() {
+                this.currentWeek = this.getCurrentWeek();
+                this.currentYear = new Date().getFullYear();
+                this.daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+                this.categories = ['implementation', 'kts'];
+                this.categoryLabels = {
+                    'implementation': 'Группа внедрения',
+                    'kts': 'КЦ в 4me'
+                };
+                
+                this.currentDayIndex = null;
+                this.currentDayName = null;
+                this.currentDate = null;
+                
+                this.data = this.loadData();
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.setupTheme();
+                this.renderTable();
+                this.updateStats();
+                this.updateWeekDisplay();
+            }
+            
+            getCurrentWeek() {
+                const now = new Date();
+                const startOfYear = new Date(now.getFullYear(), 0, 1);
+                const pastDaysOfYear = (now - startOfYear) / 86400000;
+                return Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+            }
+            
+            getWeekDates(weekNumber, year) {
+                const janFirst = new Date(year, 0, 1);
+                const daysOffset = (weekNumber - 1) * 7;
+                const weekStart = new Date(janFirst.getTime() + daysOffset * 86400000);
+                
+                // Найти понедельник
+                const dayOfWeek = weekStart.getDay();
+                const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                const monday = new Date(weekStart.getTime() + diffToMonday * 86400000);
+                
+                const dates = [];
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(monday.getTime() + i * 86400000);
+                    dates.push(date);
+                }
+                
+                return dates;
+            }
+            
+            getWeekKey(weekNumber, year) {
+                return `week_${year}_${weekNumber}`;
+            }
+            
+            getDayKey(dayIndex, weekNumber, year) {
+                return `report_${year}_${weekNumber}_${dayIndex}`;
+            }
+            
+            loadData() {
+                const weekKey = this.getWeekKey(this.currentWeek, this.currentYear);
+                const savedData = localStorage.getItem(weekKey);
+                
+                if (savedData) {
+                    return JSON.parse(savedData);
+                } else {
+                    // Создаем пустую структуру данных
+                    const emptyData = {};
+                    this.daysOfWeek.forEach((day, index) => {
+                        emptyData[index] = {
+                            implementation: 0,
+                            kts: 0,
+                            report: ''
+                        };
+                    });
+                    return emptyData;
+                }
+            }
+            
+            loadReport(dayIndex) {
+                const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
+                const savedReport = localStorage.getItem(dayKey);
+                return savedReport || '';
+            }
+            
+            saveData() {
+                const weekKey = this.getWeekKey(this.currentWeek, this.currentYear);
+                localStorage.setItem(weekKey, JSON.stringify(this.data));
+            }
+            
+            saveReport(dayIndex, reportContent) {
+                const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
+                localStorage.setItem(dayKey, reportContent);
+                
+                // Также сохраняем в общие данные
+                if (!this.data[dayIndex]) {
+                    this.data[dayIndex] = { implementation: 0, kts: 0, report: '' };
+                }
+                this.data[dayIndex].report = reportContent;
+                this.saveData();
+            }
+            
+            bindEvents() {
+                // Переключение темы
+                document.getElementById('themeToggleBtn').addEventListener('click', () => {
+                    document.body.classList.toggle('light-theme');
+                    localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+                });
+                
+                // Навигация по неделям
+                document.getElementById('prevWeekBtn').addEventListener('click', () => {
+                    this.changeWeek(-1);
+                });
+                
+                document.getElementById('nextWeekBtn').addEventListener('click', () => {
+                    this.changeWeek(1);
+                });
+                
+                document.getElementById('currentWeekBtn').addEventListener('click', () => {
+                    this.currentWeek = this.getCurrentWeek();
+                    this.currentYear = new Date().getFullYear();
+                    this.data = this.loadData();
+                    this.renderTable();
+                    this.updateStats();
+                    this.updateWeekDisplay();
+                    this.showNotification('Переход на текущую неделю', 'success');
+                });
+                
+                // Кнопки очистки
+                document.getElementById('clearDayBtn').addEventListener('click', () => {
+                    this.clearCurrentDay();
+                });
+                
+                document.getElementById('clearWeekBtn').addEventListener('click', () => {
+                    if (confirm('Вы уверены, что хотите очистить все данные за эту неделю?')) {
+                        this.clearWeek();
+                    }
+                });
+                
+                // Кнопка создания отчета за сегодня
+                document.getElementById('generateReportBtn').addEventListener('click', () => {
+                    const today = new Date().getDay();
+                    const dayIndex = today === 0 ? 6 : today - 1;
+                    this.openReportEditor(dayIndex);
+                });
+                
+                // Модальное окно
+                document.getElementById('modalCloseBtn').addEventListener('click', () => {
+                    this.closeReportEditor();
+                });
+                
+                document.getElementById('closeModalBtn').addEventListener('click', () => {
+                    this.closeReportEditor();
+                });
+                
+                document.getElementById('reportModal').addEventListener('click', (e) => {
+                    if (e.target === document.getElementById('reportModal')) {
+                        this.closeReportEditor();
+                    }
+                });
+                
+                // Кнопки редактора
+                document.getElementById('saveReportBtn').addEventListener('click', () => {
+                    this.saveCurrentReport();
+                });
+                
+                document.getElementById('copyReportBtn').addEventListener('click', () => {
+                    this.copyReportToClipboard();
+                });
+                
+                document.getElementById('insertTemplateBtn').addEventListener('click', () => {
+                    this.insertReportTemplate();
+                });
+                
+                // Обработчики для кнопок форматирования
+                document.querySelectorAll('.editor-btn[data-command]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const command = e.target.closest('.editor-btn').dataset.command;
+                        const value = e.target.closest('.editor-btn').dataset.value;
+                        
+                        if (command === 'createLink') {
+                            const url = prompt('Введите URL ссылки:', 'https://');
+                            if (url) {
+                                document.execCommand(command, false, url);
+                            }
+                        } else if (value) {
+                            document.execCommand(command, false, value);
+                        } else {
+                            document.execCommand(command, false, null);
+                        }
+                        
+                        // Обновляем превью
+                        this.updateReportPreview();
+                    });
+                });
+                
+                // Обновление превью при изменении содержимого
+                document.getElementById('editorContent').addEventListener('input', () => {
+                    this.updateReportPreview();
+                });
+            }
+            
+            setupTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                }
+            }
+            
+            renderTable() {
+                const tableBody = document.getElementById('dataTableBody');
+                tableBody.innerHTML = '';
+                
+                const weekDates = this.getWeekDates(this.currentWeek, this.currentYear);
+                
+                let totalImplementation = 0;
+                let totalKTS = 0;
+                
+                this.daysOfWeek.forEach((day, dayIndex) => {
+                    const row = document.createElement('tr');
+                    
+                    // Ячейка дня недели с датой
+                    const dayCell = document.createElement('td');
+                    const date = weekDates[dayIndex];
+                    const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+                    dayCell.innerHTML = `<div>${day}</div><div style="font-size: 11px; color: var(--text-muted);">${dateStr}</div>`;
+                    dayCell.style.fontWeight = '500';
+                    row.appendChild(dayCell);
+                    
+                    // Ячейки ввода для каждой категории
+                    this.categories.forEach(category => {
+                        const value = this.data[dayIndex]?.[category] || 0;
+                        
+                        if (category === 'implementation') totalImplementation += parseInt(value) || 0;
+                        if (category === 'kts') totalKTS += parseInt(value) || 0;
+                        
+                        const inputCell = document.createElement('td');
+                        inputCell.className = 'input-cell';
+                        
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.min = '0';
+                        input.step = '1';
+                        input.className = 'number-input';
+                        input.value = value;
+                        input.dataset.day = dayIndex;
+                        input.dataset.category = category;
+                        
+                        input.addEventListener('input', (e) => {
+                            this.handleInputChange(e.target);
+                        });
+                        
+                        input.addEventListener('blur', (e) => {
+                            this.handleInputBlur(e.target);
+                        });
+                        
+                        inputCell.appendChild(input);
+                        row.appendChild(inputCell);
+                    });
+                    
+                    // Ячейка итога за день
+                    const dayTotalCell = document.createElement('td');
+                    dayTotalCell.className = 'total-cell day-total';
+                    const dayTotal = (parseInt(this.data[dayIndex]?.implementation) || 0) + 
+                                   (parseInt(this.data[dayIndex]?.kts) || 0);
+                    dayTotalCell.textContent = dayTotal;
+                    row.appendChild(dayTotalCell);
+                    
+                    // Ячейка отчета
+                    const reportCell = document.createElement('td');
+                    const reportBtn = document.createElement('button');
+                    reportBtn.className = 'report-btn';
+                    reportBtn.innerHTML = '<i class="fas fa-file-alt"></i> Отчет';
+                    reportBtn.dataset.day = dayIndex;
+                    reportBtn.addEventListener('click', () => {
+                        this.openReportEditor(dayIndex);
+                    });
+                    
+                    // Проверяем, есть ли сохраненный отчет
+                    const hasReport = this.data[dayIndex]?.report && this.data[dayIndex].report.trim() !== '';
+                    if (hasReport) {
+                        reportBtn.innerHTML = '<i class="fas fa-file-check" style="color: var(--color-success);"></i> Отчет';
+                        reportBtn.title = 'Редактировать отчет';
+                    }
+                    
+                    reportCell.appendChild(reportBtn);
+                    row.appendChild(reportCell);
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // Строка итогов
+                const totalRow = document.createElement('tr');
+                
+                const totalLabelCell = document.createElement('td');
+                totalLabelCell.textContent = 'Итого';
+                totalLabelCell.className = 'total-cell';
+                totalLabelCell.style.fontWeight = '600';
+                totalRow.appendChild(totalLabelCell);
+                
+                // Итоги по категориям
+                const implementationTotalCell = document.createElement('td');
+                implementationTotalCell.className = 'total-cell category-total';
+                implementationTotalCell.textContent = totalImplementation;
+                totalRow.appendChild(implementationTotalCell);
+                
+                const ktsTotalCell = document.createElement('td');
+                ktsTotalCell.className = 'total-cell category-total';
+                ktsTotalCell.textContent = totalKTS;
+                totalRow.appendChild(ktsTotalCell);
+                
+                // Общий итог
+                const grandTotalCell = document.createElement('td');
+                grandTotalCell.className = 'total-cell grand-total';
+                const grandTotal = totalImplementation + totalKTS;
+                grandTotalCell.textContent = grandTotal;
+                totalRow.appendChild(grandTotalCell);
+                
+                // Пустая ячейка для выравнивания
+                const emptyCell = document.createElement('td');
+                emptyCell.className = 'total-cell';
+                totalRow.appendChild(emptyCell);
+                
+                tableBody.appendChild(totalRow);
+            }
+            
+            handleInputChange(input) {
+                const day = parseInt(input.dataset.day);
+                const category = input.dataset.category;
+                const value = parseInt(input.value) || 0;
+                
+                if (!this.data[day]) {
+                    this.data[day] = { implementation: 0, kts: 0, report: '' };
+                }
+                
+                this.data[day][category] = value;
+                this.saveData();
+                this.updateRowTotal(day);
+                this.updateStats();
+            }
+            
+            handleInputBlur(input) {
+                const value = parseInt(input.value) || 0;
+                input.value = value; // Нормализуем значение
+                this.showNotification('Значение сохранено', 'success');
+            }
+            
+            updateRowTotal(dayIndex) {
+                const rows = document.querySelectorAll('#dataTableBody tr');
+                if (rows[dayIndex]) {
+                    const implementationValue = parseInt(this.data[dayIndex]?.implementation) || 0;
+                    const ktsValue = parseInt(this.data[dayIndex]?.kts) || 0;
+                    const dayTotal = implementationValue + ktsValue;
+                    
+                    const totalCell = rows[dayIndex].querySelector('.day-total');
+                    if (totalCell) {
+                        totalCell.textContent = dayTotal;
+                    }
+                }
+                
+                // Обновляем итоговую строку
+                this.updateTotalRow();
+            }
+            
+            updateTotalRow() {
+                let totalImplementation = 0;
+                let totalKTS = 0;
+                
+                this.daysOfWeek.forEach((_, dayIndex) => {
+                    totalImplementation += parseInt(this.data[dayIndex]?.implementation) || 0;
+                    totalKTS += parseInt(this.data[dayIndex]?.kts) || 0;
+                });
+                
+                const totalRow = document.querySelector('#dataTableBody tr:last-child');
+                if (totalRow) {
+                    const cells = totalRow.querySelectorAll('td');
+                    cells[1].textContent = totalImplementation;
+                    cells[2].textContent = totalKTS;
+                    cells[3].textContent = totalImplementation + totalKTS;
+                }
+            }
+            
+            updateStats() {
+                let totalImplementation = 0;
+                let totalKTS = 0;
+                
+                this.daysOfWeek.forEach((_, dayIndex) => {
+                    totalImplementation += parseInt(this.data[dayIndex]?.implementation) || 0;
+                    totalKTS += parseInt(this.data[dayIndex]?.kts) || 0;
+                });
+                
+                const totalWeek = totalImplementation + totalKTS;
+                const averageDay = this.daysOfWeek.length > 0 ? Math.round(totalWeek / this.daysOfWeek.length) : 0;
+                
+                // Обновляем панель статистики
+                document.getElementById('totalImplementation').textContent = totalImplementation;
+                document.getElementById('totalKTS').textContent = totalKTS;
+                document.getElementById('totalWeek').textContent = totalWeek;
+                document.getElementById('averageDay').textContent = averageDay;
+            }
+            
+            updateWeekDisplay() {
+                const weekDates = this.getWeekDates(this.currentWeek, this.currentYear);
+                
+                const startDate = weekDates[0];
+                const endDate = weekDates[6];
+                
+                const formatDate = (date) => {
+                    return date.toLocaleDateString('ru-RU', { 
+                        day: '2-digit', 
+                        month: '2-digit' 
+                    });
+                };
+                
+                document.getElementById('currentWeekDisplay').textContent = 
+                    `Неделя ${this.currentWeek}, ${this.currentYear} (${formatDate(startDate)} - ${formatDate(endDate)})`;
+            }
+            
+            changeWeek(delta) {
+                this.currentWeek += delta;
+                
+                // Проверяем границы (1-52 недели) и год
+                if (this.currentWeek < 1) {
+                    this.currentWeek = 52;
+                    this.currentYear -= 1;
+                } else if (this.currentWeek > 52) {
+                    this.currentWeek = 1;
+                    this.currentYear += 1;
+                }
+                
+                this.data = this.loadData();
+                this.renderTable();
+                this.updateStats();
+                this.updateWeekDisplay();
+                
+                this.showNotification(`Переход на неделю ${this.currentWeek}`, 'info');
+            }
+            
+            openReportEditor(dayIndex) {
+                this.currentDayIndex = dayIndex;
+                this.currentDayName = this.daysOfWeek[dayIndex];
+                
+                const weekDates = this.getWeekDates(this.currentWeek, this.currentYear);
+                const date = weekDates[dayIndex];
+                this.currentDate = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                
+                // Устанавливаем заголовок модального окна
+                document.getElementById('modalTitle').textContent = 
+                    `Отчет о выполненных работах за ${this.currentDayName}, ${this.currentDate}`;
+                
+                // Загружаем сохраненный отчет или создаем новый
+                const savedReport = this.loadReport(dayIndex);
+                const editorContent = document.getElementById('editorContent');
+                
+                if (savedReport && savedReport.trim() !== '') {
+                    editorContent.innerHTML = savedReport;
+                } else {
+                    // Вставляем шаблон по умолчанию
+                    this.insertReportTemplate();
+                }
+                
+                // Обновляем превью
+                this.updateReportPreview();
+                
+                // Показываем модальное окно
+                document.getElementById('reportModal').classList.add('active');
+                
+                // Фокус на редактор
+                setTimeout(() => {
+                    editorContent.focus();
+                }, 100);
+            }
+            
+            closeReportEditor() {
+                document.getElementById('reportModal').classList.remove('active');
+                this.currentDayIndex = null;
+                this.currentDayName = null;
+                this.currentDate = null;
+            }
+            
+            saveCurrentReport() {
+                if (this.currentDayIndex === null) return;
+                
+                const editorContent = document.getElementById('editorContent');
+                const reportHtml = editorContent.innerHTML;
+                
+                this.saveReport(this.currentDayIndex, reportHtml);
+                
+                // Обновляем кнопку в таблице
+                const reportBtn = document.querySelector(`.report-btn[data-day="${this.currentDayIndex}"]`);
+                if (reportBtn) {
+                    reportBtn.innerHTML = '<i class="fas fa-file-check" style="color: var(--color-success);"></i> Отчет';
+                    reportBtn.title = 'Редактировать отчет';
+                }
+                
+                this.showNotification(`Отчет за ${this.currentDayName} сохранен`, 'success');
+            }
+            
+            copyReportToClipboard() {
+                const editorContent = document.getElementById('editorContent');
+                const reportText = this.convertHtmlToText(editorContent.innerHTML);
+                
+                navigator.clipboard.writeText(reportText)
+                    .then(() => {
+                        this.showNotification('Отчет скопирован в буфер обмена', 'success');
+                    })
+                    .catch(err => {
+                        console.error('Ошибка копирования: ', err);
+                        this.showNotification('Не удалось скопировать отчет', 'error');
+                    });
+            }
+            
+            convertHtmlToText(html) {
+                // Создаем временный элемент для извлечения текста
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Конвертируем HTML в текст
+                let text = tempDiv.textContent || tempDiv.innerText || '';
+                
+                // Форматируем текст
+                text = text
+                    .replace(/\n\s*\n/g, '\n\n') // Убираем лишние пустые строки
+                    .trim();
+                
+                return text;
+            }
+            
+            insertReportTemplate() {
+                if (this.currentDayIndex === null) return;
+                
+                const implementationValue = parseInt(this.data[this.currentDayIndex]?.implementation) || 0;
+                const ktsValue = parseInt(this.data[this.currentDayIndex]?.kts) || 0;
+                const totalDay = implementationValue + ktsValue;
+                
+                const template = `
+<h2>Отчет о выполненных работах за ${this.currentDate}</h2>
+
+<h3>1. Обработка обращений</h3>
+
+<p><strong>ММЦ (оперативные обращения):</strong> Обработано около <strong>${implementationValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
+
+<p><strong>Кол-центр (4me):</strong> Обработано около <strong>${ktsValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
+
+<ul>
+<li><em>Ссылка на список обработанных заявок в 4me</em><br>
+<a href="https://sc-tech-solutions.itsm.mos.ru/activities?created_at=%3E%3D${this.currentDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}%3C${this.getNextDate(this.currentDate).replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}&vname=all">https://sc-tech-solutions.itsm.mos.ru/activities?created_at=%3E%3D${this.currentDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}%3C${this.getNextDate(this.currentDate).replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}&vname=all</a></li>
+</ul>
+
+<h3>2. Мониторинг и аналитика мобильного приложения</h3>
+
+<ul>
+<li>Проведен ежедневный анализ ключевых дашбордов (OpenSearch, Kafka, Grafana).</li>
+<li>Группа разработки проинформирована о динамике показателей, ошибках и активности мобильного приложения.</li>
+<li>Мониторинг инцидентов и коммуникация велись в соотв. Telegram-чатах.<br>
+Нет доступа к ссылке-приглашению - "АИС ПУДС МИГ Алерты"<br>
+Нет доступа к ссылке-приглашению - "Мигранты. Амина. Эксплуатация"<br>
+<a href="https://t.me/+2JrcVFJDA9MxMTAy">https://t.me/+2JrcVFJDA9MxMTAy</a> - "ПУДС.ММУ.Разбор кейсов"<br>
+<a href="https://t.me/+gXo3QyPBkfFmODU6">https://t.me/+gXo3QyPBkfFmODU6</a> - "Ботик для анализа по работе МП"</li>
+</ul>
+
+<h3>3. Использованные инструменты и ресурсы</h3>
+
+<ul>
+<li><strong>Основные:</strong> <a href="https://amina.passport.local/navigator">Navigator</a>, <a href="http://opensearch-prod-pudsmig.passport.local/">OpenSearch</a>, <a href="https://amina.passport.local/akhq">Kafka</a>, S3, <a href="http://grafana-prod-pudsmig.passport.local/">Grafana</a>.</li>
+<li><strong>Вспомогательные:</strong> <a href="https://brsftechpd.github.io/format_uuid">Форматтер UUID</a>, <a href="https://brsftechpd.github.io/json_format">JSON Editor</a>, <a href="https://brsftechpd.github.io/wiki">База знаний</a>, <a href="https://brsftechpd.github.io/duble_search_4me">Поиск дублей 4me</a>, <a href="https://brsftechpd.github.io/check_mp">Проверка МП</a>.</li>
+</ul>
+
+<h3>Ключевые показатели за день:</h3>
+
+<ul>
+<li><strong>Всего обработано запросов:</strong> ~${totalDay}</li>
+<li><strong>Мониторинг:</strong> проведен анализ работы мобильного приложения, инцидентов не выявлено / выявлено инцидентов.</li>
+</ul>`;
+                
+                const editorContent = document.getElementById('editorContent');
+                editorContent.innerHTML = template;
+                
+                this.updateReportPreview();
+                this.showNotification('Шаблон отчета вставлен', 'info');
+            }
+            
+            getNextDate(dateStr) {
+                // Преобразуем строку даты в объект Date
+                const [day, month, year] = dateStr.split('.').map(Number);
+                const date = new Date(year, month - 1, day + 1);
+                return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            }
+            
+            updateReportPreview() {
+                const editorContent = document.getElementById('editorContent');
+                const previewElement = document.getElementById('reportPreview');
+                
+                // Копируем содержимое редактора в превью
+                previewElement.innerHTML = editorContent.innerHTML;
+                
+                // Ограничиваем высоту превью и добавляем прокрутку
+                previewElement.style.maxHeight = '200px';
+                previewElement.style.overflowY = 'auto';
+            }
+            
+            clearCurrentDay() {
+                const today = new Date().getDay();
+                // Преобразуем воскресенье (0) в 6, понедельник (1) в 0 и т.д.
+                const dayIndex = today === 0 ? 6 : today - 1;
+                
+                if (this.data[dayIndex]) {
+                    this.data[dayIndex].implementation = 0;
+                    this.data[dayIndex].kts = 0;
+                    this.data[dayIndex].report = '';
+                    this.saveData();
+                    
+                    // Удаляем сохраненный отчет
+                    const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
+                    localStorage.removeItem(dayKey);
+                    
+                    this.renderTable();
+                    this.updateStats();
+                    this.showNotification(`Данные за ${this.daysOfWeek[dayIndex]} очищены`, 'success');
+                }
+            }
+            
+            clearWeek() {
+                this.daysOfWeek.forEach((_, dayIndex) => {
+                    if (this.data[dayIndex]) {
+                        this.data[dayIndex].implementation = 0;
+                        this.data[dayIndex].kts = 0;
+                        this.data[dayIndex].report = '';
+                    }
+                    
+                    // Удаляем сохраненные отчеты
+                    const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
+                    localStorage.removeItem(dayKey);
+                });
+                
+                this.saveData();
+                this.renderTable();
+                this.updateStats();
+                this.showNotification('Данные за неделю очищены', 'success');
+            }
+            
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notificationMessage');
+                const notificationTitle = document.getElementById('notificationTitle');
+                
+                notificationMessage.textContent = message;
+                
+                let title = 'Успешно!';
+                let icon = 'fa-check-circle';
+                
+                switch(type) {
+                    case 'error':
+                        title = 'Ошибка!';
+                        icon = 'fa-exclamation-circle';
+                        break;
+                    case 'warning':
+                        title = 'Внимание!';
+                        icon = 'fa-exclamation-triangle';
+                        break;
+                    case 'info':
+                        title = 'Информация';
+                        icon = 'fa-info-circle';
+                        break;
+                }
+                
+                notificationTitle.textContent = title;
+                notification.querySelector('.notification-icon').className = `fas ${icon} notification-icon`;
+                notification.className = `notification ${type}`;
+                
+                notification.classList.remove('hide');
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    notification.classList.add('hide');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('hide');
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            window.workTracker = new WorkTracker();
+        });
+    </script>
+</body>
+</html>
