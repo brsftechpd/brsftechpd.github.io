@@ -446,27 +446,6 @@
             color: white;
         }
         
-        /* Кнопка отчета */
-        .report-btn {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--color-info);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 6px 12px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all var(--transition-base);
-        }
-        
-        .report-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: var(--color-info);
-        }
-        
         /* Модальное окно редактора отчета */
         .modal-overlay {
             position: fixed;
@@ -636,23 +615,6 @@
             text-decoration: underline;
         }
         
-        /* Превью отчета */
-        .report-preview {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-top: var(--spacing-lg);
-            border: 1px solid var(--border-color);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .report-preview h4 {
-            margin-bottom: var(--spacing-md);
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-        
         /* Уведомления */
         .notification {
             position: fixed;
@@ -794,6 +756,27 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--color-primary);
         }
+        
+        /* Стили для панели месячной статистики */
+        .month-stats-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .month-stats-title i {
+            color: var(--color-primary);
+        }
+        
+        .month-stats-panel {
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-light);
+        }
     </style>
 </head>
 <body>
@@ -831,7 +814,7 @@
             </button>
         </div>
         
-        <!-- Панель статистики -->
+        <!-- Панель статистики за неделю -->
         <div class="stats-panel">
             <div class="stat-card">
                 <i class="fas fa-users" style="color: var(--color-info); font-size: 20px;"></i>
@@ -852,6 +835,36 @@
                 <i class="fas fa-calendar-week" style="color: var(--color-primary); font-size: 20px;"></i>
                 <div class="stat-value" id="averageDay">0</div>
                 <div class="stat-label">Среднее в день</div>
+            </div>
+        </div>
+        
+        <!-- Панель статистики за месяц -->
+        <div class="month-stats-panel">
+            <div class="month-stats-title">
+                <i class="fas fa-chart-bar"></i>
+                <span>Статистика за месяц</span>
+            </div>
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <i class="fas fa-users" style="color: var(--color-info); font-size: 20px;"></i>
+                    <div class="stat-value" id="monthImplementation">0</div>
+                    <div class="stat-label">Группа внедрения (месяц)</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-headset" style="color: var(--color-warning); font-size: 20px;"></i>
+                    <div class="stat-value" id="monthKTS">0</div>
+                    <div class="stat-label">КЦ в 4me (месяц)</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calculator" style="color: var(--color-success); font-size: 20px;"></i>
+                    <div class="stat-value" id="monthTotal">0</div>
+                    <div class="stat-label">Итого за месяц</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-month" style="color: var(--color-primary); font-size: 20px;"></i>
+                    <div class="stat-value" id="monthAverage">0</div>
+                    <div class="stat-label">Среднее в день (месяц)</div>
+                </div>
             </div>
         </div>
         
@@ -885,7 +898,6 @@
                         <th>Обработка обращений от группы внедрения</th>
                         <th>Обработка обращений от КЦ в 4me</th>
                         <th>Итого за день</th>
-                        <th>Отчет</th>
                     </tr>
                 </thead>
                 <tbody id="dataTableBody">
@@ -937,28 +949,15 @@
                         <button class="editor-btn" data-command="formatBlock" data-value="h3" title="Заголовок 3">
                             H3
                         </button>
-                        <div class="separator" style="width: 1px; background: var(--border-color); margin: 0 4px;"></div>
-                        <button class="editor-btn" id="insertTemplateBtn" title="Вставить шаблон">
-                            <i class="fas fa-clone"></i> Шаблон
-                        </button>
                     </div>
                     
                     <div class="editor-content" id="editorContent" contenteditable="true">
                         <!-- Содержимое будет вставляться через JavaScript -->
                     </div>
                 </div>
-                
-                <div class="report-preview">
-                    <h4>Предварительный просмотр:</h4>
-                    <div id="reportPreview"></div>
-                </div>
             </div>
             
             <div class="modal-footer">
-                <button class="control-btn" id="saveReportBtn">
-                    <i class="fas fa-save"></i>
-                    Сохранить отчет
-                </button>
                 <button class="control-btn primary" id="copyReportBtn">
                     <i class="fas fa-copy"></i>
                     Копировать отчет
@@ -987,6 +986,7 @@
             constructor() {
                 this.currentWeek = this.getCurrentWeek();
                 this.currentYear = new Date().getFullYear();
+                this.currentMonth = new Date().getMonth();
                 this.daysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
                 this.categories = ['implementation', 'kts'];
                 this.categoryLabels = {
@@ -1008,6 +1008,7 @@
                 this.setupTheme();
                 this.renderTable();
                 this.updateStats();
+                this.updateMonthStats();
                 this.updateWeekDisplay();
             }
             
@@ -1041,10 +1042,6 @@
                 return `week_${year}_${weekNumber}`;
             }
             
-            getDayKey(dayIndex, weekNumber, year) {
-                return `report_${year}_${weekNumber}_${dayIndex}`;
-            }
-            
             loadData() {
                 const weekKey = this.getWeekKey(this.currentWeek, this.currentYear);
                 const savedData = localStorage.getItem(weekKey);
@@ -1057,35 +1054,16 @@
                     this.daysOfWeek.forEach((day, index) => {
                         emptyData[index] = {
                             implementation: 0,
-                            kts: 0,
-                            report: ''
+                            kts: 0
                         };
                     });
                     return emptyData;
                 }
             }
             
-            loadReport(dayIndex) {
-                const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
-                const savedReport = localStorage.getItem(dayKey);
-                return savedReport || '';
-            }
-            
             saveData() {
                 const weekKey = this.getWeekKey(this.currentWeek, this.currentYear);
                 localStorage.setItem(weekKey, JSON.stringify(this.data));
-            }
-            
-            saveReport(dayIndex, reportContent) {
-                const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
-                localStorage.setItem(dayKey, reportContent);
-                
-                // Также сохраняем в общие данные
-                if (!this.data[dayIndex]) {
-                    this.data[dayIndex] = { implementation: 0, kts: 0, report: '' };
-                }
-                this.data[dayIndex].report = reportContent;
-                this.saveData();
             }
             
             bindEvents() {
@@ -1107,9 +1085,11 @@
                 document.getElementById('currentWeekBtn').addEventListener('click', () => {
                     this.currentWeek = this.getCurrentWeek();
                     this.currentYear = new Date().getFullYear();
+                    this.currentMonth = new Date().getMonth();
                     this.data = this.loadData();
                     this.renderTable();
                     this.updateStats();
+                    this.updateMonthStats();
                     this.updateWeekDisplay();
                     this.showNotification('Переход на текущую неделю', 'success');
                 });
@@ -1147,17 +1127,9 @@
                     }
                 });
                 
-                // Кнопки редактора
-                document.getElementById('saveReportBtn').addEventListener('click', () => {
-                    this.saveCurrentReport();
-                });
-                
+                // Кнопка копирования отчета
                 document.getElementById('copyReportBtn').addEventListener('click', () => {
                     this.copyReportToClipboard();
-                });
-                
-                document.getElementById('insertTemplateBtn').addEventListener('click', () => {
-                    this.insertReportTemplate();
                 });
                 
                 // Обработчики для кнопок форматирования
@@ -1177,15 +1149,7 @@
                         } else {
                             document.execCommand(command, false, null);
                         }
-                        
-                        // Обновляем превью
-                        this.updateReportPreview();
                     });
-                });
-                
-                // Обновление превью при изменении содержимого
-                document.getElementById('editorContent').addEventListener('input', () => {
-                    this.updateReportPreview();
                 });
             }
             
@@ -1255,26 +1219,6 @@
                     dayTotalCell.textContent = dayTotal;
                     row.appendChild(dayTotalCell);
                     
-                    // Ячейка отчета
-                    const reportCell = document.createElement('td');
-                    const reportBtn = document.createElement('button');
-                    reportBtn.className = 'report-btn';
-                    reportBtn.innerHTML = '<i class="fas fa-file-alt"></i> Отчет';
-                    reportBtn.dataset.day = dayIndex;
-                    reportBtn.addEventListener('click', () => {
-                        this.openReportEditor(dayIndex);
-                    });
-                    
-                    // Проверяем, есть ли сохраненный отчет
-                    const hasReport = this.data[dayIndex]?.report && this.data[dayIndex].report.trim() !== '';
-                    if (hasReport) {
-                        reportBtn.innerHTML = '<i class="fas fa-file-check" style="color: var(--color-success);"></i> Отчет';
-                        reportBtn.title = 'Редактировать отчет';
-                    }
-                    
-                    reportCell.appendChild(reportBtn);
-                    row.appendChild(reportCell);
-                    
                     tableBody.appendChild(row);
                 });
                 
@@ -1305,11 +1249,6 @@
                 grandTotalCell.textContent = grandTotal;
                 totalRow.appendChild(grandTotalCell);
                 
-                // Пустая ячейка для выравнивания
-                const emptyCell = document.createElement('td');
-                emptyCell.className = 'total-cell';
-                totalRow.appendChild(emptyCell);
-                
                 tableBody.appendChild(totalRow);
             }
             
@@ -1319,13 +1258,14 @@
                 const value = parseInt(input.value) || 0;
                 
                 if (!this.data[day]) {
-                    this.data[day] = { implementation: 0, kts: 0, report: '' };
+                    this.data[day] = { implementation: 0, kts: 0 };
                 }
                 
                 this.data[day][category] = value;
                 this.saveData();
                 this.updateRowTotal(day);
                 this.updateStats();
+                this.updateMonthStats();
             }
             
             handleInputBlur(input) {
@@ -1388,6 +1328,52 @@
                 document.getElementById('averageDay').textContent = averageDay;
             }
             
+            updateMonthStats() {
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                
+                let monthImplementation = 0;
+                let monthKTS = 0;
+                
+                // Проходим по всем неделям текущего месяца
+                for (let week = 1; week <= 52; week++) {
+                    const weekKey = `week_${currentYear}_${week}`;
+                    const weekData = localStorage.getItem(weekKey);
+                    
+                    if (weekData) {
+                        try {
+                            const data = JSON.parse(weekData);
+                            // Проверяем, принадлежит ли неделя текущему месяцу
+                            const weekDates = this.getWeekDates(week, currentYear);
+                            const weekInMonth = weekDates.some(date => 
+                                date.getMonth() === currentMonth && date.getFullYear() === currentYear
+                            );
+                            
+                            if (weekInMonth) {
+                                // Суммируем данные за неделю
+                                Object.values(data).forEach(day => {
+                                    monthImplementation += parseInt(day.implementation) || 0;
+                                    monthKTS += parseInt(day.kts) || 0;
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Ошибка при обработке данных недели', week, e);
+                        }
+                    }
+                }
+                
+                const monthTotal = monthImplementation + monthKTS;
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const monthAverage = Math.round(monthTotal / daysInMonth);
+                
+                // Обновляем панель статистики за месяц
+                document.getElementById('monthImplementation').textContent = monthImplementation;
+                document.getElementById('monthKTS').textContent = monthKTS;
+                document.getElementById('monthTotal').textContent = monthTotal;
+                document.getElementById('monthAverage').textContent = monthAverage;
+            }
+            
             updateWeekDisplay() {
                 const weekDates = this.getWeekDates(this.currentWeek, this.currentYear);
                 
@@ -1420,6 +1406,7 @@
                 this.data = this.loadData();
                 this.renderTable();
                 this.updateStats();
+                this.updateMonthStats();
                 this.updateWeekDisplay();
                 
                 this.showNotification(`Переход на неделю ${this.currentWeek}`, 'info');
@@ -1437,26 +1424,15 @@
                 document.getElementById('modalTitle').textContent = 
                     `Отчет о выполненных работах за ${this.currentDayName}, ${this.currentDate}`;
                 
-                // Загружаем сохраненный отчет или создаем новый
-                const savedReport = this.loadReport(dayIndex);
-                const editorContent = document.getElementById('editorContent');
-                
-                if (savedReport && savedReport.trim() !== '') {
-                    editorContent.innerHTML = savedReport;
-                } else {
-                    // Вставляем шаблон по умолчанию
-                    this.insertReportTemplate();
-                }
-                
-                // Обновляем превью
-                this.updateReportPreview();
+                // Всегда вставляем шаблон отчета
+                this.insertReportTemplate();
                 
                 // Показываем модальное окно
                 document.getElementById('reportModal').classList.add('active');
                 
                 // Фокус на редактор
                 setTimeout(() => {
-                    editorContent.focus();
+                    document.getElementById('editorContent').focus();
                 }, 100);
             }
             
@@ -1467,52 +1443,33 @@
                 this.currentDate = null;
             }
             
-            saveCurrentReport() {
-                if (this.currentDayIndex === null) return;
-                
+            copyReportToClipboard() {
                 const editorContent = document.getElementById('editorContent');
                 const reportHtml = editorContent.innerHTML;
                 
-                this.saveReport(this.currentDayIndex, reportHtml);
+                // Создаем временный элемент для копирования HTML с форматированием
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = reportHtml;
                 
-                // Обновляем кнопку в таблице
-                const reportBtn = document.querySelector(`.report-btn[data-day="${this.currentDayIndex}"]`);
-                if (reportBtn) {
-                    reportBtn.innerHTML = '<i class="fas fa-file-check" style="color: var(--color-success);"></i> Отчет';
-                    reportBtn.title = 'Редактировать отчет';
-                }
+                // Используем Clipboard API для копирования HTML
+                const blob = new Blob([reportHtml], { type: 'text/html' });
+                const data = [new ClipboardItem({ 'text/html': blob })];
                 
-                this.showNotification(`Отчет за ${this.currentDayName} сохранен`, 'success');
-            }
-            
-            copyReportToClipboard() {
-                const editorContent = document.getElementById('editorContent');
-                const reportText = this.convertHtmlToText(editorContent.innerHTML);
-                
-                navigator.clipboard.writeText(reportText)
+                navigator.clipboard.write(data)
                     .then(() => {
-                        this.showNotification('Отчет скопирован в буфер обмена', 'success');
+                        this.showNotification('Отчет скопирован в буфер обмена (с форматированием)', 'success');
                     })
                     .catch(err => {
                         console.error('Ошибка копирования: ', err);
-                        this.showNotification('Не удалось скопировать отчет', 'error');
+                        // Fallback для старых браузеров
+                        const textArea = document.createElement('textarea');
+                        textArea.value = tempDiv.innerText || tempDiv.textContent;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        this.showNotification('Отчет скопирован в буфер обмена (как текст)', 'success');
                     });
-            }
-            
-            convertHtmlToText(html) {
-                // Создаем временный элемент для извлечения текста
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                
-                // Конвертируем HTML в текст
-                let text = tempDiv.textContent || tempDiv.innerText || '';
-                
-                // Форматируем текст
-                text = text
-                    .replace(/\n\s*\n/g, '\n\n') // Убираем лишние пустые строки
-                    .trim();
-                
-                return text;
             }
             
             insertReportTemplate() {
@@ -1527,20 +1484,20 @@
 
 <h3>1. Обработка обращений</h3>
 
-<p><strong>ММЦ (оперативные обращения):</strong> Обработано около <strong>${implementationValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
+<p><strong>ММЦ (взаимодействие с группой внедрения):</strong> Обработано около <strong>${implementationValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
 
-<p><strong>Кол-центр (4me):</strong> Обработано около <strong>${ktsValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
+<p><strong>Контакт-центр (4me):</strong> Обработано около <strong>${ktsValue}</strong> обращений. Проведен поиск и анализ данных при помощи инструментов (Navigator, OpenSearch, Kafka), сформированы ответы, исправлены ошибки в файлах пользователей (S3).</p>
 
 <ul>
 <li><em>Ссылка на список обработанных заявок в 4me</em><br>
 <a href="https://sc-tech-solutions.itsm.mos.ru/activities?created_at=%3E%3D${this.currentDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}%3C${this.getNextDate(this.currentDate).replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}&vname=all">https://sc-tech-solutions.itsm.mos.ru/activities?created_at=%3E%3D${this.currentDate.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}%3C${this.getNextDate(this.currentDate).replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')}&vname=all</a></li>
 </ul>
 
-<h3>2. Мониторинг и аналитика мобильного приложения</h3>
+<h3>2. Мониторинг и аналитика работоспособности мобильного приложения</h3>
 
 <ul>
-<li>Проведен ежедневный анализ ключевых дашбордов (OpenSearch, Kafka, Grafana).</li>
-<li>Группа разработки проинформирована о динамике показателей, ошибках и активности мобильного приложения.</li>
+<li>Проведен ежечасный анализ ключевых дашбордов (OpenSearch, Kafka, Grafana).</li>
+<li>Группа разработки проинформирована о динамике показателей, наличии ошибок и активности мобильного приложения.</li>
 <li>Мониторинг инцидентов и коммуникация велись в соотв. Telegram-чатах.<br>
 Нет доступа к ссылке-приглашению - "АИС ПУДС МИГ Алерты"<br>
 Нет доступа к ссылке-приглашению - "Мигранты. Амина. Эксплуатация"<br>
@@ -1558,15 +1515,12 @@
 <h3>Ключевые показатели за день:</h3>
 
 <ul>
-<li><strong>Всего обработано запросов:</strong> ~${totalDay}</li>
-<li><strong>Мониторинг:</strong> проведен анализ работы мобильного приложения, инцидентов не выявлено / выявлено инцидентов.</li>
+<li><strong>Всего обработано запросов:</strong> Около ${totalDay}</li>
+<li><strong>Мониторинг:</strong> Проведен анализ работы мобильного приложения, инцидентов не выявлено / выявлено (кол-во) инцидентов.</li>
 </ul>`;
                 
                 const editorContent = document.getElementById('editorContent');
                 editorContent.innerHTML = template;
-                
-                this.updateReportPreview();
-                this.showNotification('Шаблон отчета вставлен', 'info');
             }
             
             getNextDate(dateStr) {
@@ -1574,18 +1528,6 @@
                 const [day, month, year] = dateStr.split('.').map(Number);
                 const date = new Date(year, month - 1, day + 1);
                 return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            }
-            
-            updateReportPreview() {
-                const editorContent = document.getElementById('editorContent');
-                const previewElement = document.getElementById('reportPreview');
-                
-                // Копируем содержимое редактора в превью
-                previewElement.innerHTML = editorContent.innerHTML;
-                
-                // Ограничиваем высоту превью и добавляем прокрутку
-                previewElement.style.maxHeight = '200px';
-                previewElement.style.overflowY = 'auto';
             }
             
             clearCurrentDay() {
@@ -1596,15 +1538,11 @@
                 if (this.data[dayIndex]) {
                     this.data[dayIndex].implementation = 0;
                     this.data[dayIndex].kts = 0;
-                    this.data[dayIndex].report = '';
                     this.saveData();
-                    
-                    // Удаляем сохраненный отчет
-                    const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
-                    localStorage.removeItem(dayKey);
                     
                     this.renderTable();
                     this.updateStats();
+                    this.updateMonthStats();
                     this.showNotification(`Данные за ${this.daysOfWeek[dayIndex]} очищены`, 'success');
                 }
             }
@@ -1614,17 +1552,13 @@
                     if (this.data[dayIndex]) {
                         this.data[dayIndex].implementation = 0;
                         this.data[dayIndex].kts = 0;
-                        this.data[dayIndex].report = '';
                     }
-                    
-                    // Удаляем сохраненные отчеты
-                    const dayKey = this.getDayKey(dayIndex, this.currentWeek, this.currentYear);
-                    localStorage.removeItem(dayKey);
                 });
                 
                 this.saveData();
                 this.renderTable();
                 this.updateStats();
+                this.updateMonthStats();
                 this.showNotification('Данные за неделю очищены', 'success');
             }
             
