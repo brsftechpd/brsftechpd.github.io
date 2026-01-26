@@ -1557,13 +1557,13 @@
                     }
                 });
                 
-                // Копирование описаний
+                // Копирование описаний - исправленная версия
                 document.addEventListener('click', (e) => {
                     if (e.target.closest('#regStatusDescription')) {
-                        this.copyStatusDescription('regStatusDescription');
+                        this.copyStatusDescription('regStatusText');
                     }
                     if (e.target.closest('#addressStatusDescription')) {
-                        this.copyStatusDescription('addressStatusDescription');
+                        this.copyStatusDescription('addressStatusText');
                     }
                 });
                 
@@ -2082,17 +2082,22 @@
                 
                 statusBadge.innerHTML = '';
                 
-                const addressStatus = this.currentAddressName === null || this.currentAddressName === "" ? 
-                    'danger' : 'success';
+                // Проверяем addressName на null, пустую строку или строку из пробелов
+                const isAddressEmpty = this.currentAddressName === null || 
+                                       this.currentAddressName === "" || 
+                                       (typeof this.currentAddressName === 'string' && this.currentAddressName.trim() === "");
+                
+                const addressStatus = isAddressEmpty ? 'danger' : 'success';
                 
                 const addressBadge = document.createElement('div');
                 addressBadge.className = `info-badge ${addressStatus}`;
                 addressBadge.textContent = `addressName: ${this.currentAddressName === null ? 'null' : 
-                    this.currentAddressName === "" ? 'пустая строка' : 'указан'}`;
+                    this.currentAddressName === "" ? 'пустая строка' : 
+                    (typeof this.currentAddressName === 'string' && this.currentAddressName.trim() === "") ? 'строка из пробелов' : 'указан'}`;
                 statusBadge.appendChild(addressBadge);
                 
-                if (this.currentAddressName === null || this.currentAddressName === "") {
-                    statusText.textContent = 'ВНИМАНИЕ: Параметр addressName имеет значение null или пустую строку. Необходимо указать корректный адрес из ФИАС.';
+                if (isAddressEmpty) {
+                    statusText.textContent = 'ВНИМАНИЕ: Параметр addressName имеет значение null, пустую строку или строку из пробелов. Необходимо указать корректный адрес из ФИАС.';
                 } else {
                     statusText.textContent = 'Адрес указан корректно.';
                 }
@@ -2240,6 +2245,7 @@
             }
             
             copyStatusDescription(elementId) {
+                // Исправлено: копируем текст только из указанного элемента, а не из контейнера
                 const element = document.getElementById(elementId);
                 const text = element.textContent.trim();
                 
@@ -2249,11 +2255,17 @@
                 }
                 
                 navigator.clipboard.writeText(text).then(() => {
-                    element.classList.add('copied');
+                    // Добавляем класс скопировано к родительскому контейнеру для визуальной обратной связи
+                    const container = element.closest('.info-description');
+                    if (container) {
+                        container.classList.add('copied');
+                    }
                     this.showNotification('Описание скопировано', 'success');
                     
                     setTimeout(() => {
-                        element.classList.remove('copied');
+                        if (container) {
+                            container.classList.remove('copied');
+                        }
                     }, 1000);
                 }).catch(() => {
                     this.showNotification('Ошибка копирования', 'error');
