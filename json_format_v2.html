@@ -55,6 +55,9 @@
             --sidebar-width: 280px;
             --editor-min-height: 500px;
             --editor-default-height: 400px;
+            
+            /* Размер шрифта по умолчанию */
+            --font-size: 13px;
         }
         
         .light-theme {
@@ -91,7 +94,7 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            font-size: 14px;
+            font-size: var(--font-size);
             line-height: 1.5;
             transition: background-color var(--transition-base), color var(--transition-base);
             overflow-x: hidden;
@@ -278,6 +281,93 @@
             color: var(--color-primary);
             font-size: 14px;
             width: 20px;
+        }
+        
+        /* Настройка размера шрифта в боковом меню */
+        .font-size-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+        }
+        
+        .font-size-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .font-size-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .font-size-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .font-size-display {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .font-size-slider {
+            width: 100%;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: 2px solid var(--bg-card);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .font-size-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: 2px solid var(--bg-card);
+            box-shadow: var(--shadow-sm);
         }
         
         .json-blocks {
@@ -602,7 +692,7 @@
             border-right: 1px solid var(--border-light);
             color: var(--text-muted);
             font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 13px;
+            font-size: var(--font-size);
             line-height: 1.6;
             text-align: right;
             overflow-y: hidden;
@@ -618,7 +708,7 @@
             border: none;
             color: var(--text-primary);
             font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 13px;
+            font-size: var(--font-size);
             line-height: 1.6;
             resize: none;
             outline: none;
@@ -858,7 +948,7 @@
             padding: var(--spacing-xl);
             background: var(--bg-input);
             font-family: 'JetBrains Mono', 'Courier New', monospace;
-            font-size: 12px;
+            font-size: var(--font-size);
             line-height: 1.6;
             white-space: pre-wrap;
             overflow-x: auto;
@@ -873,6 +963,8 @@
             gap: var(--spacing-md);
             justify-content: center;
             background: var(--bg-secondary);
+            flex-direction: column;
+            align-items: center;
         }
         
         .info-btn {
@@ -909,6 +1001,40 @@
         
         .info-btn.warning:hover {
             background: #d97706;
+        }
+        
+        /* Таймер обратного отсчета */
+        .countdown-timer {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--color-warning);
+            color: var(--color-warning);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .countdown-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .countdown-display {
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .countdown-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
         }
         
         /* Уведомления */
@@ -1035,6 +1161,11 @@
             
             .info-panels {
                 grid-template-columns: 1fr;
+            }
+            
+            .editor-status {
+                flex-wrap: wrap;
+                justify-content: flex-end;
             }
         }
         
@@ -1169,6 +1300,21 @@
                     </button>
                 </div>
             </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-font"></i>
+                    Настройка шрифта
+                </div>
+                <div class="font-size-section">
+                    <div class="font-size-controls">
+                        <button class="font-size-btn" id="fontDecrease" title="Уменьшить шрифт">A-</button>
+                        <span class="font-size-display" id="fontSizeDisplay">13px</span>
+                        <button class="font-size-btn" id="fontIncrease" title="Увеличить шрифт">A+</button>
+                    </div>
+                    <input type="range" min="8" max="24" value="13" class="font-size-slider" id="fontSizeSlider">
+                </div>
+            </div>
         </aside>
         
         <!-- Основное содержимое -->
@@ -1244,6 +1390,11 @@
                         </div>
                         <div class="info-content" id="residenceBlockDisplay"></div>
                         <div class="info-actions">
+                            <div class="countdown-timer hidden" id="countdownTimer">
+                                <div class="countdown-title">До возможности исправления на статус 1:</div>
+                                <div class="countdown-display" id="countdownDisplay">00:00:00</div>
+                                <div class="countdown-subtitle">Осталось менее 4 суток с момента получения статуса</div>
+                            </div>
                             <button class="info-btn primary hidden" id="processMsoBtn">
                                 <i class="fas fa-check-circle"></i>
                                 Исправить на статус 1
@@ -1313,6 +1464,13 @@
                 this.scrollInterval = null;
                 this.resizeTimeout = null;
                 
+                // Настройки шрифта
+                this.fontSize = parseInt(localStorage.getItem('fontSize')) || 13;
+                
+                // Таймер обратного отсчета
+                this.countdownTimer = null;
+                this.countdownInterval = null;
+                
                 this.jsonBlocks = {
                     'residenceAddress': `"residenceAddress": {
     "addressName": "НЕОБХОДИМО УКАЗАТЬ АДРЕС ИЗ ФИАС https://fias.nalog.ru/",
@@ -1357,7 +1515,7 @@
                 };
                 
                 this.reasonDescriptions = {
-                    1: 'Пересечение границы Российской Федерации.',
+                    1: 'Переселение границы Российской Федерации.',
                     2: 'Отсутствие геоданных.',
                     3: 'Постановка на учет в другом субъекте РФ.',
                     4: 'Данные ЗАГС (смерть).',
@@ -1373,6 +1531,7 @@
                 this.setupTheme();
                 this.loadEditorHeight();
                 this.updateStatistics();
+                this.updateFontSize();
                 this.inputEditor.focus();
             }
             
@@ -1382,7 +1541,6 @@
                     this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                     this.updateStatistics();
                     this.debounceProcess();
-                    // УДАЛЕНО: автоматическое изменение высоты после вставки кода
                 });
                 
                 this.inputEditor.addEventListener('scroll', () => {
@@ -1423,6 +1581,21 @@
                     this.toggleUnicodeMode();
                 });
                 
+                // Кнопки изменения шрифта
+                document.getElementById('fontDecrease').addEventListener('click', () => {
+                    this.changeFontSize(-1);
+                });
+                
+                document.getElementById('fontIncrease').addEventListener('click', () => {
+                    this.changeFontSize(1);
+                });
+                
+                // Ползунок изменения шрифта
+                document.getElementById('fontSizeSlider').addEventListener('input', (e) => {
+                    this.fontSize = parseInt(e.target.value);
+                    this.updateFontSize();
+                });
+                
                 // Начальное обновление нумерации строк
                 this.updateLineNumbers('inputLineNumbers', 'inputEditor');
                 
@@ -1438,7 +1611,6 @@
                     this.startHeight = this.editorCard.offsetHeight;
                     this.resizeHandle.classList.add('resizing');
                     
-                    // Добавляем класс для всего тела документа для лучшего UX
                     document.body.style.cursor = 'ns-resize';
                     document.body.style.userSelect = 'none';
                     
@@ -1456,23 +1628,16 @@
                     const deltaY = currentY - this.startY;
                     const newHeight = this.startHeight + deltaY;
                     
-                    // Минимальная высота
-                    const minHeight = 500; // Минимальная высота 500px
-                    
-                    // Максимальная высота
+                    const minHeight = 500;
                     const maxHeight = 5000;
                     
-                    // Ограничиваем высоту между минимальной и максимальной
                     let finalHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
                     
-                    // Применяем изменение высоты
                     this.editorCard.style.transition = 'none';
                     this.editorCard.style.height = `${finalHeight}px`;
                     
-                    // Сохраняем высоту в локальное хранилище с дебаунсом
                     this.debounceSaveHeight();
                     
-                    // Проверяем, нужно ли скроллить страницу
                     this.checkAndScrollPage(currentY);
                 };
                 
@@ -1481,14 +1646,11 @@
                     this.resizeHandle.classList.remove('resizing');
                     this.stopPageScroll();
                     
-                    // Восстанавливаем стили документа
                     document.body.style.cursor = '';
                     document.body.style.userSelect = '';
                     
-                    // Включаем обратно transition для плавных анимаций
                     this.editorCard.style.transition = 'all var(--transition-base)';
                     
-                    // Сохраняем высоту окончательно
                     this.saveEditorHeight();
                     
                     document.removeEventListener('mousemove', handleMouseMove);
@@ -1497,11 +1659,9 @@
                     document.removeEventListener('touchend', handleMouseUp);
                 };
                 
-                // Назначаем обработчики событий
                 this.resizeHandle.addEventListener('mousedown', handleMouseDown);
                 this.resizeHandle.addEventListener('touchstart', handleMouseDown, { passive: false });
                 
-                // Добавляем визуальную обратную связь при наведении
                 this.resizeHandle.addEventListener('mouseenter', () => {
                     this.resizeHandle.style.cursor = 'ns-resize';
                 });
@@ -1511,12 +1671,9 @@
                 const windowHeight = window.innerHeight;
                 const scrollThreshold = 50;
                 
-                // Останавливаем предыдущий интервал скролла
                 this.stopPageScroll();
                 
-                // Проверяем, близко ли курсор к нижней границе окна
                 if (currentY > windowHeight - scrollThreshold) {
-                    // Скроллим страницу вниз, пока это возможно
                     this.scrollInterval = setInterval(() => {
                         const maxScroll = document.documentElement.scrollHeight - windowHeight;
                         if (window.scrollY < maxScroll - 10) {
@@ -1526,9 +1683,7 @@
                         }
                     }, 16);
                 }
-                // Проверяем, близко ли курсор к верхней границе окна
                 else if (currentY < scrollThreshold && window.scrollY > 0) {
-                    // Скроллим страницу вверх, пока это возможно
                     this.scrollInterval = setInterval(() => {
                         if (window.scrollY > 10) {
                             window.scrollBy(0, -20);
@@ -1600,15 +1755,12 @@
                 }
                 
                 try {
-                    // Форматируем JSON
                     const parsed = JSON.parse(input);
                     const formattedJson = JSON.stringify(parsed, null, 2);
                     const minifiedJson = JSON.stringify(parsed);
                     
-                    // Создаем Unicode представление
                     const unicodeJson = this.textToUnicode(minifiedJson);
                     
-                    // Копируем оба формата
                     const textToCopy = `${unicodeJson}`;
                     
                     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -1643,6 +1795,7 @@
                     inputStatus.textContent = 'Ожидание...';
                     inputStatus.className = 'status-badge waiting';
                     this.hideInfoPanels();
+                    this.stopCountdownTimer();
                     return;
                 }
                 
@@ -1650,11 +1803,9 @@
                     const parsed = JSON.parse(input);
                     const formatted = JSON.stringify(parsed, null, 2);
                     
-                    // Автоматически форматируем JSON
                     if (input !== formatted) {
                         this.inputEditor.value = formatted;
                         this.updateLineNumbers('inputLineNumbers', 'inputEditor');
-                        // УДАЛЕНО: автоматическое изменение высоты после форматирования
                     }
                     
                     inputStatus.textContent = 'Валидный JSON';
@@ -1669,6 +1820,7 @@
                     
                     this.isJsonValid = false;
                     this.hideInfoPanels();
+                    this.stopCountdownTimer();
                 }
             }
             
@@ -1741,18 +1893,13 @@
                     const receiveDate = new Date(receiveDateString);
                     const currentDate = new Date();
                     
-                    // Проверяем валидность даты
                     if (isNaN(receiveDate.getTime())) {
                         return false;
                     }
                     
-                    // Вычисляем разницу в миллисекундах
                     const differenceMs = currentDate - receiveDate;
-                    
-                    // Переводим в сутки (миллисекунды / (1000 * 60 * 60 * 24))
                     const differenceDays = differenceMs / (1000 * 60 * 60 * 24);
                     
-                    // Проверяем, прошло ли 4 суток или больше
                     return differenceDays >= 4;
                 } catch (error) {
                     console.error('Ошибка при проверке даты:', error);
@@ -1760,17 +1907,88 @@
                 }
             }
             
+            // Получение оставшегося времени до 4 суток
+            getRemainingTime(receiveDateString) {
+                if (!receiveDateString) return { days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 };
+                
+                try {
+                    const receiveDate = new Date(receiveDateString);
+                    const currentDate = new Date();
+                    
+                    if (isNaN(receiveDate.getTime())) {
+                        return { days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 };
+                    }
+                    
+                    const fourDaysLater = new Date(receiveDate.getTime() + (4 * 24 * 60 * 60 * 1000));
+                    const remainingMs = Math.max(0, fourDaysLater - currentDate);
+                    
+                    const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+                    
+                    return {
+                        days,
+                        hours,
+                        minutes,
+                        seconds,
+                        totalMs: remainingMs
+                    };
+                } catch (error) {
+                    console.error('Ошибка при расчете оставшегося времени:', error);
+                    return { days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 };
+                }
+            }
+            
+            // Форматирование времени для отображения
+            formatTimeRemaining(remaining) {
+                if (remaining.days > 0) {
+                    return `${remaining.days}д ${remaining.hours.toString().padStart(2, '0')}:${remaining.minutes.toString().padStart(2, '0')}:${remaining.seconds.toString().padStart(2, '0')}`;
+                } else {
+                    return `${remaining.hours.toString().padStart(2, '0')}:${remaining.minutes.toString().padStart(2, '0')}:${remaining.seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            
+            // Запуск таймера обратного отсчета
+            startCountdownTimer(receiveDateString) {
+                this.stopCountdownTimer();
+                
+                const updateCountdown = () => {
+                    const remaining = this.getRemainingTime(receiveDateString);
+                    
+                    if (remaining.totalMs <= 0) {
+                        this.stopCountdownTimer();
+                        document.getElementById('countdownTimer').classList.add('hidden');
+                        document.getElementById('processMsoBtn').classList.remove('hidden');
+                        return;
+                    }
+                    
+                    document.getElementById('countdownDisplay').textContent = this.formatTimeRemaining(remaining);
+                };
+                
+                updateCountdown();
+                
+                this.countdownInterval = setInterval(updateCountdown, 1000);
+            }
+            
+            // Остановка таймера обратного отсчета
+            stopCountdownTimer() {
+                if (this.countdownInterval) {
+                    clearInterval(this.countdownInterval);
+                    this.countdownInterval = null;
+                }
+            }
+            
             displayInfoPanels() {
-                // Панель residenceRegistration
                 const regPanel = document.getElementById('residencePanel');
                 if (this.residenceRegistrationFound && this.residenceRegistrationBlock) {
                     this.displayRegistrationPanel();
                     regPanel.classList.remove('hidden');
                 } else {
                     regPanel.classList.add('hidden');
+                    this.stopCountdownTimer();
                 }
                 
-                // Панель residenceAddress
                 const addressPanel = document.getElementById('residenceAddressPanel');
                 if (this.residenceAddressFound && this.residenceAddressBlock) {
                     this.displayAddressPanel();
@@ -1786,11 +2004,10 @@
                 const statusText = document.getElementById('regStatusText');
                 const processBtn = document.getElementById('processMsoBtn');
                 const invalidBtn = document.getElementById('invalidMsoBtn');
+                const countdownTimer = document.getElementById('countdownTimer');
                 
-                // Отображаем блок
                 display.textContent = JSON.stringify(this.residenceRegistrationBlock, null, 2);
                 
-                // Обновляем бейджи
                 statusBadge.innerHTML = '';
                 
                 if (this.currentRegStatus !== null) {
@@ -1819,35 +2036,41 @@
                     }
                 }
                 
-                // Обновляем описание
                 statusText.textContent = this.getFullStatusDescription();
                 
-                // Проверяем условие для кнопки "Исправить на статус 1"
                 let shouldShowProcessBtn = false;
+                let shouldShowCountdown = false;
                 
                 if (this.currentRegStatus === 3) {
-                    // Статус 3 - всегда показываем кнопку
                     shouldShowProcessBtn = true;
                 } else if (this.currentRegStatus === 7) {
-                    // Статус 7 с причинами 1, 2, 3
                     if ([1, 2, 3].includes(this.currentUnregistrationReasonId)) {
                         if (this.currentUnregistrationReasonId === 2) {
-                            // Для причины 2 проверяем, прошло ли 4 суток с receiveDate
-                            shouldShowProcessBtn = this.isFourDaysPassed(this.currentReceiveDate);
+                            const fourDaysPassed = this.isFourDaysPassed(this.currentReceiveDate);
+                            
+                            if (fourDaysPassed) {
+                                shouldShowProcessBtn = true;
+                            } else {
+                                shouldShowCountdown = true;
+                                this.startCountdownTimer(this.currentReceiveDate);
+                            }
                         } else {
-                            // Для причин 1 и 3 показываем всегда
                             shouldShowProcessBtn = true;
                         }
                     }
                 }
                 
-                // Проверяем условие для кнопки "Исправить на статус 5"
                 const shouldShowInvalidBtn = 
                     this.currentRegStatus === 6 || 
                     this.currentRegStatus === 10;
                 
                 processBtn.classList.toggle('hidden', !shouldShowProcessBtn);
                 invalidBtn.classList.toggle('hidden', !shouldShowInvalidBtn);
+                countdownTimer.classList.toggle('hidden', !shouldShowCountdown);
+                
+                if (shouldShowCountdown) {
+                    processBtn.classList.add('hidden');
+                }
             }
             
             displayAddressPanel() {
@@ -1855,10 +2078,8 @@
                 const statusBadge = document.getElementById('addressStatusBadge');
                 const statusText = document.getElementById('addressStatusText');
                 
-                // Отображаем блок
                 display.textContent = JSON.stringify(this.residenceAddressBlock, null, 2);
                 
-                // Обновляем бейджи
                 statusBadge.innerHTML = '';
                 
                 const addressStatus = this.currentAddressName === null || this.currentAddressName === "" ? 
@@ -1870,7 +2091,6 @@
                     this.currentAddressName === "" ? 'пустая строка' : 'указан'}`;
                 statusBadge.appendChild(addressBadge);
                 
-                // Обновляем описание
                 if (this.currentAddressName === null || this.currentAddressName === "") {
                     statusText.textContent = 'ВНИМАНИЕ: Параметр addressName имеет значение null или пустую строку. Необходимо указать корректный адрес из ФИАС.';
                 } else {
@@ -1881,6 +2101,7 @@
             hideInfoPanels() {
                 document.getElementById('residencePanel').classList.add('hidden');
                 document.getElementById('residenceAddressPanel').classList.add('hidden');
+                this.stopCountdownTimer();
             }
             
             fixResidenceRegistration(newStatus) {
@@ -1922,6 +2143,32 @@
                 }
             }
             
+            // Изменение размера шрифта
+            changeFontSize(delta) {
+                const minSize = 8;
+                const maxSize = 24;
+                
+                this.fontSize = Math.max(minSize, Math.min(maxSize, this.fontSize + delta));
+                this.updateFontSize();
+            }
+            
+            updateFontSize() {
+                // Обновляем CSS переменную
+                document.documentElement.style.setProperty('--font-size', `${this.fontSize}px`);
+                
+                // Обновляем отображение
+                document.getElementById('fontSizeDisplay').textContent = `${this.fontSize}px`;
+                
+                // Обновляем ползунок
+                document.getElementById('fontSizeSlider').value = this.fontSize;
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('fontSize', this.fontSize);
+                
+                // Обновляем нумерацию строк
+                this.updateLineNumbers('inputLineNumbers', 'inputEditor');
+            }
+            
             textToUnicode(text) {
                 return text.split('').map(char => {
                     const code = char.charCodeAt(0);
@@ -1944,12 +2191,10 @@
                     const minified = JSON.stringify(parsed);
                     
                     if (isUnicodeMode) {
-                        // Переключаем в Unicode режим
                         const unicode = this.textToUnicode(minified);
                         this.inputEditor.value = unicode;
                         this.inputEditor.readOnly = true;
                     } else {
-                        // Возвращаем форматированный JSON
                         const formatted = JSON.stringify(parsed, null, 2);
                         this.inputEditor.value = formatted;
                         this.inputEditor.readOnly = false;
