@@ -375,6 +375,11 @@
             height: 100%;
         }
 
+        .service-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
         .service-name {
             font-size: 1rem;
             font-weight: 600;
@@ -659,7 +664,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-title">
                     <i class="fas fa-layer-group"></i>
-                    <span>Разделы МП</span>
+                    <span>Категории</span>
                 </div>
             </div>
             
@@ -868,7 +873,7 @@
 
             const state = {
                 isLightTheme: false,
-                currentCategoryId: 'registration'
+                currentCategoryId: 'auth' // Первая категория уже установлена здесь
             };
 
             const ui = {
@@ -905,6 +910,9 @@
             };
 
             function createNavigationTabs() {
+                // Сначала очищаем существующие вкладки
+                elements.navTabs.innerHTML = '';
+                
                 categories.forEach(category => {
                     const navTab = document.createElement('button');
                     navTab.className = 'nav-tab';
@@ -920,7 +928,7 @@
                     navTab.appendChild(icon);
                     navTab.appendChild(text);
                     
-                    // Добавляем активный класс к первой вкладке
+                    // Устанавливаем активный класс для первой категории при загрузке
                     if (category.id === state.currentCategoryId) {
                         navTab.classList.add('active');
                     }
@@ -1006,7 +1014,7 @@
                     
                     const checkButton = document.createElement('button');
                     checkButton.className = 'action-btn check-btn';
-                    checkButton.innerHTML = `Проверить работу`;
+                    checkButton.innerHTML = `<i class="fas fa-search"></i> Проверить`;
                     checkButton.title = 'Открыть страницу проверки';
                     
                     const copyCheckButton = document.createElement('button');
@@ -1027,7 +1035,7 @@
                     
                     const errorButton = document.createElement('button');
                     errorButton.className = 'action-btn error-btn';
-                    errorButton.innerHTML = `Найти ошибки`;
+                    errorButton.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Ошибки`;
                     errorButton.title = 'Открыть страницу ошибок';
                     
                     const copyErrorButton = document.createElement('button');
@@ -1086,6 +1094,7 @@
             function init() {
                 ui.loadThemePreference();
                 createNavigationTabs();
+                // ПЕРВАЯ КАТЕГОРИЯ УЖЕ БУДЕТ ОТОБРАЖЕНА ПРИ ЗАГРУЗКЕ
                 displayCategoryContent(state.currentCategoryId);
                 
                 elements.homeBtn.addEventListener('click', () => {
@@ -1119,6 +1128,7 @@
                 });
             }
 
+            // Запуск инициализации
             init();
         });
     </script>
