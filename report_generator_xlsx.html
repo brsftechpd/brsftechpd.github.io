@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор отчета "Амина" - PPTX редактор</title>
+    <title>Генератор отчета "Амина" - XLSX редактор</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * {
@@ -29,7 +29,7 @@
         header {
             text-align: center;
             padding: 25px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #1e6b2e, #2a8c3e);
             color: white;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -59,7 +59,7 @@
         
         .section-title {
             font-size: 20px;
-            color: #1e3c72;
+            color: #1e6b2e;
             margin-bottom: 25px;
             padding-bottom: 12px;
             border-bottom: 2px solid #eaeaea;
@@ -71,11 +71,11 @@
             background-color: #f9fafc;
             padding: 20px;
             border-radius: 10px;
-            border-left: 4px solid #2a5298;
+            border-left: 4px solid #2a8c3e;
         }
         
         .form-group h3 {
-            color: #1e3c72;
+            color: #1e6b2e;
             margin-bottom: 18px;
             font-size: 17px;
             font-weight: 600;
@@ -99,9 +99,9 @@
         }
         
         input:focus {
-            border-color: #2a5298;
+            border-color: #2a8c3e;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            box-shadow: 0 0 0 3px rgba(42, 140, 62, 0.1);
         }
         
         .input-row {
@@ -119,7 +119,7 @@
             padding: 25px;
             border-radius: 10px;
             margin-bottom: 30px;
-            border: 2px dashed #2a5298;
+            border: 2px dashed #2a8c3e;
             text-align: center;
             transition: all 0.3s;
         }
@@ -164,14 +164,14 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #2a8c3e, #1e6b2e);
             color: white;
         }
         
         .btn-primary:hover {
-            background: linear-gradient(135deg, #1e3c72, #16325c);
+            background: linear-gradient(135deg, #1e6b2e, #155d24);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.25);
+            box-shadow: 0 8px 20px rgba(30, 107, 46, 0.25);
         }
         
         .btn-secondary {
@@ -245,7 +245,7 @@
         
         .spinner {
             border: 6px solid #f3f3f3;
-            border-top: 6px solid #2a5298;
+            border-top: 6px solid #2a8c3e;
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -263,11 +263,11 @@
             padding: 25px;
             border-radius: 10px;
             margin-top: 35px;
-            border-left: 5px solid #2a5298;
+            border-left: 5px solid #2a8c3e;
         }
         
         .info-panel h3 {
-            color: #1e3c72;
+            color: #1e6b2e;
             margin-bottom: 15px;
             font-size: 18px;
             font-weight: 600;
@@ -329,7 +329,7 @@
         }
         
         .data-summary h3 {
-            color: #1e3c72;
+            color: #1e6b2e;
             margin-bottom: 15px;
             font-size: 18px;
         }
@@ -352,7 +352,7 @@
         
         .summary-value {
             font-weight: 600;
-            color: #2a5298;
+            color: #2a8c3e;
         }
         
         @media (max-width: 768px) {
@@ -384,15 +384,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>Генератор отчета "Амина"</h1>
-            <p class="subtitle">Загрузите файл PPTX с метками, введите данные и скачайте обновленный отчет</p>
+            <h1>Генератор отчета "Амина" - XLSX редактор</h1>
+            <p class="subtitle">Загрузите файл XLSX с метками, введите данные и скачайте обновленный отчет в формате Excel с сохранением всех стилей и форматирования</p>
         </header>
         
         <div class="form-container">
-            <h2 class="section-title">1. Загрузите файл PPTX с метками</h2>
+            <h2 class="section-title">1. Загрузите файл XLSX с метками</h2>
             
             <div class="file-input-section">
-                <input type="file" id="pptxFile" accept=".pptx">
+                <input type="file" id="xlsxFile" accept=".xlsx,.xls">
                 <div id="fileStatus" class="file-info"></div>
             </div>
             
@@ -559,14 +559,14 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                     </svg>
-                    Обновить данные в PPTX
+                    Обновить данные в XLSX
                 </button>
                 <button id="downloadBtn" class="btn-disabled" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                         <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
                     </svg>
-                    Скачать PPTX
+                    Скачать XLSX
                 </button>
             </div>
             
@@ -574,30 +574,31 @@
             
             <div class="info-panel">
                 <h3>Инструкция по использованию:</h3>
-                <p>1. Загрузите файл PPTX с метками (ДАТА, А.ПОКАЗАТЕЛЬ, У.ПРОЦЕНТ, Б.ПОКАЗАТЕЛЬ, И.ЧИСЛО и т.д.)</p>
+                <p>1. Загрузите файл XLSX с метками (ДАТА, А.ПОКАЗАТЕЛЬ, У.ПРОЦЕНТ, Б.ПОКАЗАТЕЛЬ, И.ЧИСЛО и т.д.)</p>
                 <p>2. Введите все данные в форму (можно вводить дробные числа, например: 2 021,2 или 0,001)</p>
-                <p>3. Нажмите "Обновить данные в PPTX" для обработки файла</p>
-                <p>4. Скачайте обновленный файл презентации</p>
+                <p>3. Нажмите "Обновить данные в XLSX" для обработки файла</p>
+                <p>4. Скачайте обновленный файл Excel с сохранением всех стилей и форматирования</p>
                 <p><strong>Важно:</strong> В отчете прирост (все поля *.ЧИСЛО) будет отображаться со знаком "+", если значение больше 0.</p>
+                <p><strong>Поддерживаемые форматы:</strong> .xlsx (рекомендуется), .xls</p>
             </div>
         </div>
         
         <footer>
-            <p>Генератор отчета "Амина" &copy; 2026 | Для внутреннего использования</p>
+            <p>Генератор отчета "Амина" - XLSX редактор &copy; 2026 | Для внутреннего использования</p>
         </footer>
     </div>
     
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <div style="font-size: 20px; font-weight: 600; color: #1e3c72; margin-bottom: 10px;">Обработка файла PPTX...</div>
+            <div style="font-size: 20px; font-weight: 600; color: #1e6b2e; margin-bottom: 10px;">Обработка файла XLSX...</div>
             <div id="processingDetails" style="font-size: 15px; margin-top: 10px; color: #666;"></div>
         </div>
     </div>
 
     <script>
-        let pptxData = null;
-        let processedPptx = null;
+        let xlsxData = null;
+        let processedXlsx = null;
         
         document.addEventListener('DOMContentLoaded', function() {
             // Установка вчерашней даты по умолчанию
@@ -611,15 +612,15 @@
             document.getElementById('reportDate').value = `${year}-${month}-${day}`;
             
             // Обработчик загрузки файла
-            document.getElementById('pptxFile').addEventListener('change', handleFileUpload);
+            document.getElementById('xlsxFile').addEventListener('change', handleFileUpload);
             
             // Обработчик кнопки обновления данных
-            document.getElementById('processBtn').addEventListener('click', processPptx);
+            document.getElementById('processBtn').addEventListener('click', processXlsx);
             
             // Обработчик кнопки скачивания
-            document.getElementById('downloadBtn').addEventListener('click', downloadPptx);
+            document.getElementById('downloadBtn').addEventListener('click', downloadXlsx);
             
-            // Функция форматирования даты для слайда (дд.мм.гггг)
+            // Функция форматирования даты для отчета (дд.мм.гггг)
             function formatDateForDisplay(dateString) {
                 if (!dateString) return "ДАТА";
                 const date = new Date(dateString);
@@ -710,8 +711,8 @@
                 const file = event.target.files[0];
                 if (!file) return;
                 
-                if (!file.name.endsWith('.pptx')) {
-                    showStatus('Пожалуйста, выберите файл с расширением .pptx', 'error');
+                if (!file.name.match(/\.(xlsx|xls)$/i)) {
+                    showStatus('Пожалуйста, выберите файл с расширением .xlsx или .xls', 'error');
                     return;
                 }
                 
@@ -721,12 +722,12 @@
                     </svg>
                     Файл загружен: ${file.name}
                 `;
-                showStatus('Файл загружен. Теперь введите данные и нажмите "Обновить данные в PPTX"', 'success');
+                showStatus('Файл загружен. Теперь введите данные и нажмите "Обновить данные в XLSX"', 'success');
                 
                 // Чтение файла как ArrayBuffer
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    pptxData = e.target.result;
+                    xlsxData = e.target.result;
                 };
                 reader.readAsArrayBuffer(file);
             }
@@ -748,10 +749,15 @@
                 return isValid;
             }
             
-            // Основная функция обработки PPTX
-            async function processPptx() {
-                if (!pptxData) {
-                    showStatus('Сначала загрузите файл PPTX', 'error');
+            // Функция для экранирования спецсимволов в регулярных выражениях
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+            
+            // Основная функция обработки XLSX
+            async function processXlsx() {
+                if (!xlsxData) {
+                    showStatus('Сначала загрузите файл XLSX', 'error');
                     return;
                 }
                 
@@ -765,17 +771,16 @@
                 updateProcessingDetails("Начинаем обработку файла...");
                 
                 try {
-                    // Загружаем PPTX с помощью JSZip
-                    updateProcessingDetails("Чтение архива PPTX...");
-                    const zip = await JSZip.loadAsync(pptxData);
+                    updateProcessingDetails("Чтение архива XLSX...");
+                    const zip = await JSZip.loadAsync(xlsxData);
                     
                     // Получаем дату
                     const date = document.getElementById('reportDate').value;
-                    const formattedDateForSlide = formatDateForDisplay(date); // Для слайда
+                    const formattedDateForSlide = formatDateForDisplay(date); // Для отчета
                     const formattedDateForFilename = formatDateForFilename(date); // Для имени файла
                     
                     // Форматируем все данные
-                    const data = {
+                    const formattedData = {
                         // Даты
                         dateForSlide: formattedDateForSlide,
                         dateForFilename: formattedDateForFilename,
@@ -824,133 +829,161 @@
                     };
                     
                     // Показываем сводку данных
-                    updateDataSummary(data);
-                    
-                    // Ищем все файлы слайдов
-                    updateProcessingDetails("Поиск слайдов в презентации...");
-                    const slideFiles = [];
-                    
-                    // Получаем все файлы слайдов
-                    for (const filename in zip.files) {
-                        if (filename.startsWith('ppt/slides/slide') && filename.endsWith('.xml')) {
-                            slideFiles.push(filename);
-                        }
-                    }
-                    
-                    // Сортируем слайды по номеру
-                    slideFiles.sort((a, b) => {
-                        const aNum = parseInt(a.match(/slide(\d+)/)[1]);
-                        const bNum = parseInt(b.match(/slide(\d+)/)[1]);
-                        return aNum - bNum;
-                    });
-                    
-                    if (slideFiles.length === 0) {
-                        throw new Error("Не найдены слайды в презентации");
-                    }
-                    
-                    // Обрабатываем каждый слайд
-                    updateProcessingDetails(`Найдено ${slideFiles.length} слайдов. Обработка...`);
-                    
-                    let totalReplacements = 0;
-                    
-                    // Обрабатываем только первый слайд (где находится отчет)
-                    const firstSlideFile = slideFiles[0];
-                    updateProcessingDetails(`Обработка слайда: ${firstSlideFile}...`);
-                    
-                    let slideContent = await zip.file(firstSlideFile).async('string');
-                    const originalContent = slideContent;
+                    updateDataSummary(formattedData);
                     
                     // Список замен для всех меток
                     const replacements = [
                         // Даты - 2 места (метка ДАТА) - используем dateForSlide (дд.мм.гггг)
-                        { search: "ДАТА", replace: data.dateForSlide },
+                        { search: "ДАТА", replace: formattedData.dateForSlide },
                         
                         // Авторизованные пользователи
-                        { search: "А.ПОКАЗАТЕЛЬ", replace: data.A_POKAZATEL },
-                        { search: "А.ЧИСЛО", replace: data.A_CHISLO },
+                        { search: "А.ПОКАЗАТЕЛЬ", replace: formattedData.A_POKAZATEL },
+                        { search: "А.ЧИСЛО", replace: formattedData.A_CHISLO },
                         
                         // Указали номер
-                        { search: "У.ПОКАЗАТЕЛЬ", replace: data.U_POKAZATEL },
-                        { search: "У.ПРОЦЕНТ", replace: data.U_PROCENT + "%" },
-                        { search: "У.ЧИСЛО", replace: data.U_CHISLO },
+                        { search: "У.ПОКАЗАТЕЛЬ", replace: formattedData.U_POKAZATEL },
+                        { search: "У.ПРОЦЕНТ", replace: formattedData.U_PROCENT + "%" },
+                        { search: "У.ЧИСЛО", replace: formattedData.U_CHISLO },
                         
                         // Не указали номер
-                        { search: "Н.ПОКАЗАТЕЛЬ", replace: data.N_POKAZATEL },
-                        { search: "Н.ПРОЦЕНТ", replace: data.N_PROCENT + "%" },
-                        { search: "Н.ЧИСЛО", replace: data.N_CHISLO },
+                        { search: "Н.ПОКАЗАТЕЛЬ", replace: formattedData.N_POKAZATEL },
+                        { search: "Н.ПРОЦЕНТ", replace: formattedData.N_PROCENT + "%" },
+                        { search: "Н.ЧИСЛО", replace: formattedData.N_CHISLO },
                         
                         // Российские номера
-                        { search: "Р.ПОКАЗАТЕЛЬ", replace: data.R_POKAZATEL },
-                        { search: "Р.ПРОЦЕНТ", replace: data.R_PROCENT + "%" },
-                        { search: "Р.ЧИСЛО", replace: data.R_CHISLO },
+                        { search: "Р.ПОКАЗАТЕЛЬ", replace: formattedData.R_POKAZATEL },
+                        { search: "Р.ПРОЦЕНТ", replace: formattedData.R_PROCENT + "%" },
+                        { search: "Р.ЧИСЛО", replace: formattedData.R_CHISLO },
                         
                         // Иностранные номера
-                        { search: "И.ПОКАЗАТЕЛЬ", replace: data.I_POKAZATEL },
-                        { search: "И.ПРОЦЕНТ", replace: data.I_PROCENT + "%" },
-                        // ВАЖНОЕ ИСПРАВЛЕНИЕ: "И.ЧИСЛО" с переносом строки
-                        { search: "И.ЧИСЛО", replace: data.I_CHISLO },
-                        { search: "И.\nЧИСЛО", replace: data.I_CHISLO },
-                        { search: "И.\r\nЧИСЛО", replace: data.I_CHISLO },
-                        { search: "И. ЧИСЛО", replace: data.I_CHISLO },
+                        { search: "И.ПОКАЗАТЕЛЬ", replace: formattedData.I_POKAZATEL },
+                        { search: "И.ПРОЦЕНТ", replace: formattedData.I_PROCENT + "%" },
+                        { search: "И.ЧИСЛО", replace: formattedData.I_CHISLO },
                         
                         // Подтверждены
-                        { search: "П.ПОКАЗАТЕЛЬ", replace: data.P_POKAZATEL },
-                        { search: "П.ПРОЦЕНТ", replace: data.P_PROCENT + "%" },
-                        { search: "П.ЧИСЛО", replace: data.P_CHISLO },
+                        { search: "П.ПОКАЗАТЕЛЬ", replace: formattedData.P_POKAZATEL },
+                        { search: "П.ПРОЦЕНТ", replace: formattedData.P_PROCENT + "%" },
+                        { search: "П.ЧИСЛО", replace: formattedData.P_CHISLO },
                         
-                        // Не подтверждены (Б. метки) - ВАЖНОЕ ИСПРАВЛЕНИЕ
-                        // В файле "Б." на одной строке и "ПОКАЗАТЕЛЬ" на следующей
-                        { search: "Б.ПОКАЗАТЕЛЬ", replace: data.NP_POKAZATEL },
-                        { search: "Б.\nПОКАЗАТЕЛЬ", replace: data.NP_POKAZATEL },
-                        { search: "Б.\r\nПОКАЗАТЕЛЬ", replace: data.NP_POKAZATEL },
-                        { search: "Б. ПОКАЗАТЕЛЬ", replace: data.NP_POKAZATEL },
-                        
-                        { search: "Б.ПРОЦЕНТ", replace: data.NP_PROCENT + "%" },
-                        { search: "Б.\nПРОЦЕНТ", replace: data.NP_PROCENT + "%" },
-                        { search: "Б.\r\nПРОЦЕНТ", replace: data.NP_PROCENT + "%" },
-                        { search: "Б. ПРОЦЕНТ", replace: data.NP_PROCENT + "%" },
-                        
-                        { search: "Б.ЧИСЛО", replace: data.NP_CHISLO },
-                        { search: "Б.\nЧИСЛО", replace: data.NP_CHISLO },
-                        { search: "Б.\r\nЧИСЛО", replace: data.NP_CHISLO },
-                        { search: "Б. ЧИСЛО", replace: data.NP_CHISLO },
+                        // Не подтверждены (Б. метки)
+                        { search: "Б.ПОКАЗАТЕЛЬ", replace: formattedData.NP_POKAZATEL },
+                        { search: "Б.ПРОЦЕНТ", replace: formattedData.NP_PROCENT + "%" },
+                        { search: "Б.ЧИСЛО", replace: formattedData.NP_CHISLO },
                         
                         // Место сна и отдыха
-                        { search: "М.ПОКАЗАТЕЛЬ", replace: data.M_POKAZATEL },
-                        { search: "М.ЧИСЛО", replace: data.M_CHISLO },
+                        { search: "М.ПОКАЗАТЕЛЬ", replace: formattedData.M_POKAZATEL },
+                        { search: "М.ЧИСЛО", replace: formattedData.M_CHISLO },
                         
                         // Учет по ФЗ-121 (Д. метки)
-                        { search: "Д.ПОКАЗАТЕЛЬ", replace: data.G_POKAZATEL },
-                        { search: "Д.ЧИСЛО", replace: data.G_CHISLO }
+                        { search: "Д.ПОКАЗАТЕЛЬ", replace: formattedData.G_POKAZATEL },
+                        { search: "Д.ЧИСЛО", replace: formattedData.G_CHISLO }
                     ];
                     
-                    // Применяем все замены
+                    updateProcessingDetails("Поиск общих строк в файле Excel...");
+                    
+                    // Ищем файл sharedStrings.xml, где хранятся все текстовые строки
+                    const sharedStringsPath = 'xl/sharedStrings.xml';
+                    
+                    if (!zip.files[sharedStringsPath]) {
+                        throw new Error("Не найден файл sharedStrings.xml. Возможно, файл поврежден или имеет неверный формат.");
+                    }
+                    
+                    updateProcessingDetails("Обработка общих строк...");
+                    
+                    let sharedStringsContent = await zip.file(sharedStringsPath).async('string');
+                    const originalSharedStrings = sharedStringsContent;
+                    
+                    let totalReplacements = 0;
+                    
+                    // Заменяем метки в sharedStrings.xml
                     replacements.forEach(replacement => {
-                        // Используем глобальный поиск и замену
                         const regex = new RegExp(escapeRegExp(replacement.search), 'g');
-                        const matches = slideContent.match(regex);
+                        const matches = sharedStringsContent.match(regex);
                         
                         if (matches) {
-                            slideContent = slideContent.replace(regex, replacement.replace);
+                            sharedStringsContent = sharedStringsContent.replace(regex, replacement.replace);
                             totalReplacements += matches.length;
                         }
                     });
                     
-                    // Проверяем, были ли изменения
-                    if (slideContent !== originalContent) {
-                        zip.file(firstSlideFile, slideContent);
-                        updateProcessingDetails(`Выполнено ${totalReplacements} замен в слайде.`);
-                    } else {
-                        updateProcessingDetails("Не найдено меток для замены в слайде.");
-                        showStatus('Не найдено меток для замены. Убедитесь, что файл содержит правильные метки.', 'error');
-                        showLoading(false);
-                        return;
+                    // Проверяем, были ли изменения в sharedStrings.xml
+                    if (sharedStringsContent !== originalSharedStrings) {
+                        zip.file(sharedStringsPath, sharedStringsContent);
+                        updateProcessingDetails(`Выполнено ${totalReplacements} замен в общих строках.`);
                     }
                     
-                    updateProcessingDetails("Генерация нового файла...");
+                    // Также проверяем файлы листов на случай, если есть встроенные строки (inlineStr)
+                    updateProcessingDetails("Проверка листов на наличие встроенных строк...");
                     
-                    // Генерируем обновленный PPTX
-                    processedPptx = await zip.generateAsync({type: 'blob'});
+                    const sheetFiles = [];
+                    for (const filename in zip.files) {
+                        if (filename.startsWith('xl/worksheets/sheet') && filename.endsWith('.xml')) {
+                            sheetFiles.push(filename);
+                        }
+                    }
+                    
+                    if (sheetFiles.length > 0) {
+                        for (const sheetFile of sheetFiles) {
+                            let sheetContent = await zip.file(sheetFile).async('string');
+                            const originalSheetContent = sheetContent;
+                            
+                            replacements.forEach(replacement => {
+                                const regex = new RegExp(escapeRegExp(replacement.search), 'g');
+                                const matches = sheetContent.match(regex);
+                                
+                                if (matches) {
+                                    sheetContent = sheetContent.replace(regex, replacement.replace);
+                                    totalReplacements += matches.length;
+                                }
+                            });
+                            
+                            if (sheetContent !== originalSheetContent) {
+                                zip.file(sheetFile, sheetContent);
+                            }
+                        }
+                    }
+                    
+                    if (totalReplacements === 0) {
+                        // Попробуем найти метки в других местах (например, в именах листов)
+                        updateProcessingDetails("Проверка других мест...");
+                        
+                        // Проверяем workbook.xml для имен листов
+                        const workbookPath = 'xl/workbook.xml';
+                        if (zip.files[workbookPath]) {
+                            let workbookContent = await zip.file(workbookPath).async('string');
+                            const originalWorkbookContent = workbookContent;
+                            
+                            replacements.forEach(replacement => {
+                                const regex = new RegExp(escapeRegExp(replacement.search), 'g');
+                                const matches = workbookContent.match(regex);
+                                
+                                if (matches) {
+                                    workbookContent = workbookContent.replace(regex, replacement.replace);
+                                    totalReplacements += matches.length;
+                                }
+                            });
+                            
+                            if (workbookContent !== originalWorkbookContent) {
+                                zip.file(workbookPath, workbookContent);
+                            }
+                        }
+                        
+                        if (totalReplacements === 0) {
+                            updateProcessingDetails("Не найдено меток для замены.");
+                            showStatus('Не найдено меток для замены. Убедитесь, что файл содержит правильные метки (ДАТА, А.ПОКАЗАТЕЛЬ, и т.д.).', 'error');
+                            showLoading(false);
+                            return;
+                        }
+                    }
+                    
+                    updateProcessingDetails("Генерация нового файла с сохранением всех стилей...");
+                    
+                    // Генерируем обновленный XLSX (сохраняем все стили и форматирование)
+                    processedXlsx = await zip.generateAsync({
+                        type: 'blob',
+                        compression: 'DEFLATE',
+                        compressionOptions: { level: 6 }
+                    });
                     
                     // Активируем кнопку скачивания
                     document.getElementById('downloadBtn').disabled = false;
@@ -959,20 +992,15 @@
                     
                     updateProcessingDetails("Готово!");
                     setTimeout(() => {
-                        showStatus(`PPTX файл успешно обновлен! Выполнено ${totalReplacements} замен. Теперь вы можете скачать его.`, 'success');
+                        showStatus(`XLSX файл успешно обновлен! Выполнено ${totalReplacements} замен. Все стили и форматирование сохранены. Теперь вы можете скачать его.`, 'success');
                         showLoading(false);
                     }, 500);
                     
                 } catch (error) {
-                    console.error('Ошибка обработки PPTX:', error);
-                    showStatus('Ошибка при обработке PPTX файла: ' + error.message, 'error');
+                    console.error('Ошибка обработки XLSX:', error);
+                    showStatus('Ошибка при обработке XLSX файла: ' + error.message, 'error');
                     showLoading(false);
                 }
-            }
-            
-            // Функция для экранирования спецсимволов в регулярных выражениях
-            function escapeRegExp(string) {
-                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             }
             
             // Функция обновления сводки данных
@@ -999,7 +1027,7 @@
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Российские номера:</span>
-                        <span class="summary-value">${data.R_POKAZATEL} тыс. лиц (${data.R_PROCENT}%), прирост: ${data.R_CHISLO}</span>
+                        <span class="summary-value">${data.R_POKAZАТЕЛЬ} тыс. лиц (${data.R_PROCENT}%), прирост: ${data.R_CHISLO}</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">Иностранные номера:</span>
@@ -1027,18 +1055,18 @@
                 summaryDiv.style.display = 'block';
             }
             
-            // Функция скачивания PPTX
-            function downloadPptx() {
-                if (!processedPptx) {
-                    showStatus('Сначала обновите данные в PPTX', 'error');
+            // Функция скачивания XLSX
+            function downloadXlsx() {
+                if (!processedXlsx) {
+                    showStatus('Сначала обновите данные в XLSX', 'error');
                     return;
                 }
                 
                 const date = document.getElementById('reportDate').value;
                 const formattedDate = formatDateForFilename(date);
-                const filename = `Статистика_Амина_${formattedDate}.pptx`;
+                const filename = `Статистика_Амина_${formattedDate}.xlsx`;
                 
-                const url = URL.createObjectURL(processedPptx);
+                const url = URL.createObjectURL(processedXlsx);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = filename;
@@ -1047,7 +1075,7 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                showStatus(`Файл "${filename}" успешно скачан`, 'success');
+                showStatus(`Файл "${filename}" успешно скачан. Все стили и форматирование сохранены.`, 'success');
             }
             
             // Функция отображения статуса
