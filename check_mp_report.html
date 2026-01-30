@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель мониторинга сервисов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-hover: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --bg-accent: #4f46e5;
+            --border-light: rgba(255, 255, 255, 0.05);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --radius-sm: 6px;
+            --transition: all 0.2s ease;
+            --header-height: 60px;
+            --sidebar-width: 260px;
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            --gradient-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --gradient-gray: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            --gradient-gray-light: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --border-radius: 12px;
+            --border-radius-sm: 10px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --transition-fast: 0.3s;
+            --transition-normal: 0.4s;
+        }
+
+        .light-theme {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --bg-hover: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --bg-accent: #4f46e5;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --gradient-error: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            --gradient-primary: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+            --gradient-info: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --gradient-danger: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            --gradient-purple: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            --gradient-orange: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+            --gradient-pink: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+            --gradient-cyan: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            --gradient-gray: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            --gradient-gray-light: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            transition: background-color var(--transition-normal), color var(--transition-normal);
+        }
+
+        /* Шапка */
+        .main-header {
+            height: var(--header-height);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all var(--transition-normal);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            background: var(--bg-accent);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .home-btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-title i {
+            color: var(--bg-accent);
+            font-size: 20px;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--bg-accent);
+        }
+
+        .light-theme .theme-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle .theme-icon {
+            font-size: 16px;
+        }
+
+        .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        .light-theme .theme-toggle .sun-icon {
+            display: block;
+            color: #f59e0b;
+        }
+
+        .light-theme .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+            overflow-y: auto;
+            transition: width var(--transition-normal), background-color var(--transition-normal);
+        }
+
+        .sidebar-header {
+            padding: 0 var(--spacing-md) var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sidebar-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title i {
+            color: var(--bg-accent);
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 var(--spacing-sm);
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--bg-accent);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-tab.active:hover {
+            background: #4338ca;
+        }
+
+        .nav-tab i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-tab .badge {
+            position: absolute;
+            right: var(--spacing-md);
+            background: var(--gradient-danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Основное содержимое */
+        .content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: var(--spacing-md);
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-icon i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-title {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .category-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        /* КОМПАКТНЫЕ БЛОКИ SERVICE-ITEM - 3 В РЯД */
+        .service-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .service-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .service-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.4;
+            padding: 0 4px;
+            flex-grow: 1;
+        }
+
+        /* КОМПАКТНЫЙ СТИЛЬ ДЛЯ КНОПОК */
+        .button-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .action-main {
+            display: flex;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn i {
+            font-size: 0.8rem;
+        }
+
+        .check-btn {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .error-btn {
+            background: var(--gradient-error);
+            color: white;
+        }
+
+        .copy-action-btn {
+            background: var(--gradient-gray);
+            color: white;
+            width: 40px;
+            min-width: 40px;
+            padding: 8px;
+            flex-shrink: 0;
+            flex: 0 0 auto;
+        }
+
+        .copy-action-btn:hover {
+            background: var(--gradient-primary);
+        }
+
+        /* Цвета для категорий */
+        .auth .category-icon { background: var(--gradient-purple); }
+        .residence .category-icon { background: var(--gradient-danger); }
+        .geo .category-icon { background: var(--gradient-info); }
+        .phone .category-icon { background: var(--gradient-cyan); }
+        .push .category-icon { background: var(--gradient-pink); }
+        .photo .category-icon { background: var(--gradient-orange); }
+        .documents .category-icon { background: var(--gradient-success); }
+        .faq .category-icon { background: var(--gradient-primary); }
+
+        /* Мобильное меню */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-theme .mobile-menu-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .service-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: var(--header-height);
+                height: calc(100vh - var(--header-height));
+                z-index: 90;
+                transform: translateX(-100%);
+                transition: transform var(--transition-normal);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 80;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .service-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: var(--spacing-md);
+            }
+            
+            .category-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-sm);
+            }
+            
+            .category-icon {
+                margin-right: 0;
+                margin-bottom: var(--spacing-sm);
+            }
+            
+            .service-items {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+            
+            .button-row {
+                gap: 10px;
+            }
+            
+            .action-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .action-main {
+                width: 100%;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-header {
+                padding: 0 10px;
+            }
+            
+            .content {
+                padding: var(--spacing-sm);
+            }
+            
+            .service-item {
+                padding: var(--spacing-sm);
+            }
+            
+            .action-btn {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .copy-action-btn {
+                width: 36px;
+                min-width: 36px;
+                padding: 8px;
+            }
+            
+            .app-title span {
+                font-size: 14px;
+            }
+        }
+
+        /* Улучшения доступности */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Шапка -->
+    <header class="main-header">
+        <div class="header-left">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Открыть меню">
+                <i class="fas fa-bars"></i>
+            </button>
+            <button class="home-btn" id="homeBtn" title="Главная страница">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+        
+        <div class="header-center">
+            <div class="app-title">
+                <i class="fas fa-chart-line"></i>
+                <span>Панель мониторинга сервисов</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
+                <i class="fas fa-moon theme-icon moon-icon"></i>
+                <i class="fas fa-sun theme-icon sun-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Оверлей для мобильного меню -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="main-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Разделы МП</span>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs" id="navTabs">
+                <!-- Вкладки будут добавлены через JavaScript -->
+            </nav>
+        </aside>
+
+        <!-- Основное содержимое -->
+        <main class="content" id="content">
+            <!-- Контент категории будет отображаться здесь -->
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // КОНФИГУРАЦИЯ ДОЛЖНА БЫТЬ ЗДЕСЬ
+            const categories = [
+                {
+                    category: 'Авторизация',
+                    id: 'auth',
+                    class: 'auth',
+                    icon: 'fas fa-fingerprint',
+                    pages: [
+                        {
+                            name: 'Сервис auth для паспорта',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:!(echd-auth-integration,auth-cache),type:phrases,value:'echd-auth-integration,%20auth-cache'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:echd-auth-integration)),(match_phrase:(app:auth-cache)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:auth%2Fpassport%2Fauthorization),type:phrase),query:(match_phrase:(url:auth%2Fpassport%2Fauthorization)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:!(echd-auth-integration,auth-cache),type:phrases,value:'echd-auth-integration,%20auth-cache'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:echd-auth-integration)),(match_phrase:(app:auth-cache)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:auth%2Fpassport%2Fauthorization),type:phrase),query:(match_phrase:(url:auth%2Fpassport%2Fauthorization))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис auth для КИГ',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:!(echd-auth-integration,auth-cache),type:phrases,value:'echd-auth-integration,%20auth-cache'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:echd-auth-integration)),(match_phrase:(app:auth-cache)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:auth%2Fauthorization),type:phrase),query:(match_phrase:(url:auth%2Fauthorization)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:auth),type:phrase),query:(match_phrase:(app:auth))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:!(echd-auth-integration,auth-cache),type:phrases,value:'echd-auth-integration,%20auth-cache'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(app:echd-auth-integration)),(match_phrase:(app:auth-cache)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:auth%2Fauthorization),type:phrase),query:(match_phrase:(url:auth%2Fauthorization))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'ММЦ адаптер',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*IdentificationService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*IdentificationService*')))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22bool%22:%7B%22must_not%22:%5B%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*GetPhotoAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*FallbackActionAsync%22%7D%7D%5D%7D%7D'),query:(bool:(must_not:!((wildcard:(callsite.keyword:'*GetPhotoAsync')),(wildcard:(callsite.keyword:'*FallbackActionAsync'))))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*IdentificationService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*IdentificationService*')))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22bool%22:%7B%22must_not%22:%5B%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*GetPhotoAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*FallbackActionAsync%22%7D%7D%5D%7D%7D'),query:(bool:(must_not:!((wildcard:(callsite.keyword:'*GetPhotoAsync')),(wildcard:(callsite.keyword:'*FallbackActionAsync')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Аутентификация',
+                    id: 'photo',
+                    class: 'photo',
+                    icon: 'fas fa-camera',
+                    pages: [
+                        {
+                            name: 'Сервис photo',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:!(photo%2Fidentification),type:phrases,value:photo%2Fidentification),query:(bool:(minimum_should_match:1,should:!((match_phrase:(url:photo%2Fidentification))))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:!(photo%2Fidentification),type:phrases,value:photo%2Fidentification),query:(bool:(minimum_should_match:1,should:!((match_phrase:(url:photo%2Fidentification)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис photo для документов',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:!(self%2Fidentification),type:phrases,value:self%2Fidentification),query:(bool:(minimum_should_match:1,should:!((match_phrase:(url:self%2Fidentification))))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:photo),type:phrase),query:(match_phrase:(app:photo))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:!(self%2Fidentification),type:phrases,value:self%2Fidentification),query:(bool:(minimum_should_match:1,should:!((match_phrase:(url:self%2Fidentification)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис ECHD при авторизации',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-auth-integration),type:phrase),query:(match_phrase:(app:echd-auth-integration)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-auth-integration),type:phrase),query:(match_phrase:(app:echd-auth-integration))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис ECHD при повторной аутентификации',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-integration),type:phrase),query:(match_phrase:(app:echd-integration)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:echd-integration),type:phrase),query:(match_phrase:(app:echd-integration))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'ММЦ адаптер',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22bool%22:%7B%22should%22:%5B%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.GetPhotoAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.ProcessAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*AdapterApi.SendPhoto%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.FallbackActionAsync%22%7D%7D%5D,%22minimum_should_match%22:1%7D%7D'),query:(bool:(minimum_should_match:1,should:!((wildcard:(callsite.keyword:'*IdentificationService.GetPhotoAsync')),(wildcard:(callsite.keyword:'*IdentificationService.ProcessAsync')),(wildcard:(callsite.keyword:'*AdapterApi.SendPhoto')),(wildcard:(callsite.keyword:'*IdentificationService.FallbackActionAsync'))))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22bool%22:%7B%22should%22:%5B%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.GetPhotoAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.ProcessAsync%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*AdapterApi.SendPhoto%22%7D%7D,%7B%22wildcard%22:%7B%22callsite.keyword%22:%22*IdentificationService.FallbackActionAsync%22%7D%7D%5D,%22minimum_should_match%22:1%7D%7D'),query:(bool:(minimum_should_match:1,should:!((wildcard:(callsite.keyword:'*IdentificationService.GetPhotoAsync')),(wildcard:(callsite.keyword:'*IdentificationService.ProcessAsync')),(wildcard:(callsite.keyword:'*AdapterApi.SendPhoto')),(wildcard:(callsite.keyword:'*IdentificationService.FallbackActionAsync')))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Установка места сна и отдыха',
+                    id: 'residence-mso',
+                    class: 'residence',
+                    icon: 'fas fa-bed',
+                    pages: [
+                        {
+                            name: 'Сервис residence-engine',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-engine),type:phrase),query:(match_phrase:(app:residence-engine)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-engine),type:phrase),query:(match_phrase:(app:residence-engine))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис residence-mobile',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-mobile),type:phrase),query:(match_phrase:(app:residence-mobile))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:residence%2Fadd),type:phrase),query:(match_phrase:(url:residence%2Fadd)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-mobile),type:phrase),query:(match_phrase:(app:residence-mobile))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:residence%2Fadd),type:phrase),query:(match_phrase:(url:residence%2Fadd))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Запросы Яндекс',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Передача геолокации',
+                    id: 'geo',
+                    class: 'geo',
+                    icon: 'fas fa-map-marker-alt',
+                    pages: [
+                        {
+                            name: 'Сервис messages',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:messages),type:phrase),query:(match_phrase:(app:messages))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:messages-flow2),type:phrase),query:(match_phrase:(app:messages-flow2)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:messages),type:phrase),query:(match_phrase:(app:messages))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:messages-flow2),type:phrase),query:(match_phrase:(app:messages-flow2))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'ММЦ адаптер',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-track),type:phrase),query:(match_phrase:(app:mmc-track))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*TrackAsync%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*TrackAsync'))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-track),type:phrase),query:(match_phrase:(app:mmc-track))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*TrackAsync%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*TrackAsync')))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Постановка на учет',
+                    id: 'residence',
+                    class: 'residence',
+                    icon: 'fas fa-address-book',
+                    pages: [
+                        {
+                            name: 'Сервис residence-engine',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-engine),type:phrase),query:(match_phrase:(app:residence-engine)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-engine),type:phrase),query:(match_phrase:(app:residence-engine))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис residence-mobile',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-mobile),type:phrase),query:(match_phrase:(app:residence-mobile))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:residence%2Fadd),type:phrase),query:(match_phrase:(url:residence%2Fadd)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-mobile),type:phrase),query:(match_phrase:(app:residence-mobile))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:url,negate:!f,params:(query:residence%2Fadd),type:phrase),query:(match_phrase:(url:residence%2Fadd))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис residence-recorder',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-recorder),type:phrase),query:(match_phrase:(app:residence-recorder)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level,url),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:residence-recorder),type:phrase),query:(match_phrase:(app:residence-recorder))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'ММЦ адаптер',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,callsite,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*ResidenceService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*ResidenceService*'))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,callsite,properties.UserId,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*ResidenceService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*ResidenceService*')))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Запросы Яндекс',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5')))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(resp_body,http.request.uri,request_body,x_signature,http.request.body,properties.UserId,response_status,x_client_version),isDirty:!t,sort:!()),metadata:(indexPattern:'05517cb0-7754-11f0-8ccc-413df0814dca',view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:request,negate:!f,params:(query:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'),type:phrase),query:(match_phrase:(request:'POST%20%2Fyandex_api%2Fv2%2Fyandex_geocoder%20HTTP%2F1.1'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:resp_body,negate:!t,params:(query:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'),type:phrase),query:(match_phrase:(resp_body:'%D0%9E%D0%B1%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D0%B5%20%D0%B2%D0%B0%D1%88%D0%B5%20%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'05517cb0-7754-11f0-8ccc-413df0814dca',key:response_status,negate:!t,params:!('200','204'),type:phrases,value:'200,%20204'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(response_status:'200')),(match_phrase:(response_status:'204'))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Подтверждение номера телефона',
+                    id: 'phone',
+                    class: 'phone',
+                    icon: 'fas fa-phone',
+                    pages: [
+                        {
+                            name: 'Сервис phone-verification',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification),type:phrase),query:(match_phrase:(app:phone-verification))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification),type:phrase),query:(match_phrase:(app:phone-verification))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!t,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис phone-verification-flow',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-verification-flow),type:phrase),query:(match_phrase:(app:phone-verification-flow))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис phone-cache',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-cache),type:phrase),query:(match_phrase:(app:phone-cache)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:phone-cache),type:phrase),query:(match_phrase:(app:phone-cache))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'ММЦ адаптер',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level,callsite),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*MmcMobileVerificationService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*MmcMobileVerificationService*'))))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,properties.UserId,level,callsite),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:mmc-adapter),type:phrase),query:(match_phrase:(app:mmc-adapter))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22callsite.keyword%22:%7B%22value%22:%22*MmcMobileVerificationService*%22%7D%7D%7D'),query:(wildcard:(callsite.keyword:(value:'*MmcMobileVerificationService*')))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                },
+                {
+                    category: 'Пуш-уведомления',
+                    id: 'push',
+                    class: 'push',
+                    icon: 'fas fa-bell',
+                    pages: [
+                        {
+                            name: 'Сервис push-dispatcher',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-dispatcher),type:phrase),query:(match_phrase:(app:push-dispatcher)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-dispatcher),type:phrase),query:(match_phrase:(app:push-dispatcher))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error)))))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:message,negate:!t,params:(query:'Failed%20to%20send%20Firebase%20push'),type:phrase),query:(match_phrase:(message:'Failed%20to%20send%20Firebase%20push')))),query:(language:kuery,query:''))`
+                        },
+                        {
+                            name: 'Сервис push-tracker',
+                            checkUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-tracker),type:phrase),query:(match_phrase:(app:push-tracker)))),query:(language:kuery,query:''))`,
+                            errorUrl: `http://opensearch-prod-pudsmig.passport.local/app/data-explorer/discover?security_tenant=global#?_a=(discover:(columns:!(message,app,http.request.uri,http.request.body,properties.UserId,callsite,errcode,level),isDirty:!t,sort:!()),metadata:(indexPattern:f6641370-7753-11f0-8ccc-413df0814dca,view:discover))&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-6h,to:now))&_q=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:app,negate:!f,params:(query:push-tracker),type:phrase),query:(match_phrase:(app:push-tracker))),('$state':(store:appState),meta:(alias:!n,disabled:!f,index:f6641370-7753-11f0-8ccc-413df0814dca,key:level,negate:!f,params:!(fatal,error),type:phrases,value:'fatal,%20error'),query:(bool:(minimum_should_match:1,should:!((match_phrase:(level:fatal)),(match_phrase:(level:error))))))),query:(language:kuery,query:''))`
+                        }
+                    ]
+                }
+            ];
+
+            const elements = {
+                navTabs: document.getElementById('navTabs'),
+                content: document.getElementById('content'),
+                homeBtn: document.getElementById('homeBtn'),
+                themeToggleBtn: document.getElementById('themeToggleBtn'),
+                mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+                sidebar: document.getElementById('sidebar'),
+                overlay: document.getElementById('overlay')
+            };
+
+            const state = {
+                isLightTheme: false,
+                currentCategoryId: 'registration'
+            };
+
+            const ui = {
+                toggleTheme: () => {
+                    state.isLightTheme = !state.isLightTheme;
+                    
+                    if (state.isLightTheme) {
+                        document.body.classList.add('light-theme');
+                        localStorage.setItem('monitoring-dashboard-theme', 'light');
+                    } else {
+                        document.body.classList.remove('light-theme');
+                        localStorage.setItem('monitoring-dashboard-theme', 'dark');
+                    }
+                },
+                
+                loadThemePreference: () => {
+                    const savedTheme = localStorage.getItem('monitoring-dashboard-theme');
+                    state.isLightTheme = savedTheme === 'light';
+                    
+                    if (state.isLightTheme) {
+                        document.body.classList.add('light-theme');
+                    }
+                },
+                
+                toggleMobileMenu: () => {
+                    elements.sidebar.classList.toggle('open');
+                    elements.overlay.classList.toggle('active');
+                },
+                
+                closeMobileMenu: () => {
+                    elements.sidebar.classList.remove('open');
+                    elements.overlay.classList.remove('active');
+                }
+            };
+
+            function createNavigationTabs() {
+                categories.forEach(category => {
+                    const navTab = document.createElement('button');
+                    navTab.className = 'nav-tab';
+                    navTab.id = `tab-${category.id}`;
+                    navTab.dataset.categoryId = category.id;
+                    
+                    const icon = document.createElement('i');
+                    icon.className = category.icon;
+                    
+                    const text = document.createElement('span');
+                    text.textContent = category.category;
+                    
+                    navTab.appendChild(icon);
+                    navTab.appendChild(text);
+                    
+                    // Добавляем активный класс к первой вкладке
+                    if (category.id === state.currentCategoryId) {
+                        navTab.classList.add('active');
+                    }
+                    
+                    navTab.addEventListener('click', () => {
+                        // Убираем активный класс со всех вкладок
+                        document.querySelectorAll('.nav-tab').forEach(tab => {
+                            tab.classList.remove('active');
+                        });
+                        
+                        // Добавляем активный класс к выбранной вкладке
+                        navTab.classList.add('active');
+                        
+                        // Отображаем контент категории
+                        displayCategoryContent(category.id);
+                        
+                        // Закрываем мобильное меню на мобильных устройствах
+                        if (window.innerWidth <= 992) {
+                            ui.closeMobileMenu();
+                        }
+                    });
+                    
+                    elements.navTabs.appendChild(navTab);
+                });
+            }
+
+            function displayCategoryContent(categoryId) {
+                state.currentCategoryId = categoryId;
+                const category = categories.find(c => c.id === categoryId);
+                
+                if (!category) return;
+                
+                // Очищаем контент
+                elements.content.innerHTML = '';
+                
+                // Создаем заголовок категории
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = `category-header ${category.class}`;
+                
+                const categoryIcon = document.createElement('div');
+                categoryIcon.className = 'category-icon';
+                categoryIcon.innerHTML = `<i class="${category.icon}"></i>`;
+                
+                const titleContainer = document.createElement('div');
+                
+                const categoryTitle = document.createElement('h1');
+                categoryTitle.className = 'category-title';
+                categoryTitle.textContent = category.category;
+                
+                const categoryDescription = document.createElement('div');
+                categoryDescription.className = 'category-description';
+                categoryDescription.textContent = category.description;
+                
+                titleContainer.appendChild(categoryTitle);
+                titleContainer.appendChild(categoryDescription);
+                
+                categoryHeader.appendChild(categoryIcon);
+                categoryHeader.appendChild(titleContainer);
+                
+                elements.content.appendChild(categoryHeader);
+                
+                // Создаем сервисы категории
+                const serviceItems = document.createElement('div');
+                serviceItems.className = 'service-items';
+                
+                category.pages.forEach(page => {
+                    const serviceItem = document.createElement('div');
+                    serviceItem.className = 'service-item';
+                    
+                    const serviceName = document.createElement('div');
+                    serviceName.className = 'service-name';
+                    serviceName.textContent = page.name;
+                    
+                    const buttonRow = document.createElement('div');
+                    buttonRow.className = 'button-row';
+                    
+                    // Группа для проверки
+                    const checkGroup = document.createElement('div');
+                    checkGroup.className = 'action-group';
+                    
+                    const checkMain = document.createElement('div');
+                    checkMain.className = 'action-main';
+                    
+                    const checkButton = document.createElement('button');
+                    checkButton.className = 'action-btn check-btn';
+                    checkButton.innerHTML = `Проверить работу`;
+                    checkButton.title = 'Открыть страницу проверки';
+                    
+                    const copyCheckButton = document.createElement('button');
+                    copyCheckButton.className = 'copy-action-btn action-btn';
+                    copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyCheckButton.title = 'Копировать ссылку на проверку';
+                    
+                    checkMain.appendChild(checkButton);
+                    checkMain.appendChild(copyCheckButton);
+                    checkGroup.appendChild(checkMain);
+                    
+                    // Группа для ошибок
+                    const errorGroup = document.createElement('div');
+                    errorGroup.className = 'action-group';
+                    
+                    const errorMain = document.createElement('div');
+                    errorMain.className = 'action-main';
+                    
+                    const errorButton = document.createElement('button');
+                    errorButton.className = 'action-btn error-btn';
+                    errorButton.innerHTML = `Найти ошибки`;
+                    errorButton.title = 'Открыть страницу ошибок';
+                    
+                    const copyErrorButton = document.createElement('button');
+                    copyErrorButton.className = 'copy-action-btn action-btn';
+                    copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyErrorButton.title = 'Копировать ссылку на ошибки';
+                    
+                    errorMain.appendChild(errorButton);
+                    errorMain.appendChild(copyErrorButton);
+                    errorGroup.appendChild(errorMain);
+                    
+                    // Обработчики событий
+                    checkButton.addEventListener('click', () => {
+                        if (page.checkUrl && page.checkUrl !== 'конфигурация должна быть здесь') {
+                            window.open(page.checkUrl, '_blank');
+                        }
+                    });
+                    
+                    errorButton.addEventListener('click', () => {
+                        if (page.errorUrl && page.errorUrl !== 'конфигурация должна быть здесь') {
+                            window.open(page.errorUrl, '_blank');
+                        }
+                    });
+                    
+                    copyCheckButton.addEventListener('click', () => {
+                        if (page.checkUrl && page.checkUrl !== 'конфигурация должна быть здесь') {
+                            navigator.clipboard.writeText(page.checkUrl);
+                            copyCheckButton.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 1500);
+                        }
+                    });
+                    
+                    copyErrorButton.addEventListener('click', () => {
+                        if (page.errorUrl && page.errorUrl !== 'конфигурация должна быть здесь') {
+                            navigator.clipboard.writeText(page.errorUrl);
+                            copyErrorButton.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 1500);
+                        }
+                    });
+                    
+                    buttonRow.appendChild(checkGroup);
+                    buttonRow.appendChild(errorGroup);
+                    
+                    serviceItem.appendChild(serviceName);
+                    serviceItem.appendChild(buttonRow);
+                    serviceItems.appendChild(serviceItem);
+                });
+                
+                elements.content.appendChild(serviceItems);
+            }
+
+            function init() {
+                ui.loadThemePreference();
+                createNavigationTabs();
+                displayCategoryContent(state.currentCategoryId);
+                
+                elements.homeBtn.addEventListener('click', () => {
+                    window.location.href = '/';
+                });
+                
+                elements.themeToggleBtn.addEventListener('click', () => {
+                    ui.toggleTheme();
+                });
+                
+                elements.mobileMenuToggle.addEventListener('click', () => {
+                    ui.toggleMobileMenu();
+                });
+                
+                elements.overlay.addEventListener('click', () => {
+                    ui.closeMobileMenu();
+                });
+                
+                // Обработка нажатия клавиши Escape для закрытия меню
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        ui.closeMobileMenu();
+                    }
+                });
+                
+                // Закрытие меню при изменении размера окна
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 992) {
+                        ui.closeMobileMenu();
+                    }
+                });
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
