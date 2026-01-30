@@ -22,6 +22,7 @@
             --radius-sm: 6px;
             --transition: all 0.2s ease;
             --header-height: 60px;
+            --sidebar-width: 260px;
             --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
@@ -208,48 +209,122 @@
             display: none;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--spacing-md);
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - var(--header-height));
         }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .category-card {
+        /* Боковое меню */
+        .sidebar {
+            width: var(--sidebar-width);
             background: var(--bg-secondary);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-md);
-            padding: var(--spacing-lg);
-            border: 1px solid var(--border-color);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            border-right: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+            overflow-y: auto;
+            transition: width var(--transition-normal), background-color var(--transition-normal);
         }
 
-        .category-card:hover {
-            box-shadow: var(--shadow-lg);
+        .sidebar-header {
+            padding: 0 var(--spacing-md) var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .sidebar-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title i {
+            color: var(--bg-accent);
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 var(--spacing-sm);
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--bg-accent);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-tab.active:hover {
+            background: #4338ca;
+        }
+
+        .nav-tab i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-tab .badge {
+            position: absolute;
+            right: var(--spacing-md);
+            background: var(--gradient-danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Основное содержимое */
+        .content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
         }
 
         .category-header {
             display: flex;
             align-items: center;
-            margin-bottom: var(--spacing-md);
-            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
             border-bottom: 1px solid var(--border-color);
         }
 
         .category-icon {
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            margin-right: var(--spacing-sm);
-            font-size: 1.2rem;
+            margin-right: var(--spacing-md);
+            font-size: 1.3rem;
             flex-shrink: 0;
             border-radius: 50%;
             overflow: hidden;
@@ -262,7 +337,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             line-height: 1;
             display: flex;
             align-items: center;
@@ -271,59 +346,68 @@
 
         .category-title {
             color: var(--text-primary);
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
         }
 
+        .category-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        /* КОМПАКТНЫЕ БЛОКИ SERVICE-ITEM - 3 В РЯД */
         .service-items {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
         }
 
         .service-item {
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius-sm);
-            padding: var(--spacing-sm);
-            transition: background-color var(--transition-fast);
-        }
-
-        .service-item:hover {
-            background: var(--bg-hover);
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .service-name {
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-size: 1rem;
+            font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
             line-height: 1.4;
             padding: 0 4px;
+            flex-grow: 1;
         }
 
-        /* Новый дизайн кнопок */
+        /* КОМПАКТНЫЙ СТИЛЬ ДЛЯ КНОПОК */
         .button-row {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
+            margin-top: auto;
         }
 
         .action-group {
             display: flex;
             gap: 8px;
-            width: 100%;
+            justify-content: flex-start;
         }
 
         .action-main {
-            flex: 1;
             display: flex;
             gap: 4px;
+            width: 100%;
         }
 
         .action-btn {
-            flex: 1;
             border: none;
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: var(--border-radius-sm);
             font-size: 0.85rem;
             font-weight: 500;
@@ -332,8 +416,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             white-space: nowrap;
+            flex: 1;
         }
 
         .action-btn:hover {
@@ -364,7 +449,8 @@
             color: white;
             width: 40px;
             min-width: 40px;
-            padding: 10px;
+            padding: 8px;
+            flex-shrink: 0;
             flex: 0 0 auto;
         }
 
@@ -382,60 +468,134 @@
         .documents .category-icon { background: var(--gradient-success); }
         .faq .category-icon { background: var(--gradient-primary); }
 
+        /* Мобильное меню */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-theme .mobile-menu-toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
         /* Адаптивность */
+        @media (max-width: 1200px) {
+            .service-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 992px) {
-            .categories-grid {
-                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            :root {
+                --sidebar-width: 220px;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: var(--header-height);
+                height: calc(100vh - var(--header-height));
+                z-index: 90;
+                transform: translateX(-100%);
+                transition: transform var(--transition-normal);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 80;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .service-items {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 768px) {
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .category-card {
+            .content {
                 padding: var(--spacing-md);
             }
-
-            .main-header {
-                padding: 0 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: var(--spacing-sm);
-            }
-
+            
             .category-header {
                 flex-direction: column;
                 text-align: center;
+                gap: var(--spacing-sm);
             }
-
+            
             .category-icon {
                 margin-right: 0;
                 margin-bottom: var(--spacing-sm);
             }
-
-            .button-row {
-                gap: 6px;
+            
+            .service-items {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
             }
-
+            
+            .button-row {
+                gap: 10px;
+            }
+            
             .action-group {
                 flex-direction: column;
-                gap: 6px;
+                width: 100%;
             }
-
+            
             .action-main {
                 width: 100%;
             }
-
+            
             .action-btn {
-                padding: 8px 12px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-header {
+                padding: 0 10px;
+            }
+            
+            .content {
+                padding: var(--spacing-sm);
+            }
+            
+            .service-item {
+                padding: var(--spacing-sm);
+            }
+            
+            .action-btn {
+                padding: 8px 10px;
                 font-size: 0.8rem;
             }
-
+            
             .copy-action-btn {
                 width: 36px;
                 min-width: 36px;
@@ -467,6 +627,9 @@
     <!-- Шапка -->
     <header class="main-header">
         <div class="header-left">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Открыть меню">
+                <i class="fas fa-bars"></i>
+            </button>
             <button class="home-btn" id="homeBtn" title="Главная страница">
                 <i class="fas fa-home"></i>
             </button>
@@ -487,17 +650,37 @@
         </div>
     </header>
 
-    <div class="container">
-        <div class="categories-grid" id="categoriesGrid">
-            <!-- Категории будут добавлены через JavaScript -->
-        </div>
+    <!-- Оверлей для мобильного меню -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="main-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Разделы МП</span>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs" id="navTabs">
+                <!-- Вкладки будут добавлены через JavaScript -->
+            </nav>
+        </aside>
+
+        <!-- Основное содержимое -->
+        <main class="content" id="content">
+            <!-- Контент категории будет отображаться здесь -->
+        </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // КОНФИГУРАЦИЯ ДОЛЖНА БЫТЬ ЗДЕСЬ
             const categories = [
                 {
                     category: 'Регистрация',
+                    id: 'register',
                     class: 'auth',
                     icon: 'fas fa-user-plus',
                     pages: [
@@ -525,6 +708,7 @@
                 },
                 {
                     category: 'Авторизация',
+                    id: 'auth',
                     class: 'auth',
                     icon: 'fas fa-fingerprint',
                     pages: [
@@ -552,6 +736,7 @@
                 },
                 {
                     category: 'Профиль',
+                    id: 'profile',
                     class: 'auth',
                     icon: 'fas fa-user',
                     pages: [
@@ -574,6 +759,7 @@
                 },
                 {
                     category: 'Идентификация и Аутентификация',
+                    id: 'photo',
                     class: 'photo',
                     icon: 'fas fa-camera',
                     pages: [
@@ -606,6 +792,7 @@
                 },
                 {
                     category: 'Постановка на учет',
+                    id: 'residence',
                     class: 'residence',
                     icon: 'fas fa-address-book',
                     pages: [
@@ -643,6 +830,7 @@
                 },
                 {
                     category: 'Установка места сна и отдыха',
+                    id: 'residence-mso',
                     class: 'residence',
                     icon: 'fas fa-bed',
                     pages: [
@@ -675,6 +863,7 @@
                 },
                 {
                     category: 'Передача геолокации',
+                    id: 'geo',
                     class: 'geo',
                     icon: 'fas fa-map-marker-alt',
                     pages: [
@@ -697,6 +886,7 @@
                 },
                 {
                     category: 'Подтверждение номера телефона',
+                    id: 'phone',
                     class: 'phone',
                     icon: 'fas fa-phone',
                     pages: [
@@ -739,6 +929,7 @@
                 },
                 {
                     category: 'Пуш-уведомления',
+                    id: 'push',
                     class: 'push',
                     icon: 'fas fa-bell',
                     pages: [
@@ -761,6 +952,7 @@
                 },
                 {
                     category: 'Документы',
+                    id: 'documents',
                     class: 'documents',
                     icon: 'fas fa-file-alt',
                     pages: [
@@ -783,6 +975,7 @@
                 },
                 {
                     category: 'FAQ',
+                    id: 'faq',
                     class: 'faq',
                     icon: 'fas fa-question-circle',
                     pages: [
@@ -806,13 +999,18 @@
             ];
 
             const elements = {
-                categoriesGrid: document.getElementById('categoriesGrid'),
+                navTabs: document.getElementById('navTabs'),
+                content: document.getElementById('content'),
                 homeBtn: document.getElementById('homeBtn'),
-                themeToggleBtn: document.getElementById('themeToggleBtn')
+                themeToggleBtn: document.getElementById('themeToggleBtn'),
+                mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+                sidebar: document.getElementById('sidebar'),
+                overlay: document.getElementById('overlay')
             };
 
             const state = {
-                isLightTheme: false
+                isLightTheme: false,
+                currentCategoryId: 'registration'
             };
 
             const ui = {
@@ -835,141 +1033,231 @@
                     if (state.isLightTheme) {
                         document.body.classList.add('light-theme');
                     }
+                },
+                
+                toggleMobileMenu: () => {
+                    elements.sidebar.classList.toggle('open');
+                    elements.overlay.classList.toggle('active');
+                },
+                
+                closeMobileMenu: () => {
+                    elements.sidebar.classList.remove('open');
+                    elements.overlay.classList.remove('active');
                 }
             };
 
-            function createCategories() {
+            function createNavigationTabs() {
                 categories.forEach(category => {
-                    const categoryCard = document.createElement('div');
-                    categoryCard.className = `category-card ${category.class}`;
-
-                    const categoryHeader = document.createElement('div');
-                    categoryHeader.className = 'category-header';
-
-                    const categoryIcon = document.createElement('div');
-                    categoryIcon.className = 'category-icon';
-                    categoryIcon.innerHTML = `<i class="${category.icon}"></i>`;
-
-                    const categoryTitle = document.createElement('h2');
-                    categoryTitle.className = 'category-title';
-                    categoryTitle.textContent = category.category;
-
-                    categoryHeader.appendChild(categoryIcon);
-                    categoryHeader.appendChild(categoryTitle);
-
-                    const serviceItems = document.createElement('div');
-                    serviceItems.className = 'service-items';
-
-                    category.pages.forEach(page => {
-                        const serviceItem = document.createElement('div');
-                        serviceItem.className = 'service-item';
-
-                        const serviceName = document.createElement('div');
-                        serviceName.className = 'service-name';
-                        serviceName.textContent = page.name;
-
-                        const buttonRow = document.createElement('div');
-                        buttonRow.className = 'button-row';
-
-                        // Группа для проверки
-                        const checkGroup = document.createElement('div');
-                        checkGroup.className = 'action-group';
-                        
-                        const checkMain = document.createElement('div');
-                        checkMain.className = 'action-main';
-                        
-                        const checkButton = document.createElement('button');
-                        checkButton.className = 'action-btn check-btn';
-                        checkButton.innerHTML = `Проверить работу`;
-                        checkButton.title = 'Открыть страницу проверки';
-                        
-                        const copyCheckButton = document.createElement('button');
-                        copyCheckButton.className = 'copy-action-btn action-btn';
-                        copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
-                        copyCheckButton.title = 'Копировать ссылку на проверку';
-                        
-                        checkMain.appendChild(checkButton);
-                        checkMain.appendChild(copyCheckButton);
-                        checkGroup.appendChild(checkMain);
-
-                        // Группа для ошибок
-                        const errorGroup = document.createElement('div');
-                        errorGroup.className = 'action-group';
-                        
-                        const errorMain = document.createElement('div');
-                        errorMain.className = 'action-main';
-                        
-                        const errorButton = document.createElement('button');
-                        errorButton.className = 'action-btn error-btn';
-                        errorButton.innerHTML = `Найти ошибки`;
-                        errorButton.title = 'Открыть страницу ошибок';
-                        
-                        const copyErrorButton = document.createElement('button');
-                        copyErrorButton.className = 'copy-action-btn action-btn';
-                        copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
-                        copyErrorButton.title = 'Копировать ссылку на ошибки';
-                        
-                        errorMain.appendChild(errorButton);
-                        errorMain.appendChild(copyErrorButton);
-                        errorGroup.appendChild(errorMain);
-
-                        // Обработчики событий
-                        checkButton.addEventListener('click', () => {
-                            if (page.checkUrl && page.checkUrl !== 'Здесь будет ссылка') {
-                                window.open(page.checkUrl, '_blank');
-                            }
+                    const navTab = document.createElement('button');
+                    navTab.className = 'nav-tab';
+                    navTab.id = `tab-${category.id}`;
+                    navTab.dataset.categoryId = category.id;
+                    
+                    const icon = document.createElement('i');
+                    icon.className = category.icon;
+                    
+                    const text = document.createElement('span');
+                    text.textContent = category.category;
+                    
+                    navTab.appendChild(icon);
+                    navTab.appendChild(text);
+                    
+                    // Добавляем активный класс к первой вкладке
+                    if (category.id === state.currentCategoryId) {
+                        navTab.classList.add('active');
+                    }
+                    
+                    navTab.addEventListener('click', () => {
+                        // Убираем активный класс со всех вкладок
+                        document.querySelectorAll('.nav-tab').forEach(tab => {
+                            tab.classList.remove('active');
                         });
-
-                        errorButton.addEventListener('click', () => {
-                            if (page.errorUrl && page.errorUrl !== 'Здесь будет ссылка') {
-                                window.open(page.errorUrl, '_blank');
-                            }
-                        });
-
-                        copyCheckButton.addEventListener('click', () => {
-                            if (page.checkUrl && page.checkUrl !== 'Здесь будет ссылка') {
-                                navigator.clipboard.writeText(page.checkUrl);
-                                copyCheckButton.innerHTML = '<i class="fas fa-check"></i>';
-                                setTimeout(() => {
-                                    copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
-                                }, 1500);
-                            }
-                        });
-
-                        copyErrorButton.addEventListener('click', () => {
-                            if (page.errorUrl && page.errorUrl !== 'Здесь будет ссылка') {
-                                navigator.clipboard.writeText(page.errorUrl);
-                                copyErrorButton.innerHTML = '<i class="fas fa-check"></i>';
-                                setTimeout(() => {
-                                    copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
-                                }, 1500);
-                            }
-                        });
-
-                        buttonRow.appendChild(checkGroup);
-                        buttonRow.appendChild(errorGroup);
-
-                        serviceItem.appendChild(serviceName);
-                        serviceItem.appendChild(buttonRow);
-                        serviceItems.appendChild(serviceItem);
+                        
+                        // Добавляем активный класс к выбранной вкладке
+                        navTab.classList.add('active');
+                        
+                        // Отображаем контент категории
+                        displayCategoryContent(category.id);
+                        
+                        // Закрываем мобильное меню на мобильных устройствах
+                        if (window.innerWidth <= 992) {
+                            ui.closeMobileMenu();
+                        }
                     });
-
-                    categoryCard.appendChild(categoryHeader);
-                    categoryCard.appendChild(serviceItems);
-                    elements.categoriesGrid.appendChild(categoryCard);
+                    
+                    elements.navTabs.appendChild(navTab);
                 });
+            }
+
+            function displayCategoryContent(categoryId) {
+                state.currentCategoryId = categoryId;
+                const category = categories.find(c => c.id === categoryId);
+                
+                if (!category) return;
+                
+                // Очищаем контент
+                elements.content.innerHTML = '';
+                
+                // Создаем заголовок категории
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = `category-header ${category.class}`;
+                
+                const categoryIcon = document.createElement('div');
+                categoryIcon.className = 'category-icon';
+                categoryIcon.innerHTML = `<i class="${category.icon}"></i>`;
+                
+                const titleContainer = document.createElement('div');
+                
+                const categoryTitle = document.createElement('h1');
+                categoryTitle.className = 'category-title';
+                categoryTitle.textContent = category.category;
+                
+                const categoryDescription = document.createElement('div');
+                categoryDescription.className = 'category-description';
+                categoryDescription.textContent = category.description;
+                
+                titleContainer.appendChild(categoryTitle);
+                titleContainer.appendChild(categoryDescription);
+                
+                categoryHeader.appendChild(categoryIcon);
+                categoryHeader.appendChild(titleContainer);
+                
+                elements.content.appendChild(categoryHeader);
+                
+                // Создаем сервисы категории
+                const serviceItems = document.createElement('div');
+                serviceItems.className = 'service-items';
+                
+                category.pages.forEach(page => {
+                    const serviceItem = document.createElement('div');
+                    serviceItem.className = 'service-item';
+                    
+                    const serviceName = document.createElement('div');
+                    serviceName.className = 'service-name';
+                    serviceName.textContent = page.name;
+                    
+                    const buttonRow = document.createElement('div');
+                    buttonRow.className = 'button-row';
+                    
+                    // Группа для проверки
+                    const checkGroup = document.createElement('div');
+                    checkGroup.className = 'action-group';
+                    
+                    const checkMain = document.createElement('div');
+                    checkMain.className = 'action-main';
+                    
+                    const checkButton = document.createElement('button');
+                    checkButton.className = 'action-btn check-btn';
+                    checkButton.innerHTML = `Проверить работу`;
+                    checkButton.title = 'Открыть страницу проверки';
+                    
+                    const copyCheckButton = document.createElement('button');
+                    copyCheckButton.className = 'copy-action-btn action-btn';
+                    copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyCheckButton.title = 'Копировать ссылку на проверку';
+                    
+                    checkMain.appendChild(checkButton);
+                    checkMain.appendChild(copyCheckButton);
+                    checkGroup.appendChild(checkMain);
+                    
+                    // Группа для ошибок
+                    const errorGroup = document.createElement('div');
+                    errorGroup.className = 'action-group';
+                    
+                    const errorMain = document.createElement('div');
+                    errorMain.className = 'action-main';
+                    
+                    const errorButton = document.createElement('button');
+                    errorButton.className = 'action-btn error-btn';
+                    errorButton.innerHTML = `Найти ошибки`;
+                    errorButton.title = 'Открыть страницу ошибок';
+                    
+                    const copyErrorButton = document.createElement('button');
+                    copyErrorButton.className = 'copy-action-btn action-btn';
+                    copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyErrorButton.title = 'Копировать ссылку на ошибки';
+                    
+                    errorMain.appendChild(errorButton);
+                    errorMain.appendChild(copyErrorButton);
+                    errorGroup.appendChild(errorMain);
+                    
+                    // Обработчики событий
+                    checkButton.addEventListener('click', () => {
+                        if (page.checkUrl && page.checkUrl !== 'конфигурация должна быть здесь') {
+                            window.open(page.checkUrl, '_blank');
+                        }
+                    });
+                    
+                    errorButton.addEventListener('click', () => {
+                        if (page.errorUrl && page.errorUrl !== 'конфигурация должна быть здесь') {
+                            window.open(page.errorUrl, '_blank');
+                        }
+                    });
+                    
+                    copyCheckButton.addEventListener('click', () => {
+                        if (page.checkUrl && page.checkUrl !== 'конфигурация должна быть здесь') {
+                            navigator.clipboard.writeText(page.checkUrl);
+                            copyCheckButton.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyCheckButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 1500);
+                        }
+                    });
+                    
+                    copyErrorButton.addEventListener('click', () => {
+                        if (page.errorUrl && page.errorUrl !== 'конфигурация должна быть здесь') {
+                            navigator.clipboard.writeText(page.errorUrl);
+                            copyErrorButton.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                copyErrorButton.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 1500);
+                        }
+                    });
+                    
+                    buttonRow.appendChild(checkGroup);
+                    buttonRow.appendChild(errorGroup);
+                    
+                    serviceItem.appendChild(serviceName);
+                    serviceItem.appendChild(buttonRow);
+                    serviceItems.appendChild(serviceItem);
+                });
+                
+                elements.content.appendChild(serviceItems);
             }
 
             function init() {
                 ui.loadThemePreference();
-                createCategories();
+                createNavigationTabs();
+                displayCategoryContent(state.currentCategoryId);
                 
                 elements.homeBtn.addEventListener('click', () => {
                     window.location.href = '/';
                 });
-
+                
                 elements.themeToggleBtn.addEventListener('click', () => {
                     ui.toggleTheme();
+                });
+                
+                elements.mobileMenuToggle.addEventListener('click', () => {
+                    ui.toggleMobileMenu();
+                });
+                
+                elements.overlay.addEventListener('click', () => {
+                    ui.closeMobileMenu();
+                });
+                
+                // Обработка нажатия клавиши Escape для закрытия меню
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        ui.closeMobileMenu();
+                    }
+                });
+                
+                // Закрытие меню при изменении размера окна
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 992) {
+                        ui.closeMobileMenu();
+                    }
                 });
             }
 
