@@ -375,11 +375,6 @@
             height: 100%;
         }
 
-        .service-item:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
         .service-name {
             font-size: 1rem;
             font-weight: 600;
@@ -1014,7 +1009,7 @@
                     
                     const checkButton = document.createElement('button');
                     checkButton.className = 'action-btn check-btn';
-                    checkButton.innerHTML = `<i class="fas fa-search"></i> Проверить`;
+                    checkButton.innerHTML = `Проверить работу`;
                     checkButton.title = 'Открыть страницу проверки';
                     
                     const copyCheckButton = document.createElement('button');
@@ -1035,7 +1030,7 @@
                     
                     const errorButton = document.createElement('button');
                     errorButton.className = 'action-btn error-btn';
-                    errorButton.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Ошибки`;
+                    errorButton.innerHTML = `Найти ошибки`;
                     errorButton.title = 'Открыть страницу ошибок';
                     
                     const copyErrorButton = document.createElement('button');
