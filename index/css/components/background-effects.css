@@ -1,0 +1,45 @@
+.background-effects {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.gradient-orbs {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+}
+
+.gradient-orbs:nth-child(1) {
+    width: 500px;
+    height: 500px;
+    background: var(--gradient-accent);
+    top: -200px;
+    left: -200px;
+}
+
+.gradient-orbs:nth-child(2) {
+    width: 400px;
+    height: 400px;
+    background: var(--gradient-primary);
+    bottom: -150px;
+    right: -150px;
+}
+
+.grid-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black 30%, transparent 70%);
+}
