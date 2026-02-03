@@ -43,7 +43,7 @@ class ToolCardComponent {
                             Подробней
                         </button>
                     </div>
-                    <a href="${tool.link}" class="tool-link" target="_blank">
+                    <a href="${tool.link}" class="tool-link">
                         Открыть
                         <i class="fas fa-arrow-right"></i>
                     </a>
