@@ -30,10 +30,6 @@
     transition: transform var(--transition-fast);
 }
 
-.logo:hover {
-    transform: scale(1.02);
-}
-
 .logo-icon {
     position: relative;
     width: 48px;
