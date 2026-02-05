@@ -1,0 +1,35 @@
+/* Background Effects */
+.background-effects {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.gradient-orbs {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    transform-origin: center;
+}
+
+.gradient-orbs:nth-child(1) {
+    width: 500px;
+    height: 500px;
+    background: var(--gradient-accent);
+    top: -200px;
+    left: -200px;
+}
+
+.gradient-orbs:nth-child(2) {
+    width: 400px;
+    height: 400px;
+    background: var(--gradient-primary);
+    bottom: -150px;
+    right: -150px;
+}

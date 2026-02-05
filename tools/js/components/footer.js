@@ -1,0 +1,19 @@
+// Компонент подвала для всех инструментов
+class Footer {
+    render() {
+        return `
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-bottom">
+                        <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+                            Есть вопрос или предложение? Пиши в телегу
+                            <a href="https://t.me/shilov_dv" class="contact-link" target="_blank" rel="noopener noreferrer">
+                                @shilov_dv
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        `;
+    }
+}
