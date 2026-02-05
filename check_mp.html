@@ -1061,7 +1061,7 @@
                 </button>
                     
                 <!-- Логотип -->
-                <a href="/" class="logo">
+                <a href="#" class="logo">
                     <div class="logo-icon">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
@@ -1683,15 +1683,6 @@
                 if (homeBtn) {
                     homeBtn.addEventListener('click', () => {
                         window.location.href = '/';
-                    });
-                }
-
-                // Обработчик для логотипа (обновление страницы)
-                const logo = document.querySelector('.logo');
-                if (logo) {
-                    logo.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.location.reload();
                     });
                 }
             }
