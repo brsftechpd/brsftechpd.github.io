@@ -12,19 +12,19 @@ const toolsConfig = [
     },
     {
         id: 'mp',
-        version: 'v1.1',
+        version: 'v2.0',
         iconClass: 'mp',
         icon: 'fas fa-mobile-alt',
         title: 'Мониторинг МП',
-        description: 'Анализ данных мобильного приложения на основе логов OpenSearch',
+        description: 'Быстрые ссылки для мониторинга данных и ошибок в OpenSearch',
         link: '/check_mp',
         outdated: false
     },
     {
         id: '4me',
-        version: 'v1.0',
+        version: 'v2.0',
         iconClass: 'duble',
-        icon: 'fas fa-search',
+        icon: 'fas fa-users-viewfinder',
         title: 'Ticket check 4me',
         description: 'Поиск дублирующихся записей в системе 4me для оптимизации трудозатрат',
         link: '/duble_search_4me',
@@ -78,7 +78,7 @@ const instructions = {
     },
     'mp': {
         title: 'Мониторинг МП',
-        description: 'Инструмент для анализа данных мобильного приложения на основе логов OpenSearch.',
+        description: 'Инструмент быстрых ссылок для мониторинга данных и ошибок в OpenSearch.',
         features: [
             'Централизованный мониторинг сервисов по категориям',
             'Быстрый доступ к логам через предварительно настроенные запросы',

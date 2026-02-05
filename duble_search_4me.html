@@ -4,458 +4,702 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анализ таблицы заявок</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* CSS Variables */
         :root {
-            /* Цветовая палитра темной темы */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --bg-hover: #475569;
-            --text-primary: #f8fafc;
-            --text-secondary: #e2e8f0;
-            --text-muted: #94a3b8;
-            --text-placeholder: #64748b;
-            --border-color: #334155;
-            --border-focus: #475569;
+            /* Primary Colors */
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-200: #bae6fd;
+            --primary-300: #7dd3fc;
+            --primary-400: #38bdf8;
+            --primary-500: #0ea5e9;
+            --primary-600: #0284c7;
+            --primary-700: #0369a1;
+            --primary-800: #075985;
+            --primary-900: #0c4a6e;
             
-            /* Градиенты */
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            /* Gradients */
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #111827 100%);
+            --gradient-surface: linear-gradient(145deg, #1e1e2e 0%, #23233a 100%);
+            --gradient-card: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+            --gradient-accent: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
             --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --gradient-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-info: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
             --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            --gradient-cyan: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            --gradient-logo: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f59e0b);
             
-            /* Тени */
-            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
-            --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            /* Colors - Dark Theme (Default) */
+            --color-bg: #0f131c;
+            --color-surface: #121212;
+            --color-card: #1a1a1a;
+            --color-card-hover: #222222;
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #cbd5e1;
+            --color-text-tertiary: #94a3b8;
+            --color-border: #2d2d3a;
+            --color-border-hover: #3d3d4a;
+            --color-row-hover: rgba(255, 255, 255, 0.03);
             
-            /* Размеры */
-            --border-radius: 12px;
-            --border-radius-sm: 10px;
-            --border-radius-lg: 16px;
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-md: 16px;
-            --spacing-lg: 20px;
-            --spacing-xl: 30px;
+            /* Shadows */
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --glow-primary: 0 0 20px rgba(59, 130, 246, 0.5);
+            --glow-secondary: 0 0 20px rgba(139, 92, 246, 0.5);
             
-            /* Анимации */
-            --transition-fast: 0.3s;
-            --transition-normal: 0.4s;
-            --transition-slow: 0.5s;
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --radius-full: 9999px;
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 14px;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-2xl: 4rem;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Layout */
+            --header-height: 70px;
+            --sidebar-width: 280px;
+            --footer-height: 60px;
+            --container-width: 1200px;
         }
 
-        * {
+        .theme-light {
+            --color-bg: #ecf0f5;
+            --color-surface: #ffffff;
+            --color-card: #ffffff;
+            --color-card-hover: #f8fafc;
+            --color-text-primary: #0f172a;
+            --color-text-secondary: #475569;
+            --color-text-tertiary: #64748b;
+            --color-border: #e2e8f0;
+            --color-border-hover: #cbd5e1;
+            --color-row-hover: rgba(0, 0, 0, 0.02);
+            
+            --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --gradient-surface: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+            --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        /* Reset and Base Styles */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+            overflow-x: hidden;
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            min-height: 100%;
+            overflow-x: hidden;
+            transition: background var(--transition-slow), color var(--transition-slow);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: var(--spacing-md);
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .container {
-            background: var(--bg-secondary);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-lg);
-            padding: var(--spacing-xl);
-            max-width: 1200px;
-            width: 100%;
-            border: 1px solid var(--border-color);
+            flex-direction: column;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             position: relative;
+            min-height: 100vh;
         }
 
-        h1 {
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: var(--spacing-xs);
-            font-weight: 700;
-            font-size: 1.75rem;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-bg);
+            z-index: -2;
+            transition: background var(--transition-slow);
         }
 
-        .description {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: var(--spacing-lg);
-            font-size: 0.875rem;
+        body::-webkit-scrollbar {
+            display: none;
         }
 
-        /* Стили для загрузки файла */
-        .upload-section {
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            background: var(--bg-tertiary);
-            text-align: center;
-            transition: all var(--transition-normal);
+        /* Main Wrapper */
+        .main-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1154px;
+            margin: var(--header-height) auto 0;
+            flex: 1;
         }
 
-        .upload-section:hover {
-            border-color: var(--border-focus);
-            box-shadow: var(--shadow-sm);
+        /* Container */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
         }
 
-        .upload-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius-sm);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            display: inline-flex;
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Utility Classes */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            height: var(--header-height);
+            width: 100%;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 var(--spacing-md);
+            gap: var(--spacing-sm);
+        }
+
+        /* Кнопка "На главную" */
+        .home-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Стили для статистики */
-        .statistics {
-            margin: 20px 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px 15px;
-            border-radius: var(--border-radius);
-            background: var(--bg-tertiary);
-            transition: all var(--transition-normal);
+            cursor: pointer;
+            transition: all var(--transition-base);
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            color: var(--color-text-secondary);
+            flex-shrink: 0;
         }
 
-        .stat-item::before {
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-border-hover);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            color: var(--color-text-primary);
+            transform: translateY(-1px);
+        }
+
+        .home-btn i {
+            font-size: 1.25rem;
+            transition: transform var(--transition-base);
+            z-index: 1;
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
+        .home-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            text-decoration: none;
+            color: inherit;
+            transition: transform var(--transition-fast);
+            flex: 1;
+            min-width: 0;
+            position: relative;
+        }
+
+        .logo:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 4px;
+            border-radius: var(--radius-md);
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            overflow: hidden;
+            transition: all var(--transition-base);
+            flex-shrink: 0;
+        }
+
+        .logo-icon::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
         }
 
-        .stat-item:nth-child(1)::before {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
-
-        .stat-item:nth-child(2)::before {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        .stat-item:nth-child(3)::before {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-
-        .stat-item:nth-child(4)::before {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Стили для вкладок */
-        .tabs {
-            display: flex;
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius-sm);
-            padding: 4px;
-            margin-bottom: var(--spacing-lg);
-            position: relative;
-            border: 1px solid var(--border-focus);
-            overflow: hidden;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-slow);
-            border-radius: 8px;
-            z-index: 1;
-            position: relative;
-            font-weight: 500;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 0.875rem;
-        }
-
-        .tab.active {
-            color: var(--text-primary);
-        }
-
-        .tab-slider {
-            position: absolute;
-            top: 4px;
-            bottom: 4px;
-            left: 4px;
-            width: calc(33.33% - 4px);
-            background: var(--gradient-primary);
-            border-radius: 8px;
-            transition: all var(--transition-slow);
-            box-shadow: var(--shadow-sm);
-            z-index: 0;
-        }
-
-        .tab:nth-child(2).active ~ .tab-slider {
+        .logo:hover .logo-icon::before {
             transform: translateX(100%);
         }
 
-        .tab:nth-child(3).active ~ .tab-slider {
-            transform: translateX(200%);
-        }
-
-        /* Стили для таблицы */
-        .table-container {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            margin-bottom: var(--spacing-lg);
-            background: var(--bg-tertiary);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
-        }
-
-        .table-container:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Фиксированные ширины колонок для всех таблиц */
-        table {
-            table-layout: fixed;
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: var(--bg-tertiary);
-        }
-
-        th:nth-child(1),
-        td:nth-child(1) {
-            width: 12%;
-            min-width: 80px;
-        }
-
-        th:nth-child(2),
-        td:nth-child(2) {
-            width: 20%;
-            min-width: 120px;
-        }
-
-        th:nth-child(3),
-        td:nth-child(3) {
-            width: 58%;
-            min-width: 180px;
-        }
-
-        th:nth-child(4),
-        td:nth-child(4) {
-            width: 20%;
-            min-width: 80px;
-        }
-
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            transition: all var(--transition-fast);
-        }
-
-        th {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            border-bottom: 2px solid var(--border-focus);
-        }
-
-        td {
-            color: var(--text-secondary);
-        }
-
-        /* Специфичные стили для ячеек с ID */
-        td:first-child {
-            font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        /* Специфичные стили для ячеек с инициаторами */
-        td:nth-child(2) {
-            font-weight: 500;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr {
-            transition: all var(--transition-fast);
-        }
-
-        .group-header {
-            background: var(--bg-secondary);
-            font-weight: 600;
-            color: var(--text-primary);
-            border-top: 2px solid var(--border-focus);
-        }
-
-        .group-header td {
-            padding: 16px;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        /* Стили для уведомлений */
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
+        .logo-text {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-width: 350px;
+            min-width: 0;
+            flex: 1;
         }
 
-        .notification {
-            padding: 12px 20px;
-            border-radius: var(--border-radius-sm);
-            font-size: 0.875rem;
+        .logo-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: var(--gradient-logo);
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientFlow 8s ease infinite;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--color-text-tertiary);
             font-weight: 500;
-            z-index: 1000;
-            display: none;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .logo-version {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 22px;
+            padding: 0 8px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-switch {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .theme-switch:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-border-hover);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-switch i {
+            font-size: 1.25rem;
+            transition: transform var(--transition-base);
+            z-index: 1;
+        }
+
+        .theme-dark .theme-switch i {
+            color: #cbe4f5;
+        }
+
+        .theme-light .theme-switch i {
+            color: #f59e0b;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--gradient-surface);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 90;
+            min-height: 100%;
+        }
+
+        .sidebar-header {
+            padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            color: var(--color-text-primary);
+            font-size: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .sidebar-title i {
+            color: var(--color-text-primary);
+        }
+
+        /* Sidebar Navigation Container */
+        .sidebar-nav-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md) 0;
+            min-height: 0;
+        }
+
+        .sidebar-nav-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-nav-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-nav-container::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: var(--radius-full);
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .nav-tab-content {
+		    display: flex;
+            gap: var(--spacing-sm);
+		}
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .nav-tab:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-primary);
+            color: white;
             box-shadow: var(--shadow-md);
-            animation: slideInRight 0.3s ease-out;
-            max-width: 100%;
         }
 
-        @keyframes slideInRight {
-            from {
-                right: -100%;
-                opacity: 0;
-            }
-            to {
-                right: 20px;
-                opacity: 1;
-            }
+        .nav-tab i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
         }
 
-        .notification.success {
-            background: var(--gradient-success);
+        .nav-tab-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            padding: 2px 8px;
+            min-width: 28px;
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-tab.active .nav-tab-count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px 0 24px 24px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: var(--radius-full);
+        }
+
+        /* Category Header */
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: var(--gradient-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--spacing-md);
+            font-size: 1.5rem;
+            flex-shrink: 0;
             color: white;
+            box-shadow: var(--shadow-md);
         }
 
-        .notification.error {
-            background: var(--gradient-danger);
-            color: white;
+        .category-info {
+            flex: 1;
+            min-width: 0;
         }
 
-        input[type="text"]::placeholder, input[type="date"]::placeholder {
-            color: var(--text-placeholder);
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--color-text-primary);
+            line-height: 1.2;
+            margin-bottom: var(--spacing-xs);
         }
 
-        /* Стили для фильтров и экспорта */
-        .table-controls {
+        .category-description {
+            color: var(--color-text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+        }
+
+        /* Панель управления */
+        .controls-panel {
+            background: var(--gradient-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .controls-content {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            gap: 15px;
-            flex-wrap: wrap;
             align-items: center;
-            padding: 20px;
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
         }
 
         .search-container {
-            position: relative;
             flex: 1;
             min-width: 300px;
+            position: relative;
         }
 
         .search-input {
             width: 100%;
-            padding: 12px 45px 12px 15px;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--border-color);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 0.875rem;
+            padding: 14px 50px 14px 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+            font-size: 0.9375rem;
             transition: all var(--transition-fast);
         }
 
         .search-input:focus {
             outline: none;
+            border-color: var(--color-border-hover);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .search-icon {
             position: absolute;
-            right: 15px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--color-text-tertiary);
         }
 
         .export-btn {
             background: var(--gradient-success);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius-sm);
+            padding: 14px 28px;
+            border-radius: var(--radius-lg);
             cursor: pointer;
             transition: all var(--transition-fast);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             white-space: nowrap;
             box-shadow: var(--shadow-sm);
         }
@@ -465,13 +709,242 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* Стили для кнопок ID и инициатора */
-        .id-button, .initiator-button {
-            background: var(--gradient-info);
+        /* Кнопка импорта в основном контенте */
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            padding: var(--spacing-xl);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .upload-card {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            background: var(--gradient-card);
+            border-radius: var(--radius-2xl);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .upload-card:hover {
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--color-border-hover);
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+        }
+
+        .upload-icon-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .upload-icon-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+        }
+
+        .upload-icon {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .upload-content {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .upload-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.025em;
+        }
+
+        .upload-subtitle {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .upload-features {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+
+        .upload-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .upload-feature i {
+            color: var(--primary-400);
+        }
+
+        .upload-btn-main {
+            width: 100%;
+            padding: 18px;
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: var(--border-radius-sm);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .upload-btn-main:active {
+            transform: translateY(0);
+        }
+
+        .upload-btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .upload-btn-main:hover::before {
+            left: 100%;
+        }
+
+        .upload-hint {
+            text-align: center;
+            margin-top: var(--spacing-md);
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        /* Таблица */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border);
+            background: var(--gradient-card);
+            box-shadow: var(--shadow-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            color: var(--color-text-primary);
+            font-weight: 600;
+            padding: 20px 16px;
+            text-align: left;
+            border-bottom: 2px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        td {
+            padding: 18px 16px;
+            color: var(--color-text-secondary);
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.9375rem;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: var(--color-row-hover);
+        }
+
+        tr:hover td {
+            color: var(--color-text-primary);
+        }
+
+        .group-header {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .group-header td {
+            padding: 18px 16px;
+            font-size: 0.9375rem;
+            border-bottom: 2px solid var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .id-button, .initiator-button, .delete-btn {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             transition: all var(--transition-fast);
             font-weight: 500;
@@ -479,9 +952,16 @@
             width: 100%;
             text-align: center;
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            min-height: 40px;
         }
 
-        .id-button:hover, .initiator-button:hover {
+        .id-button {
+            background: var(--gradient-primary);
+        }
+
+        .id-button:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -490,20 +970,17 @@
             background: var(--gradient-purple);
         }
 
-        /* Стили для кнопки удаления */
+        .initiator-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .initiator-button.copied {
+            background: var(--gradient-success) !important;
+        }
+
         .delete-btn {
-            background: var(--gradient-danger);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            font-weight: 500;
-            font-size: 0.875rem;
-            width: 100%;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
+            background: var(--gradient-error);
         }
 
         .delete-btn:hover {
@@ -511,29 +988,167 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .container {
+        .table-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .table-actions button {
+            flex: 1;
+            max-width: 120px;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--color-border);
+            padding: 20px 0;
+            margin-top: auto;
+            flex-shrink: 0;
+            background: rgba(var(--color-bg), 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .footer .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-tertiary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .contact-link:hover {
+            color: var(--primary-400);
+        }
+
+        /* Background Effects */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .gradient-orbs {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            transform-origin: center;
+        }
+
+        .gradient-orbs:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            background: var(--gradient-accent);
+            top: -200px;
+            left: -200px;
+        }
+
+        .gradient-orbs:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--gradient-primary);
+            bottom: -150px;
+            right: -150px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            :root {
+                --sidebar-width: 200px;
+            }
+            
+            .upload-card {
+                max-width: 480px;
                 padding: var(--spacing-lg);
             }
-            
-            .statistics {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            th, td {
-                padding: 10px 12px;
-                font-size: 0.875rem;
-            }
-            
-            .tab {
-                font-size: 0.8125rem;
-                padding: 10px 12px;
-            }
-            
-            .table-controls {
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
                 flex-direction: column;
-                align-items: stretch;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--color-border);
+                min-height: auto;
+            }
+            
+            .sidebar-nav-container {
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: var(--spacing-sm);
+            }
+            
+            .nav-tabs {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: var(--spacing-sm);
+            }
+            
+            .nav-tab {
+                white-space: nowrap;
+            }
+            
+            .content {
+                padding: var(--spacing-md);
+            }
+            
+            .header {
+                height: 70px;
+            }
+            
+            .logo-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+            
+            .logo-title {
+                font-size: 1.1rem;
+            }
+            
+            .logo-subtitle {
+                font-size: 0.7rem;
+            }
+            
+            .logo-version {
+                height: 20px;
+                font-size: 0.65rem;
+                padding: 0 6px;
+            }
+            
+            .theme-switch {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .theme-switch i {
+                font-size: 1.1rem;
             }
             
             .search-container {
@@ -541,257 +1156,380 @@
                 margin-bottom: 10px;
             }
             
-            .export-btn {
-                align-self: flex-end;
+            .controls-content {
+                flex-direction: column;
+                align-items: stretch;
             }
             
-            /* Адаптивные ширины колонок для мобильных */
-            th:nth-child(1),
-            td:nth-child(1) {
-                width: 15%;
-                min-width: 70px;
-            }
-
-            th:nth-child(2),
-            td:nth-child(2) {
-                width: 25%;
-                min-width: 100px;
-            }
-
-            th:nth-child(3),
-            td:nth-child(3) {
-                width: 45%;
-                min-width: 130px;
-            }
-
-            th:nth-child(4),
-            td:nth-child(4) {
-                width: 15%;
-                min-width: 70px;
+            .category-header {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--spacing-lg);
             }
             
-            tr:hover {
-                transform: none;
+            .category-icon {
+                margin-right: 0;
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .upload-container {
+                padding: var(--spacing-md);
+                min-height: 60vh;
+            }
+            
+            .upload-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .upload-icon-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .upload-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .upload-title {
+                font-size: 1.5rem;
+            }
+            
+            .upload-features {
+                flex-direction: column;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+            
+            .table-actions {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .table-actions button {
+                max-width: none;
             }
         }
 
         @media (max-width: 480px) {
-            .statistics {
-                grid-template-columns: 1fr;
+            .logo {
+                gap: 10px;
             }
             
-            .tabs {
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+            
+            .logo-title {
+                font-size: 1rem;
                 flex-direction: column;
+                align-items: flex-start;
                 gap: 4px;
             }
             
-            .tab-slider {
-                display: none;
+            .logo-subtitle {
+                font-size: 0.65rem;
             }
             
-            .tab.active {
-                background: var(--gradient-primary);
-                color: white;
+            .logo-version {
+                height: 18px;
+                font-size: 0.6rem;
+                padding: 0 5px;
             }
             
-            /* Еще более компактные ширины для очень маленьких экранов */
-            th:nth-child(1),
-            td:nth-child(1) {
-                width: 20%;
-                min-width: 60px;
+            .theme-switch {
+                width: 38px;
+                height: 38px;
             }
-
-            th:nth-child(2),
-            td:nth-child(2) {
-                width: 30%;
-                min-width: 80px;
+            
+            .theme-switch i {
+                font-size: 1rem;
             }
-
-            th:nth-child(3),
-            td:nth-child(3) {
-                width: 35%;
-                min-width: 100px;
+            
+            .category-title {
+                font-size: 1.25rem;
             }
-
-            th:nth-child(4),
-            td:nth-child(4) {
-                width: 15%;
-                min-width: 60px;
+            
+            .category-description {
+                font-size: 0.875rem;
+            }
+            
+            .upload-container {
+                padding: var(--spacing-sm);
+            }
+            
+            .upload-card {
+                padding: var(--spacing-md);
+            }
+            
+            .upload-icon-wrapper {
+                width: 70px;
+                height: 70px;
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .upload-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.25rem;
+            }
+            
+            .upload-title {
+                font-size: 1.25rem;
+                margin-bottom: var(--spacing-xs);
+            }
+            
+            .upload-subtitle {
+                font-size: 0.875rem;
+                margin-bottom: var(--spacing-sm);
+            }
+            
+            th {
+                padding: 16px 12px;
+                font-size: 0.8125rem;
+            }
+            
+            td {
+                padding: 14px 12px;
+                font-size: 0.875rem;
             }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Анализ таблицы заявок</h1>
-        <p class="description">Анализ и форматирование данных из таблицы заявок</p>
-        
-        <!-- Секция загрузки файла -->
-        <div class="upload-section">
-            <h3>Загрузите файл Excel для анализа</h3>
-            <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
-            <button class="upload-btn" id="uploadBtn">
-                <i class="fas fa-file-upload"></i> Выбрать файл
-            </button>
-            <span id="fileName" style="margin-left: 10px; color: var(--text-muted);">Файл не выбран</span>
-        </div>
-        
-        <!-- Статистика -->
-        <div class="statistics" id="statistics" style="display: none;">
-            <div class="stat-item">
-                <div class="stat-value" id="totalCount">0</div>
-                <div class="stat-label">Записей всего</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="duplicateCount">0</div>
-                <div class="stat-label">Записей с дублированием</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="nonStandardCount">0</div>
-                <div class="stat-label">Не соответствуют формату</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="uniqueCount">0</div>
-                <div class="stat-label">Уникальных верных</div>
-            </div>
-        </div>
-        
-        <!-- Вкладки -->
-        <div class="tabs">
-            <div class="tab active" data-tab="duplicates">
-                <i class="fas fa-copy"></i> Дублирующиеся инициаторы
-            </div>
-            <div class="tab" data-tab="nonStandard">
-                <i class="fas fa-exclamation-triangle"></i> Не соответствующие формату
-            </div>
-            <div class="tab" data-tab="unique">
-                <i class="fas fa-check-circle"></i> Уникальные верные
-            </div>
-            <div class="tab-slider"></div>
-        </div>
-        
-        <!-- Панель управления для дублирующихся инициаторов -->
-        <div class="table-controls" id="duplicatesControls">
-            <div class="search-container">
-                <input type="text" id="duplicatesSearch" placeholder="Поиск в дублирующихся..." class="search-input">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            <button class="export-btn" id="exportDuplicates">
-                <i class="fas fa-download"></i> Экспорт в Excel
-            </button>
-        </div>
-        
-        <!-- Таблица дублирующихся инициаторов -->
-        <div class="table-container" id="duplicatesTable">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Инициатор запроса</th>
-                        <th>Тема</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="duplicatesBody">
-                    <!-- Данные будут добавлены через JavaScript -->
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Панель управления для несоответствующих формату -->
-        <div class="table-controls" id="nonStandardControls" style="display: none;">
-            <div class="search-container">
-                <input type="text" id="nonStandardSearch" placeholder="Поиск в несоответствующих..." class="search-input">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            <button class="export-btn" id="exportNonStandard">
-                <i class="fas fa-download"></i> Экспорт в Excel
-            </button>
-        </div>
-        
-        <!-- Таблица несоответствующих формату -->
-        <div class="table-container" id="nonStandardTable" style="display: none;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Инициатор запроса</th>
-                        <th>Тема</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="nonStandardBody">
-                    <!-- Данные будут добавлены через JavaScript -->
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Панель управления для уникальных верных -->
-        <div class="table-controls" id="uniqueControls" style="display: none;">
-            <div class="search-container">
-                <input type="text" id="uniqueSearch" placeholder="Поиск в уникальных..." class="search-input">
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            <button class="export-btn" id="exportUnique">
-                <i class="fas fa-download"></i> Экспорт в Excel
-            </button>
-        </div>
-        
-        <!-- Таблица уникальных верных -->
-        <div class="table-container" id="uniqueTable" style="display: none;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Инициатор запроса</th>
-                        <th>Тема</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="uniqueBody">
-                    <!-- Данные будут добавлены через JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <!-- Контейнер для уведомлений -->
-    <div class="notification-container">
-        <div class="notification" id="notification"></div>
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div class="background-effects">
+        <div class="gradient-orbs"></div>
+        <div class="gradient-orbs"></div>
     </div>
+    
+    <!-- Header -->
+    <header class="header" id="mainHeader">
+        <div class="container">
+            <!-- Кнопка "На главную" -->
+            <button class="home-btn" id="homeBtn" aria-label="На главную">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <!-- Логотип -->
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-users-viewfinder"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title">
+                        Ticket check 4me
+                        <span class="logo-version">v2.0</span>
+                    </div>
+                    <div class="logo-subtitle">Поиск дублирующихся записей в системе 4me для оптимизации трудозатрат</div>
+                </div>
+            </a>
+            
+            <!-- Переключение темы -->
+            <div class="nav-controls">
+                <button class="theme-switch" id="themeSwitch" aria-label="Переключить тему">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" aria-label="Категории">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <i class="fas fa-layer-group" aria-hidden="true"></i>
+                    <span>Категории</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav-container">
+                <!-- Скрытый input для загрузки файла -->
+                <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
+                
+                <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="Навигация по категориям">
+                    <!-- Навигационные вкладки с количеством -->
+                    <button class="nav-tab" id="tab-all" data-tab="all">
+                        <div class="nav-tab-content">
+                            <i class="fas fa-list"></i>
+                            <span>Все</span>
+                        </div>
+                        <span class="nav-tab-count" id="count-all">0</span>
+                    </button>
+                    <button class="nav-tab active" id="tab-duplicates" data-tab="duplicates">
+                        <div class="nav-tab-content">
+                            <i class="fas fa-copy"></i>
+                            <span>Дублирующиеся</span>
+                        </div>
+                        <span class="nav-tab-count" id="count-duplicates">0</span>
+                    </button>
+                    <button class="nav-tab" id="tab-nonStandard" data-tab="nonStandard">
+                        <div class="nav-tab-content">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Несоответствующие</span>
+                        </div>
+                        <span class="nav-tab-count" id="count-nonStandard">0</span>
+                    </button>
+                    <button class="nav-tab" id="tab-unique" data-tab="unique">
+                        <div class="nav-tab-content">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Уникальные</span>
+                        </div>
+                        <span class="nav-tab-count" id="count-unique">0</span>
+                    </button>
+                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента вкладок -->
+            <div id="contentContainer">
+                <!-- Контент по умолчанию до загрузки файла -->
+                <div id="uploadContainer" class="upload-container">
+                    <div class="upload-card">
+                        <div class="upload-icon-wrapper">
+                            <div class="upload-icon-circle"></div>
+                            <div class="upload-icon">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-content">
+                            <h1 class="upload-title">Загрузите файл Excel</h1>
+                            <p class="upload-subtitle">
+                                Загрузите Excel файл выгруженный из системы 4me. 
+                                Поддерживаются файлы формата .xlsx и .xls
+                            </p>
+                        </div>
+                        
+                        <button class="upload-btn-main" id="uploadBtnMain">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Выбрать файл Excel</span>
+                        </button>
+                        
+                        <div class="upload-hint">
+                            <p>Перетащите файл сюда или нажмите для выбора</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+                    Есть вопрос или предложение? Пиши в телегу
+                    <a href="https://t.me/shilov_dv" class="contact-link" target="_blank" rel="noopener noreferrer">
+                        @shilov_dv
+                    </a>
+                </p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Подключаем библиотеку для работы с Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Управление темой
+            class ThemeManager {
+                constructor() {
+                    this.themeSwitch = null;
+                    this.themeIcon = null;
+                    this.body = document.body;
+                }
+
+                init() {
+                    this.themeSwitch = document.getElementById('themeSwitch');
+                    if (this.themeSwitch) {
+                        this.themeIcon = this.themeSwitch.querySelector('i');
+                        this.setupTheme();
+                        this.bindEvents();
+                    } else {
+                        console.warn('Кнопка переключения темы не найдена');
+                    }
+                }
+
+                setupTheme() {
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    
+                    if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+                        this.setLightTheme();
+                    } else {
+                        this.setDarkTheme();
+                    }
+                }
+
+                setDarkTheme() {
+                    this.body.classList.remove('theme-light');
+                    this.body.classList.add('theme-dark');
+                    if (this.themeIcon) {
+                        this.themeIcon.classList.remove('fa-sun');
+                        this.themeIcon.classList.add('fa-moon');
+                    }
+                    localStorage.setItem('theme', 'dark');
+                }
+
+                setLightTheme() {
+                    this.body.classList.remove('theme-dark');
+                    this.body.classList.add('theme-light');
+                    if (this.themeIcon) {
+                        this.themeIcon.classList.remove('fa-moon');
+                        this.themeIcon.classList.add('fa-sun');
+                    }
+                    localStorage.setItem('theme', 'light');
+                }
+
+                toggleTheme() {
+                    if (this.body.classList.contains('theme-dark')) {
+                        this.setLightTheme();
+                    } else {
+                        this.setDarkTheme();
+                    }
+                }
+
+                bindEvents() {
+                    if (this.themeSwitch) {
+                        this.themeSwitch.addEventListener('click', () => this.toggleTheme());
+                    }
+                }
+            }
+
+            // Инициализация темы
+            const themeManager = new ThemeManager();
+            themeManager.init();
+
+            // Обработчик для кнопки "На главную"
+            const homeBtn = document.getElementById('homeBtn');
+            if (homeBtn) {
+                homeBtn.addEventListener('click', () => {
+                    window.location.href = '/';
+                });
+            }
+
             // DOM элементы
             const elements = {
                 fileInput: document.getElementById('fileInput'),
-                uploadBtn: document.getElementById('uploadBtn'),
-                fileName: document.getElementById('fileName'),
-                statistics: document.getElementById('statistics'),
-                totalCount: document.getElementById('totalCount'),
-                duplicateCount: document.getElementById('duplicateCount'),
-                nonStandardCount: document.getElementById('nonStandardCount'),
-                uniqueCount: document.getElementById('uniqueCount'),
-                tabs: document.querySelectorAll('.tab'),
-                duplicatesControls: document.getElementById('duplicatesControls'),
-                nonStandardControls: document.getElementById('nonStandardControls'),
-                uniqueControls: document.getElementById('uniqueControls'),
-                duplicatesTable: document.getElementById('duplicatesTable'),
-                nonStandardTable: document.getElementById('nonStandardTable'),
-                uniqueTable: document.getElementById('uniqueTable'),
-                duplicatesBody: document.getElementById('duplicatesBody'),
-                nonStandardBody: document.getElementById('nonStandardBody'),
-                uniqueBody: document.getElementById('uniqueBody'),
-                notification: document.getElementById('notification'),
-                duplicatesSearch: document.getElementById('duplicatesSearch'),
-                nonStandardSearch: document.getElementById('nonStandardSearch'),
-                uniqueSearch: document.getElementById('uniqueSearch'),
-                exportDuplicates: document.getElementById('exportDuplicates'),
-                exportNonStandard: document.getElementById('exportNonStandard'),
-                exportUnique: document.getElementById('exportUnique')
+                uploadBtnMain: document.getElementById('uploadBtnMain'),
+                uploadContainer: document.getElementById('uploadContainer'),
+                contentContainer: document.getElementById('contentContainer'),
+                tabs: document.querySelectorAll('.nav-tab'),
+                countAll: document.getElementById('count-all'),
+                countDuplicates: document.getElementById('count-duplicates'),
+                countNonStandard: document.getElementById('count-nonStandard'),
+                countUnique: document.getElementById('count-unique')
             };
 
             // Состояние приложения
@@ -800,27 +1538,12 @@
                 nonStandard: [],
                 unique: [],
                 allData: [],
-                messageTimeout: null
+                currentTab: 'duplicates',
+                fileLoaded: false
             };
 
             // Утилиты
             const utils = {
-                // Показать уведомление
-                showNotification: (text, isError = false) => {
-                    if (state.messageTimeout) {
-                        clearTimeout(state.messageTimeout);
-                        state.messageTimeout = null;
-                    }
-                    
-                    elements.notification.textContent = text;
-                    elements.notification.className = `notification ${isError ? 'error' : 'success'}`;
-                    elements.notification.style.display = 'block';
-                    
-                    state.messageTimeout = setTimeout(() => {
-                        elements.notification.style.display = 'none';
-                    }, 3000);
-                },
-
                 // Нормализация инициатора запроса
                 normalizeInitiator: (initiator) => {
                     if (!initiator) return null;
@@ -936,48 +1659,6 @@
                     return cleaned;
                 },
                 
-                // Поиск по таблице
-                searchTable: (searchInputId, tableBodyId) => {
-                    const searchTerm = document.getElementById(searchInputId).value.toLowerCase();
-                    const rows = document.getElementById(tableBodyId).getElementsByTagName('tr');
-                    
-                    for (let row of rows) {
-                        let rowText = '';
-                        const cells = row.getElementsByTagName('td');
-                        
-                        for (let cell of cells) {
-                            rowText += cell.textContent.toLowerCase() + ' ';
-                        }
-                        
-                        if (rowText.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                },
-                
-                // Экспорт таблицы в Excel (без столбца "Действия")
-                exportTableToExcel: (tableId, filename) => {
-                    const table = document.getElementById(tableId);
-                    
-                    // Создаем копию таблицы без столбца "Действия"
-                    const clonedTable = table.cloneNode(true);
-                    const rows = clonedTable.getElementsByTagName('tr');
-                    
-                    // Удаляем столбец "Действия" (последний столбец) из каждой строки
-                    for (let i = 0; i < rows.length; i++) {
-                        const cells = rows[i].cells;
-                        if (cells.length > 0) {
-                            rows[i].deleteCell(cells.length - 1);
-                        }
-                    }
-                    
-                    // Экспортируем клонированную таблицу
-                    const wb = XLSX.utils.table_to_book(clonedTable, {sheet: "Sheet1"});
-                    XLSX.writeFile(wb, filename);
-                },
-                
                 // Копирование текста в буфер обмена
                 copyToClipboard: (text) => {
                     return navigator.clipboard.writeText(text);
@@ -997,38 +1678,47 @@
                         state.nonStandard = state.nonStandard.filter(item => item.id !== id);
                     } else if (tableType === 'unique') {
                         state.unique = state.unique.filter(item => item.id !== id);
+                    } else if (tableType === 'all') {
+                        // Удаляем из всех категорий
+                        for (const initiator in state.duplicates) {
+                            state.duplicates[initiator] = state.duplicates[initiator].filter(item => item.id !== id);
+                            if (state.duplicates[initiator].length === 0) {
+                                delete state.duplicates[initiator];
+                            }
+                        }
+                        state.nonStandard = state.nonStandard.filter(item => item.id !== id);
+                        state.unique = state.unique.filter(item => item.id !== id);
                     }
 
                     // Удаляем запись из всех данных
                     state.allData = state.allData.filter(item => item.id !== id);
 
-                    // Обновляем отображение
-                    displayDuplicates(state.duplicates);
-                    displayNonStandard(state.nonStandard);
-                    displayUnique(state.unique);
+                    // Обновляем отображение без анимации
+                    renderCurrentTab(false, true);
 
-                    // Обновляем статистику
-                    updateStatisticsAfterDeletion();
+                    // Обновляем статистику в сайдбаре
+                    updateSidebarCounts();
                 },
 
-                // Обновление статистики после удаления
-                updateStatisticsAfterDeletion: () => {
-                    const total = state.allData.length;
-                    let duplicateCount = 0;
+                // Экспорт таблицы в Excel (исправленная версия из старого файла)
+                exportTableToExcel: (tableId, filename) => {
+                    const table = document.getElementById(tableId);
                     
-                    Object.values(state.duplicates).forEach(group => {
-                        duplicateCount += group.length;
-                    });
+                    // Создаем копию таблицы без столбца "Действия"
+                    const clonedTable = table.cloneNode(true);
+                    const rows = clonedTable.getElementsByTagName('tr');
                     
-                    elements.totalCount.textContent = total;
-                    elements.duplicateCount.textContent = duplicateCount;
-                    elements.nonStandardCount.textContent = state.nonStandard.length;
-                    elements.uniqueCount.textContent = state.unique.length;
-                    
-                    // Если все записи удалены, скрываем статистику
-                    if (total === 0) {
-                        elements.statistics.style.display = 'none';
+                    // Удаляем столбец "Действия" (последний столбец) из каждой строки
+                    for (let i = 0; i < rows.length; i++) {
+                        const cells = rows[i].cells;
+                        if (cells.length > 0) {
+                            rows[i].deleteCell(cells.length - 1);
+                        }
                     }
+                    
+                    // Экспортируем клонированную таблицу
+                    const wb = XLSX.utils.table_to_book(clonedTable, {sheet: "Sheet1"});
+                    XLSX.writeFile(wb, filename);
                 }
             };
 
@@ -1095,191 +1785,507 @@
                     state.duplicates = duplicates;
                     state.nonStandard = nonStandard;
                     state.unique = unique;
+                    state.fileLoaded = true;
                     
-                    // Обновляем статистику
-                    updateStatistics();
+                    // Скрываем контейнер загрузки
+                    elements.uploadContainer.style.display = 'none';
+                    
+                    // Обновляем статистику в сайдбаре
+                    updateSidebarCounts();
                     
                     // Отображаем данные
-                    displayDuplicates(duplicates);
-                    displayNonStandard(nonStandard);
-                    displayUnique(unique);
+                    renderCurrentTab();
                 }
             };
 
-            // Обновление статистики
-            const updateStatistics = () => {
-                const total = state.allData.length;
-                let duplicateCount = 0;
+            // Обновление счетчиков в сайдбаре
+            const updateSidebarCounts = () => {
+                // Общее количество
+                elements.countAll.textContent = state.allData.length;
                 
+                // Количество дублирующихся
+                let duplicateCount = 0;
                 Object.values(state.duplicates).forEach(group => {
                     duplicateCount += group.length;
                 });
+                elements.countDuplicates.textContent = duplicateCount;
                 
-                elements.totalCount.textContent = total;
-                elements.duplicateCount.textContent = duplicateCount;
-                elements.nonStandardCount.textContent = state.nonStandard.length;
-                elements.uniqueCount.textContent = state.unique.length;
+                // Количество несоответствующих формату
+                elements.countNonStandard.textContent = state.nonStandard.length;
                 
-                elements.statistics.style.display = 'grid';
+                // Количество уникальных
+                elements.countUnique.textContent = state.unique.length;
             };
 
-            // Обновление статистики после удаления
-            const updateStatisticsAfterDeletion = () => {
-                updateStatistics();
-            };
-
-            // Отображение дублирующихся записей
-            const displayDuplicates = (duplicates) => {
-                elements.duplicatesBody.innerHTML = '';
+            // Рендер текущей вкладки
+            const renderCurrentTab = (forceAnimation = false, skipAnimation = false) => {
+                if (!state.fileLoaded) return;
                 
-                if (Object.keys(duplicates).length === 0) {
-                    elements.duplicatesBody.innerHTML = `
+                let content = '';
+                
+                // Создаем заголовок
+                const tabTitles = {
+                    all: 'Все записи',
+                    duplicates: 'Дублирующиеся инициаторы',
+                    nonStandard: 'Не соответствующие формату',
+                    unique: 'Уникальные верные'
+                };
+                
+                const tabDescriptions = {
+                    all: 'Все записи из загруженного файла',
+                    duplicates: 'Записи с повторяющимися инициаторами запроса',
+                    nonStandard: 'Записи, не соответствующие стандартному формату',
+                    unique: 'Уникальные записи, соответствующие формату'
+                };
+                
+                const tabIcons = {
+                    all: 'fas fa-list',
+                    duplicates: 'fas fa-copy',
+                    nonStandard: 'fas fa-exclamation-triangle',
+                    unique: 'fas fa-check-circle'
+                };
+                
+                const tabColors = {
+                    all: 'var(--gradient-info)',
+                    duplicates: 'var(--gradient-warning)',
+                    nonStandard: 'var(--gradient-error)',
+                    unique: 'var(--gradient-success)'
+                };
+                
+                // Добавляем анимацию только если не пропускать анимацию
+                const animationClass = (forceAnimation || !skipAnimation) ? 'animation: fadeInUp 0.6s ease-out;' : '';
+                
+                content += `
+                    <div class="category-header" style="${animationClass}">
+                        <div class="category-icon" style="background: ${tabColors[state.currentTab]};">
+                            <i class="${tabIcons[state.currentTab]}"></i>
+                        </div>
+                        <div class="category-info">
+                            <h1 class="category-title">${tabTitles[state.currentTab]}</h1>
+                            <p class="category-description">${tabDescriptions[state.currentTab]}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Создаем панель управления
+                content += `
+                    <div class="controls-panel" style="${animationClass}">
+                        <div class="controls-content">
+                            <div class="search-container">
+                                <input type="text" id="${state.currentTab}Search" placeholder="Поиск по ${state.currentTab === 'all' ? 'всем записям' : state.currentTab === 'duplicates' ? 'дублирующимся' : state.currentTab === 'nonStandard' ? 'несоответствующим' : 'уникальным'} записям..." class="search-input">
+                                <i class="fas fa-search search-icon"></i>
+                            </div>
+                            <button class="export-btn" id="export${state.currentTab.charAt(0).toUpperCase() + state.currentTab.slice(1)}">
+                                <i class="fas fa-download"></i> Экспорт в Excel
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Создаем таблицу
+                let tableContent = '';
+                
+                // Получаем данные для текущей вкладки
+                let currentData = [];
+                let isEmpty = false;
+                
+                if (state.currentTab === 'all') {
+                    currentData = state.allData;
+                    isEmpty = currentData.length === 0;
+                } else if (state.currentTab === 'duplicates') {
+                    currentData = [];
+                    Object.values(state.duplicates).forEach(group => {
+                        currentData.push(...group);
+                    });
+                    isEmpty = currentData.length === 0;
+                } else if (state.currentTab === 'nonStandard') {
+                    currentData = state.nonStandard;
+                    isEmpty = currentData.length === 0;
+                } else if (state.currentTab === 'unique') {
+                    currentData = state.unique;
+                    isEmpty = currentData.length === 0;
+                }
+                
+                if (isEmpty) {
+                    let emptyMessage = '';
+                    if (state.currentTab === 'all') {
+                        emptyMessage = 'Нет записей';
+                    } else if (state.currentTab === 'duplicates') {
+                        emptyMessage = 'Дублирующихся записей не найдено';
+                    } else if (state.currentTab === 'nonStandard') {
+                        emptyMessage = 'Нет записей, не соответствующих формату';
+                    } else if (state.currentTab === 'unique') {
+                        emptyMessage = 'Уникальных верных записей не найдено';
+                    }
+                    
+                    tableContent = `
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
-                                Дублирующихся записей не найдено
+                            <td colspan="4" style="text-align: center; padding: 60px; color: var(--color-text-tertiary);">
+                                <i class="fas fa-inbox" style="font-size: 2.5rem; margin-bottom: 16px; opacity: 0.5;"></i>
+                                <p style="font-size: 1.125rem; font-weight: 500;">${emptyMessage}</p>
                             </td>
                         </tr>
                     `;
                 } else {
-                    Object.keys(duplicates).forEach(initiator => {
-                        // Добавляем заголовок группы
-                        const groupHeader = document.createElement('tr');
-                        groupHeader.className = 'group-header';
-                        groupHeader.innerHTML = `
-                            <td colspan="4">
-                                <i class="fas fa-users" style="margin-right: 8px;"></i>
-                                Инициатор: ${initiator} (${duplicates[initiator].length} записи)
-                            </td>
-                        `;
-                        elements.duplicatesBody.appendChild(groupHeader);
-                        
-                        // Добавляем записи группы
-                        duplicates[initiator].forEach(request => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>
-                                    <button class="id-button" data-id="${request.id}">${request.id}</button>
-                                </td>
-                                <td>
-                                    <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
-                                </td>
-                                <td>${request.topic}</td>
-                                <td>
-                                    <button class="delete-btn" data-id="${request.id}" data-table="duplicates">
-                                        <i class="fas fa-trash"></i> Удалить
-                                    </button>
-                                </td>
+                    if (state.currentTab === 'all') {
+                        currentData.forEach(request => {
+                            // Определяем, к какой категории относится запись
+                            let tableType = 'all';
+                            let found = false;
+                            
+                            // Проверяем дублирующиеся
+                            for (const initiator in state.duplicates) {
+                                if (state.duplicates[initiator].some(item => item.id === request.id)) {
+                                    tableType = 'duplicates';
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!found && state.nonStandard.some(item => item.id === request.id)) {
+                                tableType = 'nonStandard';
+                            } else if (!found && state.unique.some(item => item.id === request.id)) {
+                                tableType = 'unique';
+                            }
+                            
+                            // Очищаем инициатора для отображения
+                            const cleanInitiator = utils.cleanInitiatorForDisplay(request.initiator);
+                            
+                            tableContent += `
+                                <tr>
+                                    <td>
+                                        <button class="id-button" data-id="${request.id}">
+                                            ${request.id}
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="initiator-button" data-initiator="${cleanInitiator}">
+                                            ${cleanInitiator}
+                                        </button>
+                                    </td>
+                                    <td>${request.topic}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="delete-btn" data-id="${request.id}" data-table="${tableType}">
+                                                Удалить
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
                             `;
-                            elements.duplicatesBody.appendChild(row);
                         });
-                    });
+                    } else if (state.currentTab === 'duplicates') {
+                        Object.keys(state.duplicates).forEach(initiator => {
+                            // Добавляем заголовок группы
+                            tableContent += `
+                                <tr class="group-header">
+                                    <td colspan="4">
+                                        <i class="fas fa-users" style="margin-right: 10px;"></i>
+                                        Инициатор: ${initiator} (${state.duplicates[initiator].length} записи)
+                                    </td>
+                                </tr>
+                            `;
+                            
+                            // Добавляем записи группы
+                            state.duplicates[initiator].forEach(request => {
+                                tableContent += `
+                                    <tr>
+                                        <td>
+                                            <button class="id-button" data-id="${request.id}">
+                                                ${request.id}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="initiator-button" data-initiator="${request.cleanInitiator}">
+                                                ${request.cleanInitiator}
+                                            </button>
+                                        </td>
+                                        <td>${request.topic}</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <button class="delete-btn" data-id="${request.id}" data-table="duplicates">
+                                                    Удалить
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        });
+                    } else if (state.currentTab === 'nonStandard') {
+                        state.nonStandard.forEach(request => {
+                            tableContent += `
+                                <tr>
+                                    <td>
+                                        <button class="id-button" data-id="${request.id}">
+                                            ${request.id}
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="initiator-button" data-initiator="${request.cleanInitiator}">
+                                            ${request.cleanInitiator}
+                                        </button>
+                                    </td>
+                                    <td>${request.topic}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="delete-btn" data-id="${request.id}" data-table="nonStandard">
+                                                Удалить
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    } else if (state.currentTab === 'unique') {
+                        state.unique.forEach(request => {
+                            tableContent += `
+                                <tr>
+                                    <td>
+                                        <button class="id-button" data-id="${request.id}">
+                                            ${request.id}
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="initiator-button" data-initiator="${request.cleanInitiator}">
+                                            ${request.cleanInitiator}
+                                        </button>
+                                    </td>
+                                    <td>${request.topic}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <button class="delete-btn" data-id="${request.id}" data-table="unique">
+                                                Удалить
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
                 }
+                
+                const tableAnimationClass = (forceAnimation || !skipAnimation) ? 'animation: fadeInUp 1s ease-out;' : '';
+                
+                content += `
+                    <div class="table-container" style="${tableAnimationClass}">
+                        <table id="${state.currentTab}Table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Инициатор запроса</th>
+                                    <th>Тема</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="${state.currentTab}Body">
+                                ${tableContent}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                elements.contentContainer.innerHTML = content;
+                
+                // Добавляем обработчики событий для новой таблицы
+                setupTableEventListeners();
             };
 
-            // Отображение несоответствующих формату записей
-            const displayNonStandard = (nonStandard) => {
-                elements.nonStandardBody.innerHTML = '';
-                
-                if (nonStandard.length === 0) {
-                    elements.nonStandardBody.innerHTML = `
-                        <tr>
-                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
-                                Нет записей, не соответствующих формату
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    nonStandard.forEach(request => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>
-                                <button class="id-button" data-id="${request.id}">${request.id}</button>
-                            </td>
-                            <td>
-                                <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
-                            </td>
-                            <td>${request.topic}</td>
-                            <td>
-                                <button class="delete-btn" data-id="${request.id}" data-table="nonStandard">
-                                    <i class="fas fa-trash"></i> Удалить
-                                </button>
-                            </td>
-                        `;
-                        elements.nonStandardBody.appendChild(row);
+            // Настройка обработчиков событий для таблицы
+            const setupTableEventListeners = () => {
+                // Поиск в таблице
+                const searchInput = document.getElementById(`${state.currentTab}Search`);
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => {
+                        const searchTerm = searchInput.value.toLowerCase();
+                        const rows = document.getElementById(`${state.currentTab}Body`).getElementsByTagName('tr');
+                        let visibleRows = 0;
+                        
+                        for (let row of rows) {
+                            // Пропускаем заголовки групп
+                            if (row.classList.contains('group-header')) {
+                                let groupHasVisibleRows = false;
+                                let nextRow = row.nextElementSibling;
+                                
+                                // Проверяем все строки после заголовка группы
+                                while (nextRow && !nextRow.classList.contains('group-header')) {
+                                    let rowText = '';
+                                    const cells = nextRow.getElementsByTagName('td');
+                                    
+                                    for (let cell of cells) {
+                                        rowText += cell.textContent.toLowerCase() + ' ';
+                                    }
+                                    
+                                    if (rowText.includes(searchTerm)) {
+                                        groupHasVisibleRows = true;
+                                        nextRow.style.display = '';
+                                        visibleRows++;
+                                    } else {
+                                        nextRow.style.display = 'none';
+                                    }
+                                    
+                                    nextRow = nextRow.nextElementSibling;
+                                }
+                                
+                                // Показываем или скрываем заголовок группы
+                                if (groupHasVisibleRows || searchTerm === '') {
+                                    row.style.display = '';
+                                    visibleRows++;
+                                } else {
+                                    row.style.display = 'none';
+                                }
+                            } else {
+                                let rowText = '';
+                                const cells = row.getElementsByTagName('td');
+                                
+                                for (let cell of cells) {
+                                    rowText += cell.textContent.toLowerCase() + ' ';
+                                }
+                                
+                                if (rowText.includes(searchTerm)) {
+                                    row.style.display = '';
+                                    visibleRows++;
+                                } else {
+                                    row.style.display = 'none';
+                                }
+                            }
+                        }
+                        
+                        // Если нет видимых строк и есть поисковый запрос, показываем сообщение
+                        if (visibleRows === 0 && searchTerm !== '') {
+                            const tbody = document.getElementById(`${state.currentTab}Body`);
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 60px; color: var(--color-text-tertiary);">
+                                        <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 16px; opacity: 0.5;"></i>
+                                        <p style="font-size: 1.125rem; font-weight: 500;">По запросу "${searchTerm}" ничего не найдено</p>
+                                    </td>
+                                </tr>
+                            `;
+                        }
                     });
                 }
-            };
-
-            // Отображение уникальных верных записей
-            const displayUnique = (unique) => {
-                elements.uniqueBody.innerHTML = '';
                 
-                if (unique.length === 0) {
-                    elements.uniqueBody.innerHTML = `
-                        <tr>
-                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
-                                Уникальных верных записей не найдено
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    unique.forEach(request => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>
-                                <button class="id-button" data-id="${request.id}">${request.id}</button>
-                            </td>
-                            <td>
-                                <button class="initiator-button" data-initiator="${request.cleanInitiator}">${request.cleanInitiator}</button>
-                            </td>
-                            <td>${request.topic}</td>
-                            <td>
-                                <button class="delete-btn" data-id="${request.id}" data-table="unique">
-                                    <i class="fas fa-trash"></i> Удалить
-                                </button>
-                            </td>
-                        `;
-                        elements.uniqueBody.appendChild(row);
+                // Экспорт
+                const exportBtn = document.getElementById(`export${state.currentTab.charAt(0).toUpperCase() + state.currentTab.slice(1)}`);
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        let filename;
+                        
+                        if (state.currentTab === 'all') {
+                            filename = 'Все_записи.xlsx';
+                        } else if (state.currentTab === 'duplicates') {
+                            filename = 'Дублирующиеся_записи.xlsx';
+                        } else if (state.currentTab === 'nonStandard') {
+                            filename = 'Несоответствующие_формату.xlsx';
+                        } else if (state.currentTab === 'unique') {
+                            filename = 'Уникальные_верные.xlsx';
+                        }
+                        
+                        utils.exportTableToExcel(`${state.currentTab}Table`, filename);
+                    });
+                }
+                
+                // Обработка кликов по кнопкам в таблице
+                const tableBody = document.getElementById(`${state.currentTab}Body`);
+                if (tableBody) {
+                    tableBody.addEventListener('click', function(e) {
+                        // Обработка клика по кнопке ID
+                        if (e.target.classList.contains('id-button')) {
+                            const id = e.target.getAttribute('data-id');
+                            if (id) {
+                                window.open(`https://sc-tech-solutions.itsm.mos.ru/requests/${id}`, '_blank');
+                            }
+                        }
+                        
+                        // Обработка клика по кнопке инициатора
+                        if (e.target.classList.contains('initiator-button')) {
+                            const button = e.target.closest('.initiator-button');
+                            const initiator = button.getAttribute('data-initiator');
+                            const originalText = button.textContent;
+                            
+                            utils.copyToClipboard(initiator)
+                                .then(() => {
+                                    // Меняем цвет кнопки и текст
+                                    button.classList.add('copied');
+                                    button.textContent = 'Скопировано';
+                                    
+                                    // Возвращаем обратно через 1.5 секунды
+                                    setTimeout(() => {
+                                        button.classList.remove('copied');
+                                        button.textContent = originalText;
+                                    }, 1500);
+                                })
+                                .catch(err => {
+                                    console.error('Ошибка копирования: ', err);
+                                });
+                        }
+                        
+                        // Обработка клика по кнопке удаления
+                        if (e.target.closest('.delete-btn')) {
+                            const button = e.target.closest('.delete-btn');
+                            const id = button.getAttribute('data-id');
+                            const tableType = button.getAttribute('data-table');
+                            
+                            // Удаляем запись сразу без подтверждения
+                            utils.removeRecord(id, tableType);
+                        }
                     });
                 }
             };
 
             // Обработчики событий
             const setupEventListeners = () => {
-                // Загрузка файла
-                elements.uploadBtn.addEventListener('click', () => {
+                // Загрузка файла через кнопку в основном контенте
+                elements.uploadBtnMain.addEventListener('click', () => {
                     elements.fileInput.click();
+                });
+                
+                // Drag and drop для загрузки файла
+                elements.uploadContainer.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const uploadCard = document.querySelector('.upload-card');
+                    if (uploadCard) {
+                        uploadCard.style.borderColor = 'var(--primary-400)';
+                        uploadCard.style.boxShadow = 'var(--shadow-2xl)';
+                        uploadCard.style.transform = 'translateY(-4px)';
+                    }
+                });
+                
+                elements.uploadContainer.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const uploadCard = document.querySelector('.upload-card');
+                    if (uploadCard) {
+                        uploadCard.style.borderColor = 'var(--color-border)';
+                        uploadCard.style.boxShadow = 'var(--shadow-xl)';
+                        uploadCard.style.transform = 'translateY(0)';
+                    }
+                });
+                
+                elements.uploadContainer.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const uploadCard = document.querySelector('.upload-card');
+                    if (uploadCard) {
+                        uploadCard.style.borderColor = 'var(--color-border)';
+                        uploadCard.style.boxShadow = 'var(--shadow-xl)';
+                        uploadCard.style.transform = 'translateY(0)';
+                    }
+                    
+                    if (e.dataTransfer.files.length) {
+                        const file = e.dataTransfer.files[0];
+                        if (file.name.match(/\.(xlsx|xls)$/i)) {
+                            processFile(file);
+                        }
+                    }
                 });
                 
                 elements.fileInput.addEventListener('change', function() {
                     if (this.files.length > 0) {
-                        elements.fileName.textContent = this.files[0].name;
-                        
                         const file = this.files[0];
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            try {
-                                const data = new Uint8Array(e.target.result);
-                                const workbook = XLSX.read(data, {type: 'array'});
-                                
-                                // Предполагаем, что данные находятся на первом листе
-                                const firstSheetName = workbook.SheetNames[0];
-                                const worksheet = workbook.Sheets[firstSheetName];
-                                
-                                // Преобразуем лист в JSON
-                                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                                
-                                // Обрабатываем данные
-                                dataProcessor.processData(jsonData);
-                                utils.showNotification('Файл успешно загружен и обработан');
-                            } catch (error) {
-                                console.error('Ошибка при обработке файла:', error);
-                                utils.showNotification('Произошла ошибка при обработке файла: ' + error.message, true);
-                            }
-                        };
-                        
-                        reader.readAsArrayBuffer(file);
+                        processFile(file);
                     }
                 });
                 
@@ -1292,95 +2298,53 @@
                         this.classList.add('active');
                         
                         const tabName = this.getAttribute('data-tab');
+                        state.currentTab = tabName;
                         
-                        // Скрываем все таблицы и панели управления
-                        elements.duplicatesControls.style.display = 'none';
-                        elements.nonStandardControls.style.display = 'none';
-                        elements.uniqueControls.style.display = 'none';
-                        elements.duplicatesTable.style.display = 'none';
-                        elements.nonStandardTable.style.display = 'none';
-                        elements.uniqueTable.style.display = 'none';
-                        
-                        // Показываем соответствующие таблицу и панель управления
-                        if (tabName === 'duplicates') {
-                            elements.duplicatesControls.style.display = 'flex';
-                            elements.duplicatesTable.style.display = 'block';
-                        } else if (tabName === 'nonStandard') {
-                            elements.nonStandardControls.style.display = 'flex';
-                            elements.nonStandardTable.style.display = 'block';
-                        } else if (tabName === 'unique') {
-                            elements.uniqueControls.style.display = 'flex';
-                            elements.uniqueTable.style.display = 'block';
+                        // Обновляем отображение только если файл загружен
+                        if (state.fileLoaded) {
+                            renderCurrentTab(true);
                         }
                     });
                 });
+            };
+            
+            // Функция обработки файла
+            const processFile = (file) => {
+                const reader = new FileReader();
                 
-                // Поиск в таблицах
-                elements.duplicatesSearch.addEventListener('input', () => {
-                    utils.searchTable('duplicatesSearch', 'duplicatesBody');
-                });
-                
-                elements.nonStandardSearch.addEventListener('input', () => {
-                    utils.searchTable('nonStandardSearch', 'nonStandardBody');
-                });
-                
-                elements.uniqueSearch.addEventListener('input', () => {
-                    utils.searchTable('uniqueSearch', 'uniqueBody');
-                });
-                
-                // Экспорт таблиц (без столбца "Действия")
-                elements.exportDuplicates.addEventListener('click', () => {
-                    utils.exportTableToExcel('duplicatesTable', 'Дублирующиеся_записи.xlsx');
-                });
-                
-                elements.exportNonStandard.addEventListener('click', () => {
-                    utils.exportTableToExcel('nonStandardTable', 'Несоответствующие_формату.xlsx');
-                });
-                
-                elements.exportUnique.addEventListener('click', () => {
-                    utils.exportTableToExcel('uniqueTable', 'Уникальные_верные.xlsx');
-                });
-                
-                // Обработка кликов по кнопкам ID, инициатора и удаления
-                document.addEventListener('click', function(e) {
-                    // Обработка клика по кнопке ID
-                    if (e.target.classList.contains('id-button')) {
-                        const id = e.target.getAttribute('data-id');
-                        if (id) {
-                            window.open(`https://sc-tech-solutions.itsm.mos.ru/requests/${id}`, '_blank');
-                        }
-                    }
-                    
-                    // Обработка клика по кнопке инициатора
-                    if (e.target.classList.contains('initiator-button')) {
-                        const initiator = e.target.getAttribute('data-initiator');
-                        utils.copyToClipboard(initiator)
-                            .then(() => {
-                                utils.showNotification('Инициатор запроса скопирован в буфер обмена');
-                            })
-                            .catch(err => {
-                                console.error('Ошибка копирования: ', err);
-                                utils.showNotification('Не удалось скопировать инициатора запроса', true);
-                            });
-                    }
-                    
-                    // Обработка клика по кнопке удаления
-                    if (e.target.closest('.delete-btn')) {
-                        const button = e.target.closest('.delete-btn');
-                        const id = button.getAttribute('data-id');
-                        const tableType = button.getAttribute('data-table');
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
                         
-                        if (confirm('Вы уверены, что хотите удалить эту запись?')) {
-                            utils.removeRecord(id, tableType);
-                            utils.showNotification('Запись успешно удалена');
-                        }
+                        // Предполагаем, что данные находятся на первом листе
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        
+                        // Преобразуем лист в JSON
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                        
+                        // Обрабатываем данные
+                        dataProcessor.processData(jsonData);
+                    } catch (error) {
+                        console.error('Ошибка при обработке файла:', error);
+                        alert('Произошла ошибка при обработке файла. Убедитесь, что файл имеет правильный формат Excel.');
                     }
-                });
+                };
+                
+                reader.onerror = function() {
+                    alert('Ошибка при чтении файла. Попробуйте еще раз.');
+                };
+                
+                reader.readAsArrayBuffer(file);
             };
 
             // Инициализация приложения
             const init = () => {
                 setupEventListeners();
+                
+                // Инициализируем счетчики в сайдбаре
+                updateSidebarCounts();
             };
 
             // Запуск приложения
