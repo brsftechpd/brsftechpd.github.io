@@ -2,12 +2,12 @@
 const toolsConfig = [
     {
         id: 'uuid',
-        version: 'v1.2',
+        version: 'v2.0',
         iconClass: 'uuid',
         icon: 'fas fa-fingerprint',
         title: 'UUID Tools',
         description: 'Поиск и анализ данных на основе пользовательского UUID, Паспорта и КИГ',
-        link: '/format_uuid',
+        link: '/uuid',
         outdated: false
     },
     {
