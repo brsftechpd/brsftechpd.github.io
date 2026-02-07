@@ -27,18 +27,35 @@
     --gradient-pink: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
     --gradient-cyan: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
     --gradient-logo: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #f59e0b);
-    
+    --gradient-yandex: linear-gradient(135deg, #FFCC00 0%, #FF6600 100%);
+    --gradient-violet: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    --gradient-indigo: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --gradient-gray: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    --gradient-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+
     /* Colors - Dark Theme (Default) */
     --color-bg: #0f131c;
     --color-surface: #121212;
-    --color-card: #1a1a1a;
-    --color-card-hover: #222222;
+    --color-card: #1a1a2e;
+    --color-card-hover: #1f2937;
     --color-text-primary: #f8fafc;
     --color-text-secondary: #cbd5e1;
     --color-text-tertiary: #94a3b8;
     --color-border: #2d2d3a;
     --color-border-hover: #3d3d4a;
-    --color-row-hover: rgba(255, 255, 255, 0.03);
+    --color-row-hover: rgba(255, 255, 255, 0.05);
+    
+    /* Sidebar specific for dark theme */
+    --sidebar-bg: linear-gradient(145deg, #1e1e2e 0%, #1a1a2e 100%);
+    --sidebar-border: #2d2d3a;
+    --sidebar-text: #cbd5e1;
+    --sidebar-hover: rgba(255, 255, 255, 0.05);
+    
+    /* Tab specific for dark theme */
+    --tab-bg: #1a1a2e;
+    --tab-border: #2d2d3a;
+    --tab-active-bg: #1f2937;
     
     /* Shadows */
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -88,6 +105,17 @@
     --color-border: #e2e8f0;
     --color-border-hover: #cbd5e1;
     --color-row-hover: rgba(0, 0, 0, 0.02);
+    
+    /* Sidebar specific for light theme */
+    --sidebar-bg: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+    --sidebar-border: #e2e8f0;
+    --sidebar-text: #475569;
+    --sidebar-hover: rgba(0, 0, 0, 0.05);
+    
+    /* Tab specific for light theme */
+    --tab-bg: #ffffff;
+    --tab-border: #e2e8f0;
+    --tab-active-bg: #f8fafc;
     
     --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     --gradient-surface: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
