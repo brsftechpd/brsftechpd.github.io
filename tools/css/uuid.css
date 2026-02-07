@@ -1,12 +1,3 @@
-/* UUID Tools - Оптимизированные стили */
-
-/* Основной контейнер */
-.uuid-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
-}
-
 /* Вкладки UUID в Sidebar (дополнительные стили) */
 .uuid-tabs-navigation {
     display: flex;
@@ -595,9 +586,6 @@ input[type="text"].error {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-    .uuid-container {
-        padding: 0.75rem;
-    }
     
     .tabs-content {
         padding: 1rem;
