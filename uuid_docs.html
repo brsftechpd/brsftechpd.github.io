@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - UUID Tools</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    <link rel="stylesheet" href="tools/css/uuid.css">
+    <style>
+        /* Дополнительные стили для инструкций */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Переопределение для статистики в инструкциях */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Вкладки инструкций -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор инструмента
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="uuid">
+                            <i class="fas fa-fingerprint"></i> Работа с UUID
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="kig">
+                            <i class="fas fa-id-card"></i> Поиск по КИГ
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="passport">
+                            <i class="fas fa-passport"></i> Проверка паспорта
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="utc">
+                            <i class="fas fa-clock"></i> UTC время
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="stats">
+                            <i class="fas fa-chart-bar"></i> Статистика
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+
+                    <!-- Убираем статистику для инструкций -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;">
+                        <!-- Блок статистики скрыт для инструкций -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента инструкций -->
+            <div class="tabs-content">
+                <!-- Раздел: Обзор инструмента -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>UUID Tools — это веб-инструмент для выполнения типовых операций с идентификаторами пользователей (UUID) и связанными данными.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Основные функции</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент предоставляет быстрый доступ к следующим функциям:</p>
+                            <ul>
+                                <li><strong>Форматирование UUID</strong> для S3-путей</li>
+                                <li><strong>Аналитические запросы</strong> в OpenSearch</li>
+                                <li><strong>Поиск профилей</strong> по паспорту и КИГ</li>
+                                <li><strong>Служебные функции</strong> (UTC время, статистика)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Обязательно:</strong> Для всех операций с UUID требуется 23-значный числовой идентификатор.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Базовый сценарий работы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>1. Введите UUID в основное поле</p>
+                            <p>2. Используйте одну из кнопок для нужного действия</p>
+                            <p>3. Результат автоматически копируется в буфер обмена</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Работа с UUID -->
+                <div class="tab-content instruction-content" id="tab-uuid">
+                    <div class="section-header">
+                        <h2>Работа с UUID</h2>
+                        <p>Форматирование 23-значных UUID для использования в S3-путях и аналитических запросах.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Ввод UUID</h3>
+                        </div>
+                        <div class="step-description">
+                            <p><strong>Обязательно:</strong> Введите 23 цифры без пробелов и других символов.</p>
+                            <p>Поле автоматически отфильтрует нецифровые символы.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример поля ввода:</div>
+                            <div class="input-with-button static-example">
+                                <div class="input-group">
+                                    <input type="tel" value="12345678901234567890123" readonly>
+                                    <div class="input-icon">
+                                        <i class="fas fa-hashtag"></i>
+                                    </div>
+                                </div>
+                                <button class="format-btn-compact" title="Форматировать">
+                                    <i class="fas fa-wand-magic-sparkles"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="warning-note">
+                            <p><i class="fas fa-exclamation-triangle"></i> <strong>Ошибка:</strong> Если введено меньше или больше 23 цифр, поле подсветится красным.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Выбор типа объекта</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Укажите тип объекта перед форматированием:</p>
+                            <ul>
+                                <li><strong>Профиль</strong> → префикс: <code>/s3b-pudsmmu-cached-prod/</code></li>
+                                <li><strong>Фото</strong> → префикс: <code>/s3b-pudsmmu-prod/</code></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Переключатель:</div>
+                            <div class="toggle-container static-example">
+                                <div class="toggle-option active">
+                                    <i class="fas fa-user"></i>
+                                    <span>Профиль</span>
+                                </div>
+                                <div class="toggle-option">
+                                    <i class="fas fa-image"></i>
+                                    <span>Фото</span>
+                                </div>
+                                <div class="toggle-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Форматирование и копирование</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>После ввода UUID нажмите кнопку форматирования. Результат появится ниже и автоматически скопируется.</p>
+                            <p>Для повторного копирования кликните по результату или нажмите кнопку копирования.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Результат форматирования:</div>
+                            <div class="result-container static-example">
+                                <div class="result-label">Результат:</div>
+                                <div class="result-wrapper">
+                                    <div class="result">/s3b-pudsmmu-cached-prod/1234/5678/9012/3456/7890/123/</div>
+                                    <button class="copy-btn" title="Копировать">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <h3 class="step-title">Аналитические запросы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>После ввода UUID используйте кнопки для быстрого перехода к аналитике в OpenSearch:</p>
+                            <ul>
+                                <li><strong>Сервисы мобильного приложения</strong> — проверки в мобильном приложении</li>
+                                <li><strong>Запросы в ММЦ</strong> — запросы в Многофункциональный Миграционный Центр</li>
+                                <li><strong>Остальные проверки</strong> — дополнительные проверки и сервисы</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Примеры кнопок запросов:</div>
+                            <div class="check-buttons static-example">
+                                <button class="check-btn auth-group-btn">
+                                    <i class="fas fa-user-check"></i> Аутентификация
+                                </button>
+                                <button class="check-btn geo-group-btn">
+                                    <i class="fas fa-map-marker-alt"></i> Геолокация
+                                </button>
+                                <button class="check-btn notification-btn">
+                                    <i class="fas fa-bell"></i> Уведомления
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Все запросы открываются в новых вкладках браузера.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Поиск по КИГ -->
+                <div class="tab-content instruction-content" id="tab-kig">
+                    <div class="section-header">
+                        <h2>Поиск по КИГ</h2>
+                        <p>Поиск профилей по номеру Карты Иностранного Гражданина.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Ввод номера КИГ</h3>
+                        </div>
+                        <div class="step-description">
+                            <p><strong>Обязательно:</strong> 9 символов в формате <code>AA1234567</code> или <code>AB1234567</code></p>
+                            <p>Поле автоматически конвертирует русские буквы в латинские и принимает только допустимые символы.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Поле ввода КИГ:</div>
+                            <div class="input-with-button static-example">
+                                <div class="input-group">
+                                    <input type="text" value="AA1234567" readonly>
+                                    <div class="input-icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                </div>
+                                <button class="format-btn-compact" title="Найти">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Формат:</strong> Допустимы только префиксы AA или AB, затем 7 цифр.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Поиск</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Нажмите кнопку поиска или клавишу Enter. Откроется новая вкладка с результатами в OpenSearch.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Проверка паспорта -->
+                <div class="tab-content instruction-content" id="tab-passport">
+                    <div class="section-header">
+                        <h2>Проверка паспорта</h2>
+                        <p>Проверка паспортных данных в системе.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Ввод номера паспорта</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Введите номер паспорта в соответствующее поле. Поле принимает любые символы без ограничений.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Поле ввода паспорта:</div>
+                            <div class="input-with-button static-example">
+                                <div class="input-group">
+                                    <input type="text" value="1234567890" readonly>
+                                    <div class="input-icon">
+                                        <i class="fas fa-passport"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Выполнение проверок</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Используйте кнопки для различных проверок:</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Кнопки проверок:</div>
+                            <div class="passport-buttons-grid static-example">
+                                <button class="passport-btn passport-registered-btn">
+                                    <i class="fas fa-check-circle"></i> Регистрация
+                                </button>
+                                <button class="passport-btn passport-profile-btn">
+                                    <i class="fas fa-search"></i> Найти профиль
+                                </button>
+                                <button class="passport-btn passport-missing-btn">
+                                    <i class="fas fa-times-circle"></i> Отсутствие
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: UTC время -->
+                <div class="tab-content instruction-content" id="tab-utc">
+                    <div class="section-header">
+                        <h2>UTC время</h2>
+                        <p>Получение текущего времени в формате UTC.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Получение времени</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Нажмите кнопку для получения текущего UTC времени.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Кнопка получения времени:</div>
+                            <button class="utc-btn static-example">
+                                <i class="fas fa-clock"></i> Получить UTC время
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Результаты</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>После нажатия кнопки появятся два формата времени:</p>
+                            <ul>
+                                <li><strong>С миллисекундами</strong> — автоматически копируется в буфер</li>
+                                <li><strong>Без миллисекунд</strong> — упрощенный формат</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Результаты времени:</div>
+                            <div class="result-container static-example">
+                                <div class="result-label">С миллисекундами:</div>
+                                <div class="result-wrapper">
+                                    <div class="result">2023-12-01T14:30:45.123456Z</div>
+                                    <button class="copy-btn" title="Копировать">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="result-container static-example">
+                                <div class="result-label">Без миллисекунд:</div>
+                                <div class="result-wrapper">
+                                    <div class="result">2023-12-01T14:30:45Z</div>
+                                    <button class="copy-btn" title="Копировать">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Статистика -->
+                <div class="tab-content instruction-content" id="tab-stats">
+                    <div class="section-header">
+                        <h2>Статистика</h2>
+                        <p>Отслеживание активности работы с UUID.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Что отслеживается</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Статистика ведется за текущие сутки и включает:</p>
+                            <ul>
+                                <li><strong>Всего операций</strong> — общее количество форматирований</li>
+                                <li><strong>Уникальных UUID</strong> — количество различных UUID</li>
+                                <li><strong>Повторных</strong> — количество повторных операций</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Блок статистики:</div>
+                            <div class="sidebar-stat-card static-example">
+                                <div class="sidebar-stats-header">
+                                    <div class="sidebar-stats-title">
+                                        <i class="fas fa-chart-bar"></i>
+                                        <span>Статистика</span>
+                                    </div>
+                                </div>
+                                <div class="sidebar-stats-description">
+                                    Статистика отформатированных UUID за сутки
+                                </div>
+                                <ul class="sidebar-stats-list">
+                                    <li class="sidebar-stat-item">
+                                        <span class="sidebar-stat-label">Всего:</span>
+                                        <span class="sidebar-stat-value">24</span>
+                                    </li>
+                                    <li class="sidebar-stat-item">
+                                        <span class="sidebar-stat-label">Уникальных:</span>
+                                        <span class="sidebar-stat-value">18</span>
+                                    </li>
+                                    <li class="sidebar-stat-item">
+                                        <span class="sidebar-stat-label">Повторных:</span>
+                                        <span class="sidebar-stat-value">6</span>
+                                    </li>
+                                </ul>
+                                <button class="sidebar-clear-stats-btn">
+                                    <i class="fas fa-trash"></i> Очистить статистику
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Очистка статистики</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Статистика автоматически очищается в начале новых суток.</p>
+                            <p>Для ручной очистки нажмите кнопку "Очистить статистику".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по использованию</h2>
+                        <p>Полезные рекомендации для эффективной работы.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Быстрая вставка</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Вставьте текст с UUID в любое место страницы — инструмент автоматически распознает 23-значный номер.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Горячие клавиши</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li><strong>Enter</strong> в поле UUID — форматирование</li>
+                                <li><strong>Enter</strong> в поле паспорта — проверка регистрации</li>
+                                <li><strong>Enter</strong> в поле КИГ — поиск</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Используйте переключатель профиль/фото для правильного префикса</li>
+                                <li>Аналитические запросы открываются в новых вкладках — можно работать параллельно</li>
+                                <li>Результаты автоматически копируются в буфер обмена</li>
+                                <li>Очищайте статистику в конце рабочего дня</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Всегда проверяйте, что UUID содержит ровно 23 цифры перед выполнением операций.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="uuid.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту UUID Tools
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем конфиг и компоненты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для текущего инструмента
+            const toolId = 'uuid';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
+
+            // Инициализация компонентов
+            // Фоновые эффекты
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            // Шапка
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            // Подвал
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкций
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            // Функция для переключения вкладок
+            function switchTab(tabId) {
+                // Обновляем активные кнопки
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // Обновляем активные контенты
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            // Обработчики кликов по вкладкам
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Инициализация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в sidebar для страницы инструкций
+            const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
+            if (sidebarStatsContainer) {
+                sidebarStatsContainer.style.display = 'none';
+            }
+        });
+
+        // Функция для изменения subtitle
+        function changeLogoSubtitle() {
+            // Ищем элемент с классом logo-subtitle
+            const logoSubtitle = document.querySelector('.logo-subtitle');
+            
+            if (logoSubtitle) {
+                // Заменяем текст
+                logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                
+                console.log('Описание успешно изменено');
+                return true;
+            }
+            return false;
+        }
+
+        // Пытаемся изменить сразу после загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Первая попытка
+            if (!changeLogoSubtitle()) {
+                // Если не нашли сразу, используем MutationObserver
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                
+                // Наблюдаем за header-container
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    // Таймаут на случай, если Observer не сработает
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+
+        // Альтернативный подход - перехват метода render в header.js
+        // Добавьте это ДО инициализации Header
+        if (typeof Header !== 'undefined') {
+            // Сохраняем оригинальный метод render
+            const originalRender = Header.prototype.render;
+            
+            // Переопределяем метод
+            Header.prototype.render = function() {
+                const html = originalRender.call(this);
+                
+                // Если в HTML есть элемент logo-subtitle, заменяем его содержимое
+                if (html.includes('logo-subtitle')) {
+                    // Находим позицию subtitle
+                    const subtitleStart = html.indexOf('logo-subtitle');
+                    if (subtitleStart !== -1) {
+                        // Находим закрывающий тег после этого класса
+                        const afterClass = html.substring(subtitleStart);
+                        const tagEnd = afterClass.indexOf('>');
+                        const contentStart = subtitleStart + tagEnd + 1;
+                        
+                        // Находим закрывающий тег для этого div
+                        const closingTag = html.indexOf('</div>', contentStart);
+                        
+                        // Собираем новую строку
+                        const newHtml = 
+                            html.substring(0, contentStart) + 
+                            'ВАШЕ НОВОЕ ОПИСАНИЕ ДЛЯ ИНСТРУКЦИЙ' + 
+                            html.substring(closingTag);
+                        
+                        return newHtml;
+                    }
+                }
+                
+                return html;
+            };
+        }
+    </script>
+</body>
+</html>
