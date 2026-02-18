@@ -360,12 +360,14 @@
     <!-- Инициализация компонентов и логика сканера -->
     <script>
         (function() {
-            const toolConfig = {
-                icon: 'fas fa-qrcode',
-                title: 'QR-сканер',
-                version: '1.0',
-                description: 'Сканирование QR-кодов'
-            };
+            // Загружаем конфиг для текущего инструмента
+            const toolId = 'qr';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
 
             document.addEventListener('DOMContentLoaded', function() {
                 const backgroundEffects = new BackgroundEffects();
