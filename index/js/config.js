@@ -66,7 +66,7 @@ const toolsConfig = [
         iconClass: 'qr',
         icon: 'fas fa-qrcode',
         title: 'QR Сканер',
-        description: 'Сканер QR кода для получения uuid',
+        description: 'Сканер QR кода для получения uuid с быстрыми шаблонами для отправки в телеграм',
         link: '/qr_scaner',
         outdated: false
     }
