@@ -116,6 +116,7 @@
 .tool-icon-wrapper.format { background: var(--gradient-secondary); }
 .tool-icon-wrapper.json { background: linear-gradient(135deg, #06b6d4, #0891b2); }
 .tool-icon-wrapper.wiki { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+.tool-icon-wrapper.qr { background: linear-gradient(135deg, #f6e45c, #ed8b3a); }
 
 .tool-info {
     flex: 1;

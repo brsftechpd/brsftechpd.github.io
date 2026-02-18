@@ -59,6 +59,16 @@ const toolsConfig = [
         description: 'База знаний тех.поддержки с категориями и возможностью быстрого копирования ответа',
         link: '/wiki',
         outdated: false
+    },
+    {
+        id: 'qr',
+        version: 'v1.0',
+        iconClass: 'qr',
+        icon: 'fas fa-qrcode',
+        title: 'QR Сканер',
+        description: 'Сканер QR кода для получения uuid',
+        link: '/qr_scaner',
+        outdated: false
     }
 ];
 
@@ -138,5 +148,14 @@ const instructions = {
             'Полнотекстовый поиск по названиям и описаниям'
         ],
         fullLink: '/wiki/docs'
+    },
+    'qr': {
+        title: 'QR Сканер',
+        description: 'Инструмент QR сканера для получения uuid и быстрого копирования с тематикой проблемы.',
+        features: [
+            'Быстрое получение uuid с возможностью его копирования в бефер обмена',
+            'Быстрые шаблоны проблем для отправки специалистам 2-ой линии',
+        ],
+        fullLink: '/qr/docs'
     }
 };

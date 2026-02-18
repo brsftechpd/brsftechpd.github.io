@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-сканер — Support Tools Dashboard</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Базовые стили инструментов (common, компоненты) -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+
+    <!-- Собственные стили для сканера (с градиентами на всех кнопках) -->
+    <style>
+        .scanner-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0 20px 0;
+            width: 100%;
+        }
+
+        .scanner-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .scanner-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .scanner-title i {
+            color: var(--primary-500);
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+        }
+
+        #reader video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Базовый стиль кнопки (будет переопределён градиентами для цветных) */
+        .btn-scanner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border: 1px solid transparent;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            border-color: var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-scanner:hover {
+            background: var(--color-bg-secondary);
+            border-color: var(--color-border-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-scanner:active {
+            transform: translateY(0);
+        }
+
+        /* Градиентные кнопки — все с белым текстом */
+        .btn-scanner.primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.warning {
+            background: var(--gradient-error);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.secondary {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.info {
+            background: var(--gradient-info);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.purple {
+            background: var(--gradient-purple);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.pink {
+            background: var(--gradient-pink);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.cyan {
+            background: var(--gradient-cyan);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.orange {
+            background: var(--gradient-orange);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.teal {
+            background: var(--gradient-teal);
+            color: white;
+            border: none;
+        }
+
+        .btn-scanner.indigo {
+            background: var(--gradient-indigo);
+            color: white;
+            border: none;
+        }
+
+        /* Для всех градиентных кнопок единый hover */
+        .btn-scanner.primary:hover,
+        .btn-scanner.warning:hover,
+        .btn-scanner.secondary:hover,
+        .btn-scanner.info:hover,
+        .btn-scanner.purple:hover,
+        .btn-scanner.pink:hover,
+        .btn-scanner.cyan:hover,
+        .btn-scanner.orange:hover,
+        .btn-scanner.teal:hover,
+        .btn-scanner.indigo:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-scanner:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+
+        /* Область результата */
+        .result-area {
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Кликабельное поле с текстом */
+        #result-text {
+            padding: 20px 20px;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--color-text-primary);
+            transition: background-color 0.15s, border-color 0.15s;
+            word-break: break-word;
+            min-height: 60px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        #result-text:hover {
+            background-color: var(--color-bg-secondary);
+            border-color: var(--color-border-hover);
+        }
+
+        #result-text.placeholder {
+            color: var(--color-text-tertiary);
+            font-style: italic;
+            cursor: default;
+        }
+
+        #result-text.placeholder:hover {
+            background-color: var(--color-bg-primary);
+            border-color: var(--color-border);
+        }
+
+        /* Контейнер дополнительных кнопок */
+        #buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-area:not(.has-result) ~ #buttons-container {
+            display: none !important;
+        }
+
+        .copy-btn {
+            min-width: 160px;
+            flex: 1 1 auto;
+        }
+
+        .note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-text-tertiary);
+            margin-top: 1rem;
+        }
+
+        /* Toast-уведомление */
+        .custom-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .custom-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-toast.error {
+            background: var(--gradient-error);
+            color: white;
+            border-color: transparent;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Фоновые эффекты -->
+    <div id="background-effects"></div>
+
+    <!-- Шапка -->
+    <div id="header-container"></div>
+
+    <!-- Основной контент -->
+    <div class="main-wrapper">
+        <main class="content">
+            <div class="scanner-container">
+                <div class="scanner-card">
+                    <div class="scanner-title">
+                        <span>Сканер QR‑кода</span>
+                    </div>
+
+                    <!-- Одна универсальная кнопка управления камерой -->
+                    <div class="button-group">
+                        <button class="btn-scanner primary" id="toggle-camera">
+                            <i class="fas fa-play"></i> Включить камеру
+                        </button>
+                    </div>
+
+                    <!-- Контейнер для видео -->
+                    <div id="reader"></div>
+
+                    <!-- Область результата -->
+                    <div class="result-area" id="result-area">
+                        <div class="result-label">
+                            <i class="fas fa-hashtag"></i> Распознанный UUID
+                        </div>
+                        <!-- Кликабельное поле -->
+                        <div id="result-text" class="placeholder">Отсканируйте QR‑код</div>
+                    </div>
+
+                    <!-- Дополнительные кнопки копирования (префиксы/суффиксы) -->
+                    <div class="button-group" id="buttons-container"></div>
+
+                    <div class="note">
+                        <i class="fas fa-info-circle"></i> Нажмите на поле с распознанным UUID, чтобы скопировать QR‑код, или используйте кнопки с комментариями.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Подвал -->
+    <div id="footer-container"></div>
+
+    <!-- Общие скрипты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+
+    <!-- Библиотека QR-сканера -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <!-- Инициализация компонентов и логика сканера -->
+    <script>
+        (function() {
+            const toolConfig = {
+                icon: 'fas fa-qrcode',
+                title: 'QR-сканер',
+                version: '1.0',
+                description: 'Сканирование QR-кодов'
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const backgroundEffects = new BackgroundEffects();
+                document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+                const header = new Header(toolConfig);
+                document.getElementById('header-container').innerHTML = header.render();
+                header.initEventListeners();
+
+                const footer = new Footer();
+                document.getElementById('footer-container').innerHTML = footer.render();
+
+                initScanner();
+            });
+
+            // ================== РАСШИРЕННЫЙ КОНФИГ КНОПОК С ГРАДИЕНТАМИ ==================
+            const buttonConfig = [
+			/*
+                { label: 'Нет в МВД', prefix: '', suffix: '\nНет учета в БД МВД', className: 'warning' },
+                { label: 'Слетает МСО', prefix: '', suffix: '\nПри попытке указать новый адрес МСО, отображается старый адрес', className: 'secondary' },
+                { label: 'ℹ️ Инфо', prefix: '', suffix: '\nДополнительная информация', className: 'info' },
+                { label: '💜 Фиолетовый', prefix: '', suffix: '\nФиолетовый комментарий', className: 'purple' },
+                { label: '🌸 Розовый', prefix: '', suffix: '\nРозовый комментарий', className: 'pink' },
+                { label: '💠 Бирюзовый', prefix: '', suffix: '\nБирюзовый комментарий', className: 'cyan' },
+                { label: '🟠 Оранжевый', prefix: '', suffix: '\nОранжевый комментарий', className: 'orange' },
+                { label: '🌿 Зелёный', prefix: '', suffix: '\nЗелёный комментарий', className: 'teal' },
+                { label: '🔷 Индиго', prefix: '', suffix: '\nИндиго комментарий', className: 'indigo' },
+			*/
+                { label: 'Нет учета в МВД', prefix: '', suffix: '\nНет учета в базе данных МВД.', className: 'purple' },
+                { label: 'Слетает МСО', prefix: '', suffix: '\nПри попытке указать адрес, отображается старый адрес или кнопка повторить.', className: 'purple' },
+                { label: 'Нет блока МСО', prefix: '', suffix: '\nВ интрефейсе отсутствует блок Места сна и отдыха', className: 'purple' },
+                { label: 'Не передается ГЕО', prefix: '', suffix: '\nНеобходимо проверить передачу геолокации.', className: 'primary' },
+            ];
+            // ================== КОНЕЦ НАСТРОЕК ==================
+
+            let lastScannedText = '';
+            let scanner = null;
+            let isScanning = false;
+            let toastTimeout = null;
+
+            const resultArea = document.getElementById('result-area');
+            const resultText = document.getElementById('result-text');
+            const buttonsContainer = document.getElementById('buttons-container');
+            const toggleCameraBtn = document.getElementById('toggle-camera');
+
+            function showToast(message, type = 'success') {
+                const existingToast = document.querySelector('.custom-toast');
+                if (existingToast) existingToast.remove();
+                if (toastTimeout) clearTimeout(toastTimeout);
+
+                const toast = document.createElement('div');
+                toast.className = `custom-toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+
+                setTimeout(() => toast.classList.add('show'), 10);
+
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                    toastTimeout = null;
+                }, 2000);
+            }
+
+            function updateUIForResult(hasResult) {
+                if (hasResult) {
+                    resultArea.classList.add('has-result');
+                    resultText.classList.remove('placeholder');
+                    resultText.textContent = lastScannedText;
+                    buttonsContainer.style.display = 'flex';
+                    document.querySelectorAll('.copy-btn').forEach(btn => btn.disabled = false);
+                } else {
+                    resultArea.classList.remove('has-result');
+                    resultText.classList.add('placeholder');
+                    resultText.textContent = 'Отсканируйте QR‑код';
+                    buttonsContainer.style.display = 'none';
+                    document.querySelectorAll('.copy-btn').forEach(btn => btn.disabled = true);
+                }
+            }
+
+            async function copyTextWithTransform(prefix, suffix, successMessage = 'Скопировано в буфер обмена (используйте CTRL+V для вставки)') {
+                if (!lastScannedText) {
+                    showToast('Сначала отсканируйте QR-код', 'error');
+                    return;
+                }
+                const textToCopy = prefix + lastScannedText + suffix;
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    showToast(successMessage);
+                } catch (err) {
+                    showToast('Ошибка копирования', 'error');
+                }
+            }
+
+            function renderButtons() {
+                buttonsContainer.innerHTML = '';
+                buttonConfig.forEach(cfg => {
+                    const btn = document.createElement('button');
+                    btn.className = `btn-scanner copy-btn ${cfg.className || ''}`;
+                    btn.textContent = cfg.label;
+                    btn.dataset.prefix = cfg.prefix || '';
+                    btn.dataset.suffix = cfg.suffix || '';
+                    btn.addEventListener('click', e => {
+                        const prefix = e.currentTarget.dataset.prefix;
+                        const suffix = e.currentTarget.dataset.suffix;
+                        copyTextWithTransform(prefix, suffix, 'Скопировано в буфер обмена (используйте CTRL+V для вставки)');
+                    });
+                    buttonsContainer.appendChild(btn);
+                });
+                updateUIForResult(false);
+            }
+
+            function onScanSuccess(decodedText) {
+                lastScannedText = decodedText;
+                updateUIForResult(true);
+            }
+
+            async function stopScanner() {
+                if (scanner && isScanning) {
+                    try {
+                        await scanner.stop();
+                        isScanning = false;
+                        toggleCameraBtn.innerHTML = '<i class="fas fa-play"></i> Включить камеру';
+                    } catch (error) {
+                        console.error('Ошибка при остановке сканера:', error);
+                    }
+                }
+            }
+
+            async function startScanner() {
+                if (isScanning) return;
+
+                try {
+                    const cameras = await Html5Qrcode.getCameras();
+                    if (!cameras || cameras.length === 0) {
+                        throw new Error('Камеры не найдены');
+                    }
+
+                    let selectedCameraId = cameras[0].id;
+                    const backCamera = cameras.find(cam => 
+                        cam.label.toLowerCase().includes('back') || 
+                        cam.label.toLowerCase().includes('environment')
+                    );
+                    if (backCamera) selectedCameraId = backCamera.id;
+
+                    if (!scanner) {
+                        scanner = new Html5Qrcode("reader");
+                    }
+
+                    await scanner.start(
+                        selectedCameraId,
+                        { fps: 10 },
+                        onScanSuccess,
+                        () => {}
+                    );
+
+                    isScanning = true;
+                    toggleCameraBtn.innerHTML = '<i class="fas fa-stop"></i> Выключить камеру';
+                } catch (error) {
+                    console.error(error);
+                    let message = 'Не удалось получить доступ к камере.\n';
+                    if (error.message.includes('Камеры не найдены')) {
+                        message += 'Убедитесь, что камера подключена и не используется другим приложением.';
+                    } else if (error.name === 'NotAllowedError' || error.message.includes('permission')) {
+                        message += 'Доступ к камере запрещён. Разрешите доступ в настройках браузера.';
+                    } else {
+                        message += 'Попробуйте перезагрузить страницу.';
+                    }
+                    alert(message);
+                }
+            }
+
+            function initScanner() {
+                toggleCameraBtn.addEventListener('click', () => {
+                    if (isScanning) {
+                        stopScanner();
+                    } else {
+                        startScanner();
+                    }
+                });
+
+                resultText.addEventListener('click', () => {
+                    copyTextWithTransform('', '', 'Скопировано в буфер обмена (используйте CTRL+V для вставки)');
+                });
+
+                window.addEventListener('beforeunload', () => {
+                    if (scanner && isScanning) {
+                        scanner.stop().catch(() => {});
+                    }
+                });
+
+                renderButtons();
+            }
+        })();
+    </script>
+</body>
+</html>
