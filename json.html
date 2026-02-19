@@ -848,17 +848,11 @@
                     this.updateFontSize();
                     this.updateLineNumbers();
 
-                    // Восстанавливаем сохранённую высоту редактора
+                    // Восстанавливаем сохранённую высоту редактора (опционально)
                     const savedHeight = localStorage.getItem('editorHeight');
                     if (savedHeight) {
                         const editorCard = document.getElementById('editorCard');
                         editorCard.style.height = savedHeight + 'px';
-                    }
-
-                    // Восстанавливаем сохранённый текст
-                    const savedText = localStorage.getItem('jsonEditorText');
-                    if (savedText) {
-                        this.setText(savedText, true);
                     }
 
                     this.initResizeObserver();
@@ -988,7 +982,6 @@
                         statusEl.textContent = 'Вставьте JSON код';
                         statusEl.className = 'status-badge waiting';
                         this.hideInfoPanels();
-                        localStorage.setItem('jsonEditorText', '');
                         return;
                     }
                     try {
@@ -1011,8 +1004,6 @@
                         statusEl.textContent = 'Невалидный JSON';
                         statusEl.className = 'status-badge invalid';
                         this.hideInfoPanels();
-                        // Сохраняем невалидный текст без подсветки
-                        localStorage.setItem('jsonEditorText', input);
                     }
                 }
 
@@ -1248,7 +1239,6 @@
                         this.inputEditor.textContent = text;
                         this.updateLineNumbers();
                     }
-                    localStorage.setItem('jsonEditorText', text);
                 }
 
                 setHighlightedContent(text) {
