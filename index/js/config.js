@@ -42,12 +42,12 @@ const toolsConfig = [
     },
     {
         id: 'json',
-        version: 'v3.0',
+        version: 'v4.0',
         iconClass: 'json',
         icon: 'fas fa-code',
         title: 'JSON Editor S3',
         description: 'Продвинутый редактор JSON для работы с файлом профиля мобильного приложения',
-        link: '/json_format',
+        link: '/json',
         outdated: false
     },
     {

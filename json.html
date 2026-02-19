@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Editor</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Базовые стили инструментов -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+
+    <!-- Собственные стили для JSON Editor -->
+    <style>
+        :root, .theme-dark {
+            --nav-tab-hover-bg: rgba(255, 255, 255, 0.05);
+        }
+        .theme-light {
+            --nav-tab-hover-bg: rgba(109, 109, 109, 0.05);
+        }
+
+        /* ===== Стили для категорий sidebar (адаптированы под общий стиль) ===== */
+        .sidebar-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-category-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-tertiary);
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+            font-weight: 600;
+            background: var(--color-text-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+        }
+
+        /* Используем стандартные кнопки навигации из sidebar.css */
+        .nav-tabs {
+            padding: 0 0.5rem;
+        }
+
+        .nav-tab {
+            display: flex;
+            align-items: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border-width: initial;
+            border-style: none;
+            border-color: initial;
+            border-image: initial;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .nav-tab:hover {
+            color: var(--color-text-primary);
+            background: var(--nav-tab-hover-bg);
+        }
+
+        /* Новые стили для кнопок управления шрифтом */
+        .font-size-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0 0.5rem;
+        }
+
+        .font-size-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+
+        .font-btn {
+            flex: 1;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            border-radius: var(--radius-md);
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .font-btn:hover {
+            color: var(--color-text-primary);
+            background: var(--nav-tab-hover-bg);
+        }
+
+        .font-btn:active {
+            transform: scale(0.98);
+        }
+
+        .font-size-slider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .font-size-slider input[type=range] {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--color-border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer; /* стандартный курсор при взаимодействии */
+        }
+
+        .font-size-slider input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-500);
+            cursor: pointer;
+            border: 2px solid var(--color-bg-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .font-size-value {
+            min-width: 40px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+        }
+
+        /* ===== Карточки ===== */
+        .info-card,
+        .editor-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-card {
+            background: var(--color-bg-secondary);
+        }
+
+        .editor-card {
+            background: var(--color-bg-secondary);
+        }
+
+        /* ===== Компактные статус-панели ===== */
+        .status-panels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card {
+            flex: 1 1 280px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--gradient-surface);
+        }
+
+        .info-header {
+            padding: 0.5rem 0.75rem;
+            background: var(--color-bg-tertiary);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .info-header i {
+            color: var(--primary-500);
+            margin-right: 0.4rem;
+        }
+
+        .info-badges {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        /* Бейджи с полупрозрачными цветами */
+        .badge {
+            padding: 0.15rem 0.4rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+        }
+
+        .badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .badge.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .info-description {
+            padding: 0.5rem 0.75rem;
+            background: var(--color-bg-primary);
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .info-description:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .info-description.copied {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .copy-hint {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            color: var(--color-text-tertiary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .info-description:hover .copy-hint {
+            opacity: 1;
+        }
+
+        /* ===== Редактор ===== */
+        .editor-card {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            min-height: 500px;
+            resize: vertical;
+            position: relative;
+            background: var(--gradient-surface);
+        }
+
+        /* Увеличенная шапка редактора */
+        .editor-header {
+            padding: 0.75rem 1rem;
+            background: var(--color-bg-tertiary);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .editor-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .editor-header-left i {
+            color: var(--primary-500);
+        }
+
+        .editor-header-right {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Кнопки в шапке — менее скругленные */
+        .btn-editor {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.85rem;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-editor:hover {
+            background: var(--color-bg-tertiary);
+            border-color: var(--color-border-hover);
+        }
+
+        /* Специальные цвета для кнопок Копировать и Очистить (полупрозрачные) */
+        [data-action="copy-input"] {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+        [data-action="copy-input"]:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+        }
+
+        [data-action="clear-all"] {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        [data-action="clear-all"]:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
+
+        /* Статус-бейдж в заголовке редактора */
+        .status-badge {
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-tertiary);
+            border: 1px solid var(--color-border);
+        }
+
+        .status-badge.valid {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.invalid {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Action panel — кнопки на всю ширину */
+        .action-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--color-bg-tertiary);
+            border-bottom: 1px solid var(--color-border);
+            flex-shrink: 0;
+        }
+
+        .btn-info {
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .btn-info.primary {
+            background: var(--gradient-primary);
+        }
+
+        .btn-info.warning {
+            background: var(--gradient-error);
+        }
+
+        .btn-info:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .countdown-timer {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-warning);
+            color: var(--color-warning);
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .countdown-display {
+            font-size: 1rem;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            overflow: auto;
+            background: var(--color-bg-primary);
+        }
+
+        .line-numbers {
+            width: 45px;
+            padding: 0.5rem 0.3rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--font-size, 13px);
+            line-height: 1.5;
+            text-align: right;
+            border-right: 1px solid var(--color-border);
+            user-select: none;
+            overflow: hidden;
+            white-space: pre;
+            flex-shrink: 0;
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 0.5rem;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: var(--font-size, 13px);
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            overflow: auto;
+        }
+
+        .editor-content::placeholder {
+            color: var(--color-text-tertiary);
+            opacity: 0.7;
+        }
+
+        /* ===== Кастомный скроллбар ===== */
+        .editor-content::-webkit-scrollbar,
+        .line-numbers::-webkit-scrollbar,
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .editor-content::-webkit-scrollbar-track,
+        .line-numbers::-webkit-scrollbar-track,
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--color-bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .editor-content::-webkit-scrollbar-thumb,
+        .line-numbers::-webkit-scrollbar-thumb,
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 4px;
+            border: 2px solid var(--color-bg-tertiary);
+        }
+
+        .editor-content::-webkit-scrollbar-thumb:hover,
+        .line-numbers::-webkit-scrollbar-thumb:hover,
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--color-border-hover);
+            cursor: default;
+        }
+
+        /* Скрытие ненужных элементов */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Toast */
+        .custom-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .custom-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .custom-toast.error {
+            background: var(--gradient-error);
+            color: white;
+            border-color: transparent;
+        }
+
+        .custom-toast.info {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            border-color: var(--color-border);
+        }
+
+        /* Адаптация */
+        @media (max-width: 768px) {
+            .status-panels {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Фоновые эффекты -->
+    <div id="background-effects"></div>
+
+    <!-- Шапка -->
+    <div id="header-container"></div>
+
+    <!-- Main Wrapper (с sidebar) -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Боковая панель инструментов">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-gears"></i>
+                        <span>Настройки</span>
+                    </div>
+                </div>
+                <div class="sidebar-nav-container">
+                    <!-- Категория: JSON Блоки -->
+                    <div class="sidebar-category">
+                        <div class="sidebar-category-title">
+                            Шаблоны JSON блоков
+                        </div>
+                        <div class="nav-tabs">
+                            <button class="nav-tab" data-action="insert-residence-address">
+                                residenceAddress
+                            </button>
+                            <button class="nav-tab" data-action="insert-residence-registration">
+                                residenceRegistration
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Категория: Настройка шрифта (обновлено) -->
+                    <div class="sidebar-category">
+                        <div class="sidebar-category-title">
+                            Настройка шрифта
+                        </div>
+                        <div class="font-size-control">
+                            <div class="font-size-buttons">
+                                <button class="font-btn" id="fontDecrease">−</button>
+                                <button class="font-btn" id="fontReset">13</button>
+                                <button class="font-btn" id="fontIncrease">+</button>
+                            </div>
+                            <div class="font-size-slider">
+                                <input type="range" id="fontSizeSlider" min="10" max="20" value="14" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Основной контент -->
+        <main class="content" id="content">
+            <div class="json-container">
+                <div class="json-card">
+                    <!-- Статус-панели -->
+                    <div class="status-panels">
+                        <!-- Панель residenceRegistration -->
+                        <div class="info-card hidden" id="residencePanel">
+                            <div class="info-header">
+                                <span>residenceRegistration</span>
+                                <div class="info-badges" id="regStatusBadge"></div>
+                            </div>
+                            <div class="info-description" id="regStatusDescription">
+                                <span id="regStatusText">Загрузка...</span>
+                                <span class="copy-hint">Кликните для копирования</span>
+                            </div>
+                        </div>
+
+                        <!-- Панель residenceAddress -->
+                        <div class="info-card hidden" id="residenceAddressPanel">
+                            <div class="info-header">
+                                <span>residenceAddress</span>
+                                <div class="info-badges" id="addressStatusBadge"></div>
+                            </div>
+                            <div class="info-description" id="addressStatusDescription">
+                                <span id="addressStatusText">Проверка адреса...</span>
+                                <span class="copy-hint">Кликните для копирования</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Редактор JSON -->
+                    <div class="editor-card" id="editorCard">
+                        <div class="editor-header">
+                            <div class="editor-header-left">
+                                Ввод JSON
+                                <div class="status-badge waiting" id="inputStatus">Вставьте JSON код</div>
+                            </div>
+                            <div class="editor-header-right">
+                                <button class="btn-editor" data-action="copy-input">
+                                    <i class="fas fa-copy"></i> Копировать
+                                </button>
+                                <button class="btn-editor" data-action="clear-all">
+                                    <i class="fas fa-trash"></i> Очистить
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action panel с кнопками на всю ширину -->
+                        <div class="action-panel hidden" id="actionPanel">
+                            <div class="countdown-timer hidden" id="countdownTimer">
+                                <div class="countdown-display" id="countdownDisplay">00:00:00</div>
+                                <div style="font-size:0.7rem;">До исправления на статус 1</div>
+                            </div>
+                            <button class="btn-info primary hidden" id="processMsoBtn">
+                                <i class="fas fa-check-circle"></i> Исправить на статус 1
+                            </button>
+                            <button class="btn-info warning hidden" id="invalidMsoBtn">
+                                <i class="fas fa-exclamation-triangle"></i> Исправить на статус 5
+                            </button>
+                        </div>
+
+                        <div class="editor-container">
+                            <div class="line-numbers" id="inputLineNumbers">1</div>
+                            <textarea class="editor-content" id="inputEditor" placeholder='Вставьте JSON код...'></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Подвал -->
+    <div id="footer-container"></div>
+
+    <!-- Общие скрипты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+
+    <!-- Логика JSON Editor -->
+    <script>
+        (function() {
+            const toolId = 'json';
+            let toolConfig = toolsConfig.find(tool => tool.id === toolId);
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const backgroundEffects = new BackgroundEffects();
+                document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+                const header = new Header(toolConfig);
+                document.getElementById('header-container').innerHTML = header.render();
+                header.initEventListeners();
+
+                const footer = new Footer();
+                document.getElementById('footer-container').innerHTML = footer.render();
+
+                initJSONEditor();
+            });
+
+            class JSONEditor {
+                constructor() {
+                    this.debounceTimer = null;
+                    this.isJsonValid = false;
+                    this.residenceRegistrationFound = false;
+                    this.residenceAddressFound = false;
+                    this.residenceRegistrationBlock = null;
+                    this.residenceAddressBlock = null;
+                    this.currentRegStatus = null;
+                    this.currentUnregistrationReasonId = null;
+                    this.currentStatusMessageCode = null;
+                    this.currentReceiveDate = null;
+                    this.currentAddressName = null;
+                    this.inputEditor = document.getElementById('inputEditor');
+                    this.fontSize = parseInt(localStorage.getItem('fontSize')) || 14;
+                    this.countdownInterval = null;
+                    this.resizeObserver = null;
+
+                    this.statusDescriptions = {
+                        1: 'Действий не требуется, пользователь видит кнопку "Начать".',
+                        3: 'В процессе обработки.',
+                        4: 'Состоит на учете.',
+                        5: 'Действий не требуется, пользователь видит кнопку "Повторить".',
+                        6: 'Отказ в постановке на учет.',
+                        7: 'Снятие с миграционного учета.',
+                        10: 'На Вас не распространяются новые правила учета через мобильное приложение «Амина».'
+                    };
+                    this.reasonDescriptions = {
+                        1: 'Пересечение границы Российской Федерации.',
+                        2: 'Отсутствие геоданных.',
+                        3: 'Постановка на учет в другом субъекте РФ.',
+                        4: 'Данные ЗАГС (смерть).',
+                        5: 'Решение суда (безвестно отсутствующий).',
+                        6: 'Вам необходимо встать на миграционный учет по действующим правилам.'
+                    };
+
+                    this.jsonBlocks = {
+                        residenceAddress: `"residenceAddress": {\n    "addressName": "Полный_Адрес",\n    "flat": null,\n    "city": "город",\n    "street": "Улица",\n    "house": "1",\n    "province": "Центральный федеральный округ",\n    "point": {\n      "lat": 0,\n      "lon": 0\n    },\n    "timestamp": "2025-11-25T10:50:29Z",\n    "regDate": null,\n    "regStatus": null,\n    "changeDate": "2025-11-25T10:50:29Z",\n    "vegetation": null,\n    "district": null,\n    "locality": null,\n    "residenceStatus": 4,\n    "residenceMessageCode": null\n  }`,
+                        residenceRegistration: `"residenceRegistration": {\n    "regStatus": 4,\n    "unregistrationReasonId": null,\n    "statusMessageCode": null,\n    "receiveDate": "2025-11-13T23:03:13.335Z",\n    "expirationDate": "2029-09-01T00:00:00",\n    "isRkl": false,\n    "changeDate": "2025-11-13T01:09:55Z"\n  }`
+                    };
+
+                    this.init();
+                }
+
+                init() {
+                    this.bindEvents();
+                    this.updateFontSize();
+                    this.updateLineNumbers();
+
+                    // Восстанавливаем сохранённую высоту редактора
+                    const savedHeight = localStorage.getItem('editorHeight');
+                    if (savedHeight) {
+                        const editorCard = document.getElementById('editorCard');
+                        editorCard.style.height = savedHeight + 'px';
+                    }
+
+                    this.initResizeObserver();
+                }
+
+                initResizeObserver() {
+                    const editorCard = document.getElementById('editorCard');
+                    this.resizeObserver = new ResizeObserver(entries => {
+                        for (let entry of entries) {
+                            if (entry.target === editorCard) {
+                                const height = entry.contentRect.height;
+                                localStorage.setItem('editorHeight', height);
+                            }
+                        }
+                    });
+                    this.resizeObserver.observe(editorCard);
+                }
+
+                bindEvents() {
+                    this.inputEditor.addEventListener('input', () => {
+                        this.updateLineNumbers();
+                        this.debounceProcess();
+                    });
+
+                    this.inputEditor.addEventListener('scroll', () => {
+                        document.getElementById('inputLineNumbers').scrollTop = this.inputEditor.scrollTop;
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        const btn = e.target.closest('[data-action]');
+                        if (btn) this.handleAction(btn.dataset.action);
+                    });
+
+                    // Ползунок шрифта
+                    document.getElementById('fontSizeSlider').addEventListener('input', (e) => {
+                        this.fontSize = parseInt(e.target.value);
+                        this.updateFontSize();
+                    });
+
+                    // Новые кнопки управления шрифтом
+                    document.getElementById('fontDecrease').addEventListener('click', () => this.changeFontSize(-1));
+                    document.getElementById('fontIncrease').addEventListener('click', () => this.changeFontSize(1));
+                    document.getElementById('fontReset').addEventListener('click', () => this.resetFontSize());
+
+                    document.getElementById('regStatusDescription').addEventListener('click', () => {
+                        this.copyStatusDescription('regStatusText');
+                    });
+                    document.getElementById('addressStatusDescription').addEventListener('click', () => {
+                        this.copyStatusDescription('addressStatusText');
+                    });
+
+                    document.getElementById('processMsoBtn').addEventListener('click', () => this.fixResidenceRegistration(1));
+                    document.getElementById('invalidMsoBtn').addEventListener('click', () => this.fixResidenceRegistration(5));
+                }
+
+                handleAction(action) {
+                    switch (action) {
+                        case 'clear-all':
+                            this.clearAll();
+                            break;
+                        case 'copy-input':
+                            this.copyInputWithUnicode();
+                            break;
+                        case 'insert-residence-address':
+                            this.copyJsonBlock('residenceAddress');
+                            break;
+                        case 'insert-residence-registration':
+                            this.copyJsonBlock('residenceRegistration');
+                            break;
+                    }
+                }
+
+                copyJsonBlock(blockName) {
+                    const block = this.jsonBlocks[blockName];
+                    if (!block) return;
+                    navigator.clipboard.writeText(block).then(() => {
+                        this.showNotification(`Блок ${blockName} скопирован в буфер обмена`);
+                    }).catch(() => {
+                        this.showNotification('Ошибка копирования', 'error');
+                    });
+                }
+
+                copyInputWithUnicode() {
+                    const input = this.inputEditor.value.trim();
+                    if (!input) return this.showNotification('Нет данных', 'warning');
+                    try {
+                        const parsed = JSON.parse(input);
+                        const minified = JSON.stringify(parsed);
+                        const unicode = this.textToUnicode(minified);
+                        navigator.clipboard.writeText(unicode).then(() => {
+                            this.showNotification('JSON скопирован в формате Unicode');
+                        });
+                    } catch {
+                        this.showNotification('Невалидный JSON', 'error');
+                    }
+                }
+
+                textToUnicode(text) {
+                    return text.split('').map(ch => {
+                        const code = ch.charCodeAt(0);
+                        return code > 127 ? '\\u' + code.toString(16).toUpperCase().padStart(4, '0') : ch;
+                    }).join('');
+                }
+
+                debounceProcess() {
+                    clearTimeout(this.debounceTimer);
+                    this.debounceTimer = setTimeout(() => this.processInput(), 500);
+                }
+
+                processInput() {
+                    const input = this.inputEditor.value.trim();
+                    const statusEl = document.getElementById('inputStatus');
+                    if (!input) {
+                        statusEl.textContent = 'Вставьте JSON код';
+                        statusEl.className = 'status-badge waiting';
+                        this.hideInfoPanels();
+                        return;
+                    }
+                    try {
+                        let parsed = JSON.parse(input);
+
+                        // Автоматически удаляем нежелательные поля из residenceRegistration
+                        this.cleanRegistrationFields(parsed);
+
+                        const formatted = JSON.stringify(parsed, null, 2);
+                        if (input !== formatted) {
+                            this.inputEditor.value = formatted;
+                            this.updateLineNumbers();
+                        }
+                        statusEl.textContent = 'Валидный JSON';
+                        statusEl.className = 'status-badge valid';
+                        this.findResidenceBlocks(parsed);
+                    } catch {
+                        statusEl.textContent = 'Невалидный JSON';
+                        statusEl.className = 'status-badge invalid';
+                        this.hideInfoPanels();
+                    }
+                }
+
+                // Новый метод для удаления полей из residenceRegistration
+                cleanRegistrationFields(obj) {
+                    if (!obj || typeof obj !== 'object') return;
+
+                    // Если это объект residenceRegistration
+                    if (obj.residenceRegistration && typeof obj.residenceRegistration === 'object') {
+                        const reg = obj.residenceRegistration;
+                        const fieldsToRemove = ['addressName', 'flat', 'city', 'street', 'house', 'province', 'point'];
+                        fieldsToRemove.forEach(field => {
+                            if (reg.hasOwnProperty(field)) {
+                                delete reg[field];
+                            }
+                        });
+                    }
+
+                    // Рекурсивно обходим все вложенные объекты
+                    for (let key in obj) {
+                        if (typeof obj[key] === 'object') {
+                            this.cleanRegistrationFields(obj[key]);
+                        }
+                    }
+                }
+
+                findResidenceBlocks(obj) {
+                    this.residenceRegistrationFound = false;
+                    this.residenceAddressFound = false;
+                    this.residenceRegistrationBlock = null;
+                    this.residenceAddressBlock = null;
+
+                    const search = (item) => {
+                        if (!item || typeof item !== 'object') return;
+                        if (item.residenceRegistration) {
+                            this.residenceRegistrationFound = true;
+                            this.residenceRegistrationBlock = item.residenceRegistration;
+                            this.currentRegStatus = item.residenceRegistration.regStatus;
+                            this.currentUnregistrationReasonId = item.residenceRegistration.unregistrationReasonId;
+                            this.currentStatusMessageCode = item.residenceRegistration.statusMessageCode;
+                            this.currentReceiveDate = item.residenceRegistration.receiveDate;
+                        }
+                        if (item.residenceAddress) {
+                            this.residenceAddressFound = true;
+                            this.residenceAddressBlock = item.residenceAddress;
+                            this.currentAddressName = item.residenceAddress.addressName;
+                        }
+                        for (let key in item) {
+                            if (typeof item[key] === 'object') search(item[key]);
+                        }
+                    };
+                    search(obj);
+                    this.displayInfoPanels();
+                }
+
+                displayInfoPanels() {
+                    const regPanel = document.getElementById('residencePanel');
+                    if (this.residenceRegistrationFound) {
+                        this.displayRegistrationPanel();
+                        regPanel.classList.remove('hidden');
+                    } else {
+                        regPanel.classList.add('hidden');
+                        this.stopCountdown();
+                    }
+
+                    const addrPanel = document.getElementById('residenceAddressPanel');
+                    if (this.residenceAddressFound) {
+                        this.displayAddressPanel();
+                        addrPanel.classList.remove('hidden');
+                    } else {
+                        addrPanel.classList.add('hidden');
+                    }
+
+                    this.updateActionPanelVisibility();
+                }
+
+                hideInfoPanels() {
+                    document.getElementById('residencePanel').classList.add('hidden');
+                    document.getElementById('residenceAddressPanel').classList.add('hidden');
+                    document.getElementById('actionPanel').classList.add('hidden');
+                    this.stopCountdown();
+                }
+
+                displayRegistrationPanel() {
+                    const badgeContainer = document.getElementById('regStatusBadge');
+                    const statusText = document.getElementById('regStatusText');
+
+                    badgeContainer.innerHTML = '';
+                    if (this.currentRegStatus !== null) {
+                        const badge = document.createElement('span');
+                        // Определяем класс для badge: для статуса 7 - danger, для 6 и 10 - warning, остальные - success
+                        let badgeClass = 'success';
+                        if (this.currentRegStatus === 7) badgeClass = 'danger';
+                        else if (this.currentRegStatus === 6 || this.currentRegStatus === 10) badgeClass = 'warning';
+                        badge.className = `badge ${badgeClass}`;
+                        badge.textContent = `Статус: ${this.currentRegStatus}`;
+                        badgeContainer.appendChild(badge);
+                    }
+
+                    statusText.textContent = this.getFullStatusDescription();
+                }
+
+                displayAddressPanel() {
+                    const badgeContainer = document.getElementById('addressStatusBadge');
+                    const statusText = document.getElementById('addressStatusText');
+
+                    const isEmpty = !this.currentAddressName || String(this.currentAddressName).trim() === '';
+                    badgeContainer.innerHTML = `<span class="badge ${isEmpty ? 'danger' : 'success'}">addressName: ${isEmpty ? 'пусто' : 'указан'}</span>`;
+                    statusText.textContent = isEmpty ? 'ВНИМАНИЕ: addressName не заполнен!' : 'Адрес указан.';
+                }
+
+                getFullStatusDescription() {
+                    if (!this.currentRegStatus) return '';
+                    let desc = this.statusDescriptions[this.currentRegStatus] || `Статус ${this.currentRegStatus}`;
+                    if (this.currentRegStatus === 7 && this.currentUnregistrationReasonId === 6) {
+                        desc += ' Пользователь получил ВНЖ.';
+                    } else if (this.currentRegStatus === 7 && this.currentUnregistrationReasonId) {
+                        desc += ` Причина: ${this.reasonDescriptions[this.currentUnregistrationReasonId] || this.currentUnregistrationReasonId}`;
+                    }
+                    return desc;
+                }
+
+                updateActionPanelVisibility() {
+                    const processBtn = document.getElementById('processMsoBtn');
+                    const invalidBtn = document.getElementById('invalidMsoBtn');
+                    const countdownTimer = document.getElementById('countdownTimer');
+                    const actionPanel = document.getElementById('actionPanel');
+
+                    processBtn.classList.add('hidden');
+                    invalidBtn.classList.add('hidden');
+                    countdownTimer.classList.add('hidden');
+
+                    let showProcess = false, showInvalid = false, showCountdown = false;
+
+                    if (this.currentRegStatus === 3) showProcess = true;
+                    else if (this.currentRegStatus === 7) {
+                        if ([1, 2, 3, 6].includes(this.currentUnregistrationReasonId)) {
+                            if (this.currentUnregistrationReasonId === 2 && !this.isFourDaysPassed(this.currentReceiveDate)) {
+                                showCountdown = true;
+                                this.startCountdown(this.currentReceiveDate);
+                            } else {
+                                showProcess = true;
+                            }
+                        }
+                    }
+                    if (this.currentRegStatus === 6 || this.currentRegStatus === 10) showInvalid = true;
+
+                    processBtn.classList.toggle('hidden', !showProcess);
+                    invalidBtn.classList.toggle('hidden', !showInvalid);
+                    countdownTimer.classList.toggle('hidden', !showCountdown);
+
+                    const anyVisible = showProcess || showInvalid || showCountdown;
+                    actionPanel.classList.toggle('hidden', !anyVisible);
+                }
+
+                isFourDaysPassed(dateStr) {
+                    if (!dateStr) return false;
+                    const receive = new Date(dateStr);
+                    const now = new Date();
+                    return (now - receive) >= 4 * 24 * 60 * 60 * 1000;
+                }
+
+                startCountdown(dateStr) {
+                    this.stopCountdown();
+                    const update = () => {
+                        const receive = new Date(dateStr);
+                        const fourDaysLater = new Date(receive.getTime() + 4 * 24 * 60 * 60 * 1000);
+                        const diff = fourDaysLater - new Date();
+                        if (diff <= 0) {
+                            this.stopCountdown();
+                            document.getElementById('countdownTimer').classList.add('hidden');
+                            document.getElementById('processMsoBtn').classList.remove('hidden');
+                            return;
+                        }
+
+                        // Переводим миллисекунды в дни, часы, минуты, секунды
+                        const totalSeconds = Math.floor(diff / 1000);
+                        const days = Math.floor(totalSeconds / (24 * 3600));
+                        const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+                        const minutes = Math.floor((totalSeconds % 3600) / 60);
+                        const seconds = totalSeconds % 60;
+
+                        let formatted;
+                        if (days > 0) {
+                            formatted = `${days} д ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        } else {
+                            formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        }
+
+                        document.getElementById('countdownDisplay').textContent = formatted;
+                    };
+                    update();
+                    this.countdownInterval = setInterval(update, 1000);
+                }
+
+                stopCountdown() {
+                    if (this.countdownInterval) {
+                        clearInterval(this.countdownInterval);
+                        this.countdownInterval = null;
+                    }
+                }
+
+                fixResidenceRegistration(newStatus) {
+                    try {
+                        const parsed = JSON.parse(this.inputEditor.value);
+                        const update = (obj) => {
+                            if (obj.residenceRegistration) {
+                                obj.residenceRegistration.regStatus = newStatus;
+                                if (newStatus === 1) obj.residenceRegistration.unregistrationReasonId = null;
+                                else if (newStatus === 5) obj.residenceRegistration.statusMessageCode = null;
+                                return true;
+                            }
+                            for (let key in obj) {
+                                if (typeof obj[key] === 'object' && update(obj[key])) return true;
+                            }
+                            return false;
+                        };
+                        if (update(parsed)) {
+                            this.inputEditor.value = JSON.stringify(parsed, null, 2);
+                            this.showNotification(`Статус изменён на ${newStatus}`);
+                            this.processInput();
+                        }
+                    } catch {
+                        this.showNotification('Ошибка изменения', 'error');
+                    }
+                }
+
+                changeFontSize(delta) {
+                    this.fontSize = Math.min(20, Math.max(10, this.fontSize + delta));
+                    this.updateFontSize();
+                }
+
+                resetFontSize() {
+                    this.fontSize = 14;
+                    this.updateFontSize();
+                }
+
+                updateFontSize() {
+                    document.documentElement.style.setProperty('--font-size', this.fontSize + 'px');
+                    // Обновляем слайдер и кнопку сброса
+                    const slider = document.getElementById('fontSizeSlider');
+                    if (slider) slider.value = this.fontSize;
+                    const resetBtn = document.getElementById('fontReset');
+                    if (resetBtn) resetBtn.textContent = this.fontSize;
+                    localStorage.setItem('fontSize', this.fontSize);
+                    this.updateLineNumbers();
+                }
+
+                updateLineNumbers() {
+                    const lines = this.inputEditor.value.split('\n').length;
+                    let nums = '';
+                    for (let i = 1; i <= lines; i++) nums += i + '\n';
+                    document.getElementById('inputLineNumbers').innerHTML = nums;
+                }
+
+                clearAll() {
+                    this.inputEditor.value = '';
+                    document.getElementById('inputStatus').textContent = 'Вставьте JSON код';
+                    document.getElementById('inputStatus').className = 'status-badge waiting';
+                    this.hideInfoPanels();
+                    this.updateLineNumbers();
+                    this.showNotification('Очищено');
+                }
+
+                copyStatusDescription(elementId) {
+                    const text = document.getElementById(elementId).textContent.trim();
+                    if (!text) return;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const desc = document.getElementById(elementId).closest('.info-description');
+                        if (desc) {
+                            desc.classList.add('copied');
+                            setTimeout(() => desc.classList.remove('copied'), 1000);
+                        }
+                        this.showNotification('Описание скопировано');
+                    }).catch(() => this.showNotification('Ошибка копирования', 'error'));
+                }
+
+                showNotification(message, type = 'success') {
+                    let toast = document.querySelector('.custom-toast');
+                    if (toast) toast.remove();
+                    toast = document.createElement('div');
+                    toast.className = `custom-toast ${type}`;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.classList.add('show'), 10);
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 2000);
+                }
+            }
+
+            function initJSONEditor() {
+                window.jsonEditor = new JSONEditor();
+            }
+        })();
+    </script>
+</body>
+</html>
