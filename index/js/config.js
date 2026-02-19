@@ -42,7 +42,7 @@ const toolsConfig = [
     },
     {
         id: 'json',
-        version: 'v4.0',
+        version: 'v4.1',
         iconClass: 'json',
         icon: 'fas fa-code',
         title: 'JSON Editor S3',

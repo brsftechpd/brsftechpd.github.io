@@ -28,12 +28,29 @@
     <style>
         :root, .theme-dark {
             --nav-tab-hover-bg: rgba(255, 255, 255, 0.05);
+            --json-key: #9cdcfe;
+            --json-string: #ce9178;
+            --json-number: #b5cea8;
+            --json-boolean: #569cd6;
+            --json-null: #d4d4d4;
         }
         .theme-light {
             --nav-tab-hover-bg: rgba(109, 109, 109, 0.05);
+            --json-key: #0451a5;
+            --json-string: #a31515;
+            --json-number: #098658;
+            --json-boolean: #0000ff;
+            --json-null: #808080;
         }
 
-        /* ===== Стили для категорий sidebar (адаптированы под общий стиль) ===== */
+        /* Подсветка синтаксиса */
+        .json-key { color: var(--json-key); }
+        .json-string { color: var(--json-string); }
+        .json-number { color: var(--json-number); }
+        .json-boolean { color: var(--json-boolean); }
+        .json-null { color: var(--json-null); }
+
+        /* ===== Стили для категорий sidebar ===== */
         .sidebar-category {
             margin-bottom: 1.5rem;
         }
@@ -54,7 +71,6 @@
             letter-spacing: 0.7px;
         }
 
-        /* Используем стандартные кнопки навигации из sidebar.css */
         .nav-tabs {
             padding: 0 0.5rem;
         }
@@ -84,7 +100,7 @@
             background: var(--nav-tab-hover-bg);
         }
 
-        /* Новые стили для кнопок управления шрифтом */
+        /* Кнопки управления шрифтом */
         .font-size-control {
             display: flex;
             flex-direction: column;
@@ -134,7 +150,7 @@
             background: var(--color-border);
             border-radius: 2px;
             outline: none;
-            cursor: pointer; /* стандартный курсор при взаимодействии */
+            cursor: pointer;
         }
 
         .font-size-slider input[type=range]::-webkit-slider-thumb {
@@ -156,7 +172,7 @@
             color: var(--color-text-primary);
         }
 
-        /* ===== Карточки ===== */
+        /* Карточки */
         .info-card,
         .editor-card {
             background: var(--color-bg-secondary);
@@ -166,14 +182,14 @@
 
         .info-card {
             background: var(--color-bg-secondary);
-			margin-bottom: 1rem;
+            margin-bottom: 1rem;
         }
 
         .editor-card {
             background: var(--color-bg-secondary);
         }
 
-        /* ===== Компактные статус-панели ===== */
+        /* Компактные статус-панели */
         .status-panels {
             display: flex;
             flex-wrap: wrap;
@@ -209,7 +225,6 @@
             flex-wrap: wrap;
         }
 
-        /* Бейджи с полупрозрачными цветами */
         .badge {
             padding: 0.15rem 0.4rem;
             border-radius: 9999px;
@@ -273,7 +288,7 @@
             opacity: 1;
         }
 
-        /* ===== Редактор ===== */
+        /* Редактор */
         .editor-card {
             border-radius: var(--radius-md);
             overflow: hidden;
@@ -286,7 +301,6 @@
             background: var(--gradient-surface);
         }
 
-        /* Увеличенная шапка редактора */
         .editor-header {
             padding: 0.75rem 1rem;
             background: var(--color-bg-tertiary);
@@ -313,7 +327,6 @@
             gap: 0.5rem;
         }
 
-        /* Кнопки в шапке — менее скругленные */
         .btn-editor {
             display: inline-flex;
             align-items: center;
@@ -335,7 +348,6 @@
             border-color: var(--color-border-hover);
         }
 
-        /* Специальные цвета для кнопок Копировать и Очистить (полупрозрачные) */
         [data-action="copy-input"] {
             background: rgba(16, 185, 129, 0.1);
             color: #10b981;
@@ -356,7 +368,6 @@
             border-color: #ef4444;
         }
 
-        /* Статус-бейдж в заголовке редактора */
         .status-badge {
             padding: 0.2rem 0.7rem;
             border-radius: 9999px;
@@ -380,7 +391,6 @@
             border-color: rgba(239, 68, 68, 0.2);
         }
 
-        /* Action panel — кнопки на всю ширину */
         .action-panel {
             display: flex;
             flex-direction: column;
@@ -443,6 +453,7 @@
             display: flex;
             overflow: auto;
             background: var(--color-bg-primary);
+            position: relative;
         }
 
         .line-numbers {
@@ -473,14 +484,18 @@
             resize: none;
             outline: none;
             overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
-        .editor-content::placeholder {
+        .editor-content:empty:before {
+            content: attr(data-placeholder);
             color: var(--color-text-tertiary);
             opacity: 0.7;
+            font-style: italic;
         }
 
-        /* ===== Кастомный скроллбар ===== */
+        /* Кастомный скроллбар */
         .editor-content::-webkit-scrollbar,
         .line-numbers::-webkit-scrollbar,
         .sidebar::-webkit-scrollbar {
@@ -510,7 +525,6 @@
             cursor: default;
         }
 
-        /* Скрытие ненужных элементов */
         .hidden {
             display: none !important;
         }
@@ -553,7 +567,6 @@
             border-color: var(--color-border);
         }
 
-        /* Адаптация */
         @media (max-width: 768px) {
             .status-panels {
                 flex-direction: column;
@@ -598,7 +611,7 @@
                         </div>
                     </div>
 
-                    <!-- Категория: Настройка шрифта (обновлено) -->
+                    <!-- Категория: Настройка шрифта -->
                     <div class="sidebar-category">
                         <div class="sidebar-category-title">
                             Настройка шрифта
@@ -606,7 +619,7 @@
                         <div class="font-size-control">
                             <div class="font-size-buttons">
                                 <button class="font-btn" id="fontDecrease">−</button>
-                                <button class="font-btn" id="fontReset">13</button>
+                                <button class="font-btn" id="fontReset">14</button>
                                 <button class="font-btn" id="fontIncrease">+</button>
                             </div>
                             <div class="font-size-slider">
@@ -682,10 +695,10 @@
 
                         <div class="editor-container">
                             <div class="line-numbers" id="inputLineNumbers">1</div>
-                            <textarea class="editor-content" id="inputEditor" placeholder='Вставьте JSON код...'></textarea>
+                            <!-- Заменяем textarea на contenteditable div -->
+                            <div class="editor-content" id="inputEditor" contenteditable="true" data-placeholder="Вставьте JSON код..."></div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </main>
@@ -720,6 +733,71 @@
                 initJSONEditor();
             });
 
+            // Вспомогательные функции для подсветки
+            function escapeHtml(unsafe) {
+                return unsafe.replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+            }
+
+            function highlightJson(text) {
+                try {
+                    const obj = JSON.parse(text);
+                    const canonical = JSON.stringify(obj, null, 2);
+                    return applyHighlightMarkers(canonical);
+                } catch {
+                    return escapeHtml(text);
+                }
+            }
+
+            function applyHighlightMarkers(canonical) {
+                let str = canonical;
+                const keyMarkers = [];
+                const stringMarkers = [];
+
+                // 1. Заменяем ключи (только "key", без двоеточия)
+                const keyRegex = /("(?:\\"|[^"])*")(?=\s*:)/g;
+                str = str.replace(keyRegex, (match) => {
+                    const marker = `__KEY_${keyMarkers.length}__`;
+                    keyMarkers.push({ marker, key: match });
+                    return marker;
+                });
+
+                // 2. Заменяем строки-значения (включая префикс : и пробелы, но маркируем только саму строку)
+                const stringValueRegex = /(:\s*)("(?:\\"|[^"])*")/g;
+                str = str.replace(stringValueRegex, (match, prefix, strVal) => {
+                    const marker = `__STR_${stringMarkers.length}__`;
+                    stringMarkers.push({ marker, strVal });
+                    return prefix + marker;
+                });
+
+                // 3. Подсветка чисел, булевых, null (в оставшемся тексте, где нет маркеров)
+                const numberRegex = /(\b)(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)(\b)/g;
+                str = str.replace(numberRegex, '$1<span class="json-number">$2</span>$3');
+
+                const booleanRegex = /(\b)(true|false)(\b)/g;
+                str = str.replace(booleanRegex, '$1<span class="json-boolean">$2</span>$3');
+
+                const nullRegex = /(\b)(null)(\b)/g;
+                str = str.replace(nullRegex, '$1<span class="json-null">$2</span>$3');
+
+                // 4. Возвращаем строки-значения (маркеры заменяем на спаны)
+                stringMarkers.forEach(item => {
+                    str = str.replace(item.marker, '<span class="json-string">' + escapeHtml(item.strVal) + '</span>');
+                });
+
+                // 5. Возвращаем ключи (маркеры заменяем на спаны)
+                keyMarkers.forEach(item => {
+                    str = str.replace(item.marker, '<span class="json-key">' + escapeHtml(item.key) + '</span>');
+                });
+
+                return str;
+            }
+
             class JSONEditor {
                 constructor() {
                     this.debounceTimer = null;
@@ -737,6 +815,7 @@
                     this.fontSize = parseInt(localStorage.getItem('fontSize')) || 14;
                     this.countdownInterval = null;
                     this.resizeObserver = null;
+                    this.isUpdating = false; // флаг для предотвращения циклов
 
                     this.statusDescriptions = {
                         1: 'Действий не требуется, пользователь видит кнопку "Начать".',
@@ -776,6 +855,12 @@
                         editorCard.style.height = savedHeight + 'px';
                     }
 
+                    // Восстанавливаем сохранённый текст
+                    const savedText = localStorage.getItem('jsonEditorText');
+                    if (savedText) {
+                        this.setText(savedText, true);
+                    }
+
                     this.initResizeObserver();
                 }
 
@@ -793,15 +878,26 @@
                 }
 
                 bindEvents() {
+                    // Основное событие ввода
                     this.inputEditor.addEventListener('input', () => {
+                        if (this.isUpdating) return;
                         this.updateLineNumbers();
                         this.debounceProcess();
                     });
 
+                    // Синхронизация прокрутки
                     this.inputEditor.addEventListener('scroll', () => {
                         document.getElementById('inputLineNumbers').scrollTop = this.inputEditor.scrollTop;
                     });
 
+                    // Обработка вставки (только текст)
+                    this.inputEditor.addEventListener('paste', (e) => {
+                        e.preventDefault();
+                        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                        document.execCommand('insertText', false, text);
+                    });
+
+                    // Обработка кликов по кнопкам
                     document.addEventListener('click', (e) => {
                         const btn = e.target.closest('[data-action]');
                         if (btn) this.handleAction(btn.dataset.action);
@@ -813,11 +909,12 @@
                         this.updateFontSize();
                     });
 
-                    // Новые кнопки управления шрифтом
+                    // Кнопки управления шрифтом
                     document.getElementById('fontDecrease').addEventListener('click', () => this.changeFontSize(-1));
                     document.getElementById('fontIncrease').addEventListener('click', () => this.changeFontSize(1));
                     document.getElementById('fontReset').addEventListener('click', () => this.resetFontSize());
 
+                    // Клик по описаниям для копирования
                     document.getElementById('regStatusDescription').addEventListener('click', () => {
                         this.copyStatusDescription('regStatusText');
                     });
@@ -825,6 +922,7 @@
                         this.copyStatusDescription('addressStatusText');
                     });
 
+                    // Кнопки исправления
                     document.getElementById('processMsoBtn').addEventListener('click', () => this.fixResidenceRegistration(1));
                     document.getElementById('invalidMsoBtn').addEventListener('click', () => this.fixResidenceRegistration(5));
                 }
@@ -857,7 +955,7 @@
                 }
 
                 copyInputWithUnicode() {
-                    const input = this.inputEditor.value.trim();
+                    const input = this.getText().trim();
                     if (!input) return this.showNotification('Нет данных', 'warning');
                     try {
                         const parsed = JSON.parse(input);
@@ -884,12 +982,13 @@
                 }
 
                 processInput() {
-                    const input = this.inputEditor.value.trim();
+                    const input = this.getText().trim();
                     const statusEl = document.getElementById('inputStatus');
                     if (!input) {
                         statusEl.textContent = 'Вставьте JSON код';
                         statusEl.className = 'status-badge waiting';
                         this.hideInfoPanels();
+                        localStorage.setItem('jsonEditorText', '');
                         return;
                     }
                     try {
@@ -900,8 +999,10 @@
 
                         const formatted = JSON.stringify(parsed, null, 2);
                         if (input !== formatted) {
-                            this.inputEditor.value = formatted;
-                            this.updateLineNumbers();
+                            this.setText(formatted, true);
+                        } else {
+                            // Если текст совпадает, просто обновляем подсветку
+                            this.setHighlightedContent(input);
                         }
                         statusEl.textContent = 'Валидный JSON';
                         statusEl.className = 'status-badge valid';
@@ -910,14 +1011,14 @@
                         statusEl.textContent = 'Невалидный JSON';
                         statusEl.className = 'status-badge invalid';
                         this.hideInfoPanels();
+                        // Сохраняем невалидный текст без подсветки
+                        localStorage.setItem('jsonEditorText', input);
                     }
                 }
 
-                // Новый метод для удаления полей из residenceRegistration
                 cleanRegistrationFields(obj) {
                     if (!obj || typeof obj !== 'object') return;
 
-                    // Если это объект residenceRegistration
                     if (obj.residenceRegistration && typeof obj.residenceRegistration === 'object') {
                         const reg = obj.residenceRegistration;
                         const fieldsToRemove = ['addressName', 'flat', 'city', 'street', 'house', 'province', 'point'];
@@ -928,7 +1029,6 @@
                         });
                     }
 
-                    // Рекурсивно обходим все вложенные объекты
                     for (let key in obj) {
                         if (typeof obj[key] === 'object') {
                             this.cleanRegistrationFields(obj[key]);
@@ -1000,7 +1100,6 @@
                     badgeContainer.innerHTML = '';
                     if (this.currentRegStatus !== null) {
                         const badge = document.createElement('span');
-                        // Определяем класс для badge: для статуса 7 - danger, для 6 и 10 - warning, остальные - success
                         let badgeClass = 'success';
                         if (this.currentRegStatus === 7) badgeClass = 'danger';
                         else if (this.currentRegStatus === 6 || this.currentRegStatus === 10) badgeClass = 'warning';
@@ -1085,7 +1184,6 @@
                             return;
                         }
 
-                        // Переводим миллисекунды в дни, часы, минуты, секунды
                         const totalSeconds = Math.floor(diff / 1000);
                         const days = Math.floor(totalSeconds / (24 * 3600));
                         const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
@@ -1114,7 +1212,7 @@
 
                 fixResidenceRegistration(newStatus) {
                     try {
-                        const parsed = JSON.parse(this.inputEditor.value);
+                        const parsed = JSON.parse(this.getText());
                         const update = (obj) => {
                             if (obj.residenceRegistration) {
                                 obj.residenceRegistration.regStatus = newStatus;
@@ -1128,13 +1226,98 @@
                             return false;
                         };
                         if (update(parsed)) {
-                            this.inputEditor.value = JSON.stringify(parsed, null, 2);
+                            const formatted = JSON.stringify(parsed, null, 2);
+                            this.setText(formatted, true);
                             this.showNotification(`Статус изменён на ${newStatus}`);
-                            this.processInput();
+                            this.processInput(); // обновить панели
                         }
                     } catch {
                         this.showNotification('Ошибка изменения', 'error');
                     }
+                }
+
+                // ===== Работа с текстом =====
+                getText() {
+                    return this.inputEditor.textContent || '';
+                }
+
+                setText(text, shouldHighlight = true) {
+                    if (shouldHighlight) {
+                        this.setHighlightedContent(text);
+                    } else {
+                        this.inputEditor.textContent = text;
+                        this.updateLineNumbers();
+                    }
+                    localStorage.setItem('jsonEditorText', text);
+                }
+
+                setHighlightedContent(text) {
+                    this.isUpdating = true;
+                    const offset = this.getCurrentTextOffset();
+                    const html = highlightJson(text);
+                    this.inputEditor.innerHTML = html;
+                    this.updateLineNumbers();
+                    this.restoreTextOffset(offset);
+                    this.inputEditor.focus();
+                    this.isUpdating = false;
+                }
+
+                getCurrentTextOffset() {
+                    const selection = window.getSelection();
+                    if (!selection.rangeCount) return null;
+                    const range = selection.getRangeAt(0);
+                    if (!this.inputEditor.contains(range.startContainer)) return null;
+                    const preRange = range.cloneRange();
+                    preRange.selectNodeContents(this.inputEditor);
+                    preRange.setEnd(range.startContainer, range.startOffset);
+                    return preRange.toString().length;
+                }
+
+                restoreTextOffset(offset) {
+                    if (offset === null || offset === undefined) return;
+                    const editor = this.inputEditor;
+                    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, null, false);
+                    let currentOffset = 0;
+                    let targetNode = null;
+                    let targetOffset = 0;
+                    while (walker.nextNode()) {
+                        const node = walker.currentNode;
+                        const len = node.textContent.length;
+                        if (currentOffset + len >= offset) {
+                            targetNode = node;
+                            targetOffset = offset - currentOffset;
+                            break;
+                        }
+                        currentOffset += len;
+                    }
+                    if (targetNode) {
+                        const range = document.createRange();
+                        range.setStart(targetNode, targetOffset);
+                        range.collapse(true);
+                        const sel = window.getSelection();
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    } else {
+                        // offset больше длины, ставим в конец последнего текстового узла
+                        const lastTextNode = this.getLastTextNode(editor);
+                        if (lastTextNode) {
+                            const range = document.createRange();
+                            range.setStart(lastTextNode, lastTextNode.textContent.length);
+                            range.collapse(true);
+                            const sel = window.getSelection();
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+                    }
+                }
+
+                getLastTextNode(node) {
+                    if (node.nodeType === Node.TEXT_NODE) return node;
+                    for (let i = node.childNodes.length - 1; i >= 0; i--) {
+                        const found = this.getLastTextNode(node.childNodes[i]);
+                        if (found) return found;
+                    }
+                    return null;
                 }
 
                 changeFontSize(delta) {
@@ -1149,7 +1332,6 @@
 
                 updateFontSize() {
                     document.documentElement.style.setProperty('--font-size', this.fontSize + 'px');
-                    // Обновляем слайдер и кнопку сброса
                     const slider = document.getElementById('fontSizeSlider');
                     if (slider) slider.value = this.fontSize;
                     const resetBtn = document.getElementById('fontReset');
@@ -1159,14 +1341,14 @@
                 }
 
                 updateLineNumbers() {
-                    const lines = this.inputEditor.value.split('\n').length;
+                    const lines = this.getText().split('\n').length;
                     let nums = '';
                     for (let i = 1; i <= lines; i++) nums += i + '\n';
                     document.getElementById('inputLineNumbers').innerHTML = nums;
                 }
 
                 clearAll() {
-                    this.inputEditor.value = '';
+                    this.setText('', true);
                     document.getElementById('inputStatus').textContent = 'Вставьте JSON код';
                     document.getElementById('inputStatus').className = 'status-badge waiting';
                     this.hideInfoPanels();
