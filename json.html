@@ -1137,10 +1137,18 @@
                     if (this.currentRegStatus === 3) showProcess = true;
                     else if (this.currentRegStatus === 7) {
                         if ([1, 2, 3, 6].includes(this.currentUnregistrationReasonId)) {
-                            if (this.currentUnregistrationReasonId === 2 && !this.isFourDaysPassed(this.currentReceiveDate)) {
-                                showCountdown = true;
-                                this.startCountdown(this.currentReceiveDate);
+                            if (this.currentUnregistrationReasonId === 2) {
+                                // причина 2: отсутствие геоданных — нужен таймер до доступности (полночь после 4 дней)
+                                const availability = this.getAvailabilityTime(this.currentReceiveDate);
+                                const now = new Date();
+                                if (now >= availability) {
+                                    showProcess = true;
+                                } else {
+                                    showCountdown = true;
+                                    this.startCountdown(availability);
+                                }
                             } else {
+                                // другие причины: показываем кнопку сразу
                                 showProcess = true;
                             }
                         }
@@ -1155,19 +1163,21 @@
                     actionPanel.classList.toggle('hidden', !anyVisible);
                 }
 
-                isFourDaysPassed(dateStr) {
-                    if (!dateStr) return false;
-                    const receive = new Date(dateStr);
-                    const now = new Date();
-                    return (now - receive) >= 4 * 24 * 60 * 60 * 1000;
+                getAvailabilityTime(isoString) {
+                    if (!isoString) return null;
+                    const d = new Date(isoString);
+                    // добавляем 3 дня
+                    d.setUTCDate(d.getUTCDate() + 3);
+                    // переходим на следующий день в 00:00 UTC
+                    const availability = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1, 0, 0, 0));
+                    return availability;
                 }
 
-                startCountdown(dateStr) {
+                startCountdown(targetDate) {
                     this.stopCountdown();
                     const update = () => {
-                        const receive = new Date(dateStr);
-                        const fourDaysLater = new Date(receive.getTime() + 4 * 24 * 60 * 60 * 1000);
-                        const diff = fourDaysLater - new Date();
+                        const now = new Date();
+                        const diff = targetDate - now;
                         if (diff <= 0) {
                             this.stopCountdown();
                             document.getElementById('countdownTimer').classList.add('hidden');
