@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор зарплат и услуг</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Базовые стили инструментов -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+
+    <!-- Собственные стили для калькулятора -->
+    <style>
+        /* Переменные */
+        :root, .theme-dark {
+            --calculator-bg: var(--color-bg-secondary);
+            --calculator-card-bg: var(--color-card);
+            --calculator-border: var(--color-border);
+            --input-bg: var(--color-bg-tertiary);
+            --input-focus-border: var(--primary-500);
+        }
+        .theme-light {
+            --calculator-bg: var(--color-bg-secondary);
+            --calculator-card-bg: var(--color-card);
+            --calculator-border: var(--color-border);
+            --input-bg: var(--color-bg-tertiary);
+            --input-focus-border: var(--primary-500);
+        }
+
+        /* Скрыть стрелки у числовых input'ов */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Компактный блок финансового расчёта */
+        .info-panel {
+            background: var(--gradient-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md); /* уменьшили отступ */
+            box-shadow: var(--shadow-md);
+        }
+
+        .info-panel h3 {
+            font-size: 1.1rem; /* чуть меньше */
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-panel h3 i {
+            color: var(--primary-500);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* фиксированное число колонок для компактности */
+            gap: var(--spacing-sm);
+        }
+
+        .info-item {
+            background: var(--color-bg-tertiary);
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .info-item .label {
+            font-size: 0.7rem;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.1rem;
+        }
+
+        .info-item .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            line-height: 1.2;
+        }
+
+        .info-item .value small {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--color-text-tertiary);
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Улучшенный timeBalance */
+        .time-balance {
+            background: var(--gradient-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            color: var(--color-text-secondary);
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .time-balance-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--color-bg-tertiary);
+            padding: 0.4rem 1rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--color-border);
+        }
+
+        .time-balance-item i {
+            color: var(--primary-500);
+            font-size: 1rem;
+        }
+
+        .time-balance-item .label {
+            font-weight: 500;
+            color: var(--color-text-tertiary);
+        }
+
+        .time-balance-item .value {
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .time-balance-item .value.warning {
+            color: #f59e0b;
+        }
+
+        .time-balance-item .value.ok {
+            color: #10b981;
+        }
+
+        /* Стили для полей ввода в сайдбаре - приводим к единому стилю */
+        .sidebar-category-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-tertiary);
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+            font-weight: 600;
+            background: var(--color-text-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+        }
+
+        .sidebar-input-group {
+            padding: 0 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-input-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: 0.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding-left: 0.5rem;
+        }
+
+        .sidebar-input-group input {
+            width: 100%;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-full); /* делаем скруглёнными, как кнопки */
+            padding: 0.6rem 1rem;
+            color: var(--color-text-primary);
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+
+        .sidebar-input-group input:hover {
+            background: var(--color-card-hover);
+            border-color: var(--color-border-hover);
+        }
+
+        .sidebar-input-group input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: var(--color-bg-secondary);
+        }
+
+        /* Стили для остальных элементов остаются без изменений */
+        .calculator-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .services-section {
+            background: var(--gradient-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .services-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .services-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .services-header h3 i {
+            color: var(--primary-500);
+        }
+
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-fast);
+        }
+
+        .service-item:hover {
+            border-color: var(--color-border-hover);
+            background: var(--color-card-hover);
+        }
+
+        .service-item label {
+            min-width: 100px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .service-item input {
+            flex: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-full); /* единообразие */
+            padding: 0.6rem 1rem;
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+            transition: all var(--transition-fast);
+        }
+
+        .service-item input:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .service-item button {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 1rem;
+        }
+
+        .service-item button:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            transform: scale(1.05);
+        }
+
+        .buttons-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .btn {
+            border: 1px solid var(--color-border);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            flex: 1 0 auto;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            box-shadow: var(--glow-primary);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-primary);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-tertiary);
+            border-color: var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-card-hover);
+            border-color: var(--color-border-hover);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .message {
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .message.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .message.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .result-card {
+            background: var(--gradient-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .result-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-small:hover {
+            background: var(--color-card-hover);
+            border-color: var(--color-border-hover);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th {
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            padding: 1rem 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            padding: 0.9rem 0.5rem;
+            border-bottom: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: var(--color-card-hover);
+        }
+
+        .footer-note {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+            color: var(--color-text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .service-item {
+                flex-wrap: wrap;
+            }
+            .service-item label {
+                min-width: 100%;
+            }
+            .buttons-panel {
+                flex-direction: column;
+            }
+        }
+
+        input[type="number"]::placeholder,
+        input[type="text"]::placeholder {
+            color: var(--color-text-tertiary);
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Фоновые эффекты -->
+    <div id="background-effects"></div>
+
+    <!-- Шапка -->
+    <div id="header-container"></div>
+
+    <!-- Main Wrapper (с sidebar) -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Боковая панель инструментов">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Параметры</span>
+                    </div>
+                </div>
+                <div class="sidebar-nav-container">
+                    <!-- Категория: Исходные данные -->
+                    <div class="sidebar-category">
+                        <div class="sidebar-category-title">
+                            Исходные данные
+                        </div>
+                        <div class="sidebar-input-group">
+                            <label for="contractSalary">Зарплата по договору (₽)</label>
+                            <input type="number" id="contractSalary" min="0" step="1" value="" placeholder="Введите сумму">
+                        </div>
+                        <div class="sidebar-input-group">
+                            <label for="plannedHours">Плановые часы/мес</label>
+                            <input type="number" id="plannedHours" min="1" step="1" value="" placeholder="Введите часы">
+                        </div>
+                        <div class="sidebar-input-group">
+                            <label for="actualHours">Фактические часы</label>
+                            <input type="number" id="actualHours" min="0" step="1" value="" placeholder="Введите часы">
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Основной контент -->
+        <main class="content" id="content">
+            <div class="calculator-container">
+                <!-- Блок с результатами расчёта зарплаты (компактный) -->
+                <div class="info-panel">
+                    <div class="info-grid" id="salaryInfo">
+                        <div class="info-item">
+                            <div class="label">Ставка часа</div>
+                            <div class="value" id="hourRate">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">До вычета</div>
+                            <div class="value" id="grossAmount">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Налог (13%)</div>
+                            <div class="value" id="taxAmount">-</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">На руки</div>
+                            <div class="value" id="netAmount">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Услуги -->
+                <div class="services-section">
+                    <div class="services-header">
+                        <h3>Услуги</h3>
+                    </div>
+
+                    <!-- Индикатор распределения времени (улучшенный) -->
+                    <div class="time-balance" id="timeBalance">
+                        <!-- будет заполняться динамически -->
+                    </div>
+
+                    <div class="service-list" id="servicesContainer"></div>
+
+                    <!-- Панель кнопок управления услугами -->
+                    <div class="buttons-panel">
+                        <button class="btn btn-secondary" id="addService"><i class="fas fa-plus-circle"></i> Добавить</button>
+                        <button class="btn btn-secondary" id="removeService"><i class="fas fa-minus-circle"></i> Удалить</button>
+                        <button class="btn btn-primary" id="calculate"><i class="fas fa-calculator"></i> Подобрать цены</button>
+                    </div>
+
+                    <!-- Сообщения -->
+                    <div id="message"></div>
+
+                    <!-- Результат подбора -->
+                    <div id="result" class="result-card" style="display: none;">
+                        <div class="result-header">
+                            <h3><i class="fas fa-check-circle" style="color: #10b981;"></i> Результат подбора</h3>
+                            <button class="btn-small" id="findAnother"><i class="fas fa-random"></i> Найти другой вариант</button>
+                        </div>
+                        <table id="resultTable">
+                            <thead>
+                                <tr>
+                                    <th>№</th>
+                                    <th>Часы</th>
+                                    <th>Цена за час (₽)</th>
+                                    <th>Стоимость (₽)</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Подвал -->
+    <div id="footer-container"></div>
+
+    <!-- Общие скрипты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+
+    <!-- Логика калькулятора (с обновлённым timeBalance) -->
+    <script>
+        (function() {
+            const toolId = 'act';
+            let toolConfig = null;
+            if (typeof toolsConfig !== 'undefined') {
+                toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof BackgroundEffects !== 'undefined') {
+                    const backgroundEffects = new BackgroundEffects();
+                    document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+                }
+
+                if (typeof Header !== 'undefined') {
+                    const header = new Header(toolConfig);
+                    document.getElementById('header-container').innerHTML = header.render();
+                    if (header.initEventListeners) header.initEventListeners();
+                } else {
+                    document.getElementById('header-container').innerHTML = `
+                        <header class="header" id="mainHeader">
+                            <div class="container">
+                                <a href="#" class="logo">
+                                    <div class="logo-icon"><i class="fas fa-tools"></i></div>
+                                    <div class="logo-text">
+                                        <div class="logo-title">Support Tools Dashboard</div>
+                                        <div class="logo-subtitle">Панель инструментов команды тех.поддержки</div>
+                                    </div>
+                                </a>
+                                <div class="nav-controls">
+                                    <button class="theme-switch" id="themeSwitch" aria-label="Переключить тему">
+                                        <i class="fas fa-moon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+                    `;
+                }
+
+                if (typeof Footer !== 'undefined') {
+                    const footer = new Footer();
+                    document.getElementById('footer-container').innerHTML = footer.render();
+                } else {
+                    document.getElementById('footer-container').innerHTML = `
+                        <footer class="footer">
+                            <div class="container">
+                                <div class="footer-bottom">
+                                    <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+                                        Есть вопрос или предложение? Пиши в телегу 
+                                        <a href="https://t.me/shilov_dv" class="contact-link" target="_blank">@shilov_dv</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </footer>
+                    `;
+                }
+
+                initCalculator();
+            });
+
+            function initCalculator() {
+                const contractInput = document.getElementById('contractSalary');
+                const plannedInput = document.getElementById('plannedHours');
+                const actualInput = document.getElementById('actualHours');
+                const container = document.getElementById('servicesContainer');
+                const addBtn = document.getElementById('addService');
+                const removeBtn = document.getElementById('removeService');
+                const calcBtn = document.getElementById('calculate');
+                const findAnotherBtn = document.getElementById('findAnother');
+                const messageDiv = document.getElementById('message');
+                const resultDiv = document.getElementById('result');
+                const resultBody = document.querySelector('#resultTable tbody');
+                const timeBalanceDiv = document.getElementById('timeBalance');
+
+                const hourRateSpan = document.getElementById('hourRate');
+                const grossAmountSpan = document.getElementById('grossAmount');
+                const taxAmountSpan = document.getElementById('taxAmount');
+                const netAmountSpan = document.getElementById('netAmount');
+
+                let currentGross = 0;
+                let lastHours = null;
+                let lastTotal = null;
+                let lastPrices = null;
+
+                function updateLabels() {
+                    const items = document.querySelectorAll('.service-item');
+                    items.forEach((item, index) => {
+                        const label = item.querySelector('label');
+                        if (label) {
+                            label.innerHTML = `<i class="fas fa-briefcase" style="margin-right: 6px;"></i>Услуга ${index + 1}:`;
+                        }
+                    });
+                    updateTimeBalance();
+                }
+
+                function createServiceItem(hoursValue = '') {
+                    const div = document.createElement('div');
+                    div.className = 'service-item';
+
+                    const label = document.createElement('label');
+                    label.innerHTML = `<i class="fas fa-briefcase" style="margin-right: 6px;"></i>Услуга:`;
+
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '1';
+                    input.step = '1';
+                    input.value = hoursValue;
+                    input.placeholder = 'Укажите часы затраченные по услуге';
+                    input.addEventListener('input', updateTimeBalance);
+
+                    const delBtn = document.createElement('button');
+                    delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    delBtn.title = 'Удалить услугу';
+                    delBtn.onclick = function() {
+                        div.remove();
+                        updateLabels();
+                        updateTimeBalance();
+                        resultDiv.style.display = 'none';
+                    };
+
+                    div.appendChild(label);
+                    div.appendChild(input);
+                    div.appendChild(delBtn);
+                    return div;
+                }
+
+                function addService(hours = '') {
+                    const item = createServiceItem(hours);
+                    container.appendChild(item);
+                    updateLabels();
+                    resultDiv.style.display = 'none';
+                }
+
+                function removeLastService() {
+                    const items = document.querySelectorAll('.service-item');
+                    if (items.length > 1) {
+                        items[items.length - 1].remove();
+                        updateLabels();
+                        updateTimeBalance();
+                        resultDiv.style.display = 'none';
+                    } else {
+                        showMessage('Должна остаться хотя бы одна услуга.', 'info');
+                    }
+                }
+
+                function showMessage(text, type = 'info') {
+                    messageDiv.innerHTML = `<div class="message ${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-triangle' : (type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'))}"></i> ${text}</div>`;
+                }
+
+                function updateSalaryInfo() {
+                    const contract = parseFloat(contractInput.value);
+                    const planned = parseInt(plannedInput.value, 10);
+                    const actual = parseInt(actualInput.value, 10);
+
+                    if (isNaN(contract) || contract <= 0 || isNaN(planned) || planned <= 0 || isNaN(actual) || actual <= 0) {
+                        hourRateSpan.innerText = '-';
+                        grossAmountSpan.innerText = '-';
+                        taxAmountSpan.innerText = '-';
+                        netAmountSpan.innerText = '-';
+                        currentGross = 0;
+                        return;
+                    }
+
+                    const hourRate = contract / planned;
+                    const netEarnings = hourRate * actual;
+                    const grossTotal = netEarnings / 0.87;
+                    const tax = grossTotal - netEarnings;
+                    const roundedGross = Math.round(grossTotal);
+
+                    hourRateSpan.innerText = hourRate.toFixed(2) + ' ₽';
+                    grossAmountSpan.innerText = roundedGross.toLocaleString('ru') + ' ₽';
+                    taxAmountSpan.innerText = Math.round(tax).toLocaleString('ru') + ' ₽';
+                    netAmountSpan.innerText = Math.round(netEarnings).toLocaleString('ru') + ' ₽';
+                    currentGross = roundedGross;
+                }
+
+                function updateTimeBalance() {
+                    const actual = parseInt(actualInput.value, 10);
+                    const hourInputs = document.querySelectorAll('.service-item input');
+                    let distributed = 0;
+                    for (let input of hourInputs) {
+                        const h = parseInt(input.value, 10);
+                        if (!isNaN(h) && h > 0) distributed += h;
+                    }
+
+                    if (isNaN(actual) || actual <= 0) {
+                        timeBalanceDiv.innerHTML = `
+                            <div class="time-balance-item"><i class="fas fa-clock"></i><span class="label">Всего:</span><span class="value">—</span></div>
+                            <div class="time-balance-item"><i class="fas fa-chart-pie"></i><span class="label">Распред.:</span><span class="value">${distributed}</span></div>
+                            <div class="time-balance-item"><i class="fas fa-hourglass-half"></i><span class="label">Осталось:</span><span class="value">—</span></div>
+                        `;
+                        return;
+                    }
+
+                    const remaining = actual - distributed;
+                    const remainingClass = remaining === 0 ? 'ok' : 'warning';
+                    const remainingIcon = remaining === 0 ? 'fa-check-circle' : 'fa-exclamation-triangle';
+
+                    timeBalanceDiv.innerHTML = `
+                        <div class="time-balance-item"><i class="fas fa-clock"></i><span class="label">Всего:</span><span class="value">${actual}</span></div>
+                        <div class="time-balance-item"><i class="fas fa-chart-pie"></i><span class="label">Распред.:</span><span class="value">${distributed}</span></div>
+                        <div class="time-balance-item"><i class="fas ${remainingIcon}"></i><span class="label">Осталось:</span><span class="value ${remainingClass}">${remaining}</span></div>
+                    `;
+                }
+
+                function collectData() {
+                    const total = currentGross;
+                    if (total <= 0) {
+                        throw new Error('Невозможно определить общую сумму. Заполните оклад и часы.');
+                    }
+
+                    const hourInputs = document.querySelectorAll('.service-item input');
+                    if (hourInputs.length === 0) {
+                        throw new Error('Добавьте хотя бы одну услугу.');
+                    }
+
+                    const hours = [];
+                    for (let input of hourInputs) {
+                        const h = parseInt(input.value, 10);
+                        if (isNaN(h) || h <= 0) {
+                            throw new Error('Часы должны быть положительными целыми числами.');
+                        }
+                        hours.push(h);
+                    }
+
+                    const actual = parseInt(actualInput.value, 10);
+                    if (isNaN(actual) || actual <= 0) {
+                        throw new Error('Фактические часы должны быть положительным целым числом.');
+                    }
+                    const sumHours = hours.reduce((a, b) => a + b, 0);
+                    if (sumHours !== actual) {
+                        throw new Error(`Сумма часов услуг (${sumHours}) не равна фактическим часам (${actual}). Подбор невозможен.`);
+                    }
+
+                    return { total, hours };
+                }
+
+                function findPrices(hours, total, skipPrices = null) {
+                    const n = hours.length;
+                    if (n === 0) return null;
+
+                    const items = hours.map((h, idx) => ({ hours: h, index: idx }));
+                    items.sort((a, b) => a.hours - b.hours);
+                    const sortedHours = items.map(item => item.hours);
+                    const originalIndices = items.map(item => item.index);
+
+                    const totalHours = sortedHours.reduce((a, b) => a + b, 0);
+                    const avg = total / totalHours;
+
+                    const maxPrices = sortedHours.map(h => Math.floor(total / h));
+
+                    let K = 5;
+                    const MAX_K = 200;
+
+                    while (K <= MAX_K) {
+                        const lows = [];
+                        const highs = [];
+                        let possible = true;
+                        for (let i = 0; i < n; i++) {
+                            let low = Math.max(1, Math.floor(avg) - K);
+                            let high = Math.min(maxPrices[i], Math.floor(avg) + K);
+                            if (low > high) {
+                                possible = false;
+                                break;
+                            }
+                            lows.push(low);
+                            highs.push(high);
+                        }
+                        if (!possible) {
+                            K += 5;
+                            continue;
+                        }
+
+                        let solution = null;
+                        const currentPrices = [];
+
+                        function dfs(idx, currentSum) {
+                            if (solution) return;
+                            if (idx === n) {
+                                if (currentSum === total) {
+                                    const costs = currentPrices.map((p, i) => p * sortedHours[i]);
+                                    if (new Set(costs).size === n && new Set(currentPrices).size === n) {
+                                        if (skipPrices) {
+                                            const fullPrices = new Array(n);
+                                            for (let i = 0; i < n; i++) {
+                                                fullPrices[originalIndices[i]] = currentPrices[i];
+                                            }
+                                            const same = skipPrices.every((p, idx) => p === fullPrices[idx]);
+                                            if (!same) {
+                                                solution = [...currentPrices];
+                                            }
+                                        } else {
+                                            solution = [...currentPrices];
+                                        }
+                                    }
+                                }
+                                return;
+                            }
+
+                            for (let price = lows[idx]; price <= highs[idx]; price++) {
+                                const newSum = currentSum + price * sortedHours[idx];
+                                if (newSum > total) break;
+                                currentPrices.push(price);
+                                dfs(idx + 1, newSum);
+                                if (solution) return;
+                                currentPrices.pop();
+                            }
+                        }
+
+                        dfs(0, 0);
+                        if (solution) {
+                            const result = new Array(n);
+                            for (let i = 0; i < n; i++) {
+                                result[originalIndices[i]] = solution[i];
+                            }
+                            return result;
+                        }
+
+                        K += 5;
+                    }
+
+                    return null;
+                }
+
+                function displayResult(hours, prices, total) {
+                    resultBody.innerHTML = '';
+                    let sumCheck = 0;
+                    for (let i = 0; i < hours.length; i++) {
+                        const cost = prices[i] * hours[i];
+                        sumCheck += cost;
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${i + 1}</td>
+                            <td>${hours[i]}</td>
+                            <td>${prices[i]}</td>
+                            <td>${cost.toLocaleString('ru')}</td>
+                        `;
+                        resultBody.appendChild(row);
+                    }
+                    const row = document.createElement('tr');
+                    row.style.fontWeight = 'bold';
+                    row.style.background = 'var(--color-bg-tertiary)';
+                    row.innerHTML = `
+                        <td colspan="3" style="text-align:right;">ИТОГО:</td>
+                        <td>${sumCheck.toLocaleString('ru')}</td>
+                    `;
+                    resultBody.appendChild(row);
+
+                    resultDiv.style.display = 'block';
+                }
+
+                function calculate() {
+                    resultDiv.style.display = 'none';
+                    messageDiv.innerHTML = '';
+
+                    try {
+                        const { total, hours } = collectData();
+
+                        const minPossibleSum = hours.reduce((s, h) => s + h, 0);
+                        if (total < minPossibleSum) {
+                            throw new Error(`Общая сумма не может быть меньше ${minPossibleSum} (минимальная цена 1 руб/час).`);
+                        }
+
+                        if (hours.length > 12) {
+                            showMessage('Алгоритм оптимизирован для ≤12 услуг. При большем количестве время расчёта может быть значительным.', 'info');
+                        }
+
+                        const prices = findPrices(hours, total, null);
+
+                        if (prices) {
+                            lastHours = hours.slice();
+                            lastTotal = total;
+                            lastPrices = prices.slice();
+                            displayResult(hours, prices, total);
+                            showMessage('Решение найдено! Все стоимости и цены за час уникальны.', 'success');
+                        } else {
+                            showMessage('Не удалось подобрать целые цены. Попробуйте изменить сумму или часы.', 'error');
+                        }
+                    } catch (e) {
+                        showMessage(e.message, 'error');
+                    }
+                }
+
+                function findAnother() {
+                    if (!lastHours || !lastTotal || !lastPrices) {
+                        showMessage('Сначала выполните успешный подбор.', 'info');
+                        return;
+                    }
+
+                    messageDiv.innerHTML = '';
+                    const newPrices = findPrices(lastHours, lastTotal, lastPrices);
+
+                    if (newPrices) {
+                        lastPrices = newPrices.slice();
+                        displayResult(lastHours, newPrices, lastTotal);
+                        showMessage('Найден другой вариант с уникальными стоимостями и ценами.', 'success');
+                    } else {
+                        showMessage('Других вариантов в пределах допустимого диапазона не найдено.', 'warning');
+                    }
+                }
+
+                contractInput.addEventListener('input', updateSalaryInfo);
+                plannedInput.addEventListener('input', updateSalaryInfo);
+                actualInput.addEventListener('input', function() {
+                    updateSalaryInfo();
+                    updateTimeBalance();
+                });
+
+                addBtn.addEventListener('click', () => addService(''));
+                removeBtn.addEventListener('click', removeLastService);
+                calcBtn.addEventListener('click', calculate);
+                findAnotherBtn.addEventListener('click', findAnother);
+
+                addService('');
+            }
+        })();
+    </script>
+</body>
+</html>

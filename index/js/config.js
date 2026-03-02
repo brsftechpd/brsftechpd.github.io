@@ -69,6 +69,16 @@ const toolsConfig = [
         description: 'Сканер QR кода для получения uuid с быстрыми шаблонами для отправки в телеграм',
         link: '/qr_scaner',
         outdated: false
+    },
+    {
+        id: 'act',
+        version: 'v1.0',
+        iconClass: 'act',
+        icon: 'fas fa-chart-pie',
+        title: 'Калькулятор отчета',
+        description: 'Калькулятор распределения времени по оказанным услугам ГПХ',
+        link: '/act',
+        outdated: false
     }
 ];
 
