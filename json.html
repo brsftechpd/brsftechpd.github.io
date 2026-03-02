@@ -1033,6 +1033,13 @@
                     this.residenceRegistrationBlock = null;
                     this.residenceAddressBlock = null;
 
+                    // Сбрасываем предыдущие значения статусов
+                    this.currentRegStatus = null;
+                    this.currentUnregistrationReasonId = null;
+                    this.currentStatusMessageCode = null;
+                    this.currentReceiveDate = null;
+                    this.currentAddressName = null;
+
                     const search = (item) => {
                         if (!item || typeof item !== 'object') return;
                         if (item.residenceRegistration) {
