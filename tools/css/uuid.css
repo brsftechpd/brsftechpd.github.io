@@ -464,16 +464,15 @@ input[type="text"].error {
 }
 
 /* Цвета кнопок */
-.auth-group-btn { background: var(--gradient-purple); }
-.mso-group-btn { background: var(--gradient-orange); }
-.geo-group-btn { background: var(--gradient-primary); }
-.phone-group-btn { background: var(--gradient-cyan); }
-.notification-btn { background: var(--gradient-pink); }
-.photo-btn { background: var(--gradient-teal); }
-.documents-btn { background: var(--gradient-success); }
-.yandex-service-btn { background: var(--gradient-yandex); }
-.warning-group-btn { background: var(--gradient-warning); }
-.danger-group-btn { background: var(--gradient-error); }
+.auth-group-btn { background: var(--gradient-auth); }
+.mso-group-btn { background: var(--gradient-mso); }
+.geo-group-btn { background: var(--gradient-geo); }
+.phone-group-btn { background: var(--gradient-phone); }
+.notification-btn { background: var(--gradient-notification); }
+.photo-btn { background: var(--gradient-photo); }
+.documents-btn { background: var(--gradient-documents); }
+.faq-btn { background: var(--gradient-faq); }
+.migservice-btn { background: var(--gradient-migservice); }
 
 /* Остальные проверки */
 .other-checks-buttons {

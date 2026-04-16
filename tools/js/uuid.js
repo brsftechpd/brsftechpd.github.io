@@ -4,7 +4,6 @@ class UUIDToolsApp {
         this.state = {
             selectedType: 'profile',
             activeTab: 'uuid',
-            stats: this.loadStats(),
             errorTimers: {} // Для хранения таймеров очистки ошибок
         };
         
@@ -14,7 +13,6 @@ class UUIDToolsApp {
     init() {
         this.renderContent();
         this.setupEventListeners();
-        this.updateStatsDisplay();
         
         // Добавляем обработчик paste для всего документа
         document.addEventListener('paste', (e) => this.handlePaste(e));
@@ -66,22 +64,22 @@ class UUIDToolsApp {
                             </div>
                         </div>
 
-                        <!-- Сервисы мобильного приложения -->
+                        <!-- Сервисы приложения -->
                         <div class="button-group">
-                            <div class="group-title">Сервисы мобильного приложения</div>
-                            <div class="check-buttons" id="mobileAppButtons"></div>
+                            <div class="group-title">Сервисы приложения (Бэкенд)</div>
+                            <div class="check-buttons" id="AppButtons"></div>
                         </div>
 
-                        <!-- Запросы в ММЦ -->
+                        <!-- Запросы от мобильного приложения -->
                         <div class="button-group">
-                            <div class="group-title">Запросы в ММЦ</div>
-                            <div class="additional-buttons" id="mmcButtons"></div>
+                            <div class="group-title">Запросы от мобильного приложения (Фронтенд)</div>
+                            <div class="additional-buttons" id="RequestButtons"></div>
                         </div>
 
-                        <!-- Остальные проверки -->
+                        <!-- Сервисы ММЦ и ЕЦХД -->
                         <div class="button-group">
-                            <div class="group-title">Остальные проверки</div>
-                            <div class="other-checks-buttons" id="otherChecksButtons"></div>
+                            <div class="group-title">Сервисы ММЦ и ЕЦХД (Внешние сервисы)</div>
+                            <div class="other-checks-buttons" id="MMCButtons"></div>
                         </div>
                     </div>
 
@@ -162,9 +160,9 @@ class UUIDToolsApp {
         `;
 
         this.initializeElements();
-        this.initMobileAppButtons();
-        this.initMmcButtons();
-        this.initOtherChecksButtons();
+        this.initAppButtons();
+        this.initRequestButtons();
+        this.initMMCButtons();
     }
 
     initializeElements() {
@@ -174,9 +172,9 @@ class UUIDToolsApp {
             formattedResult: document.getElementById('formattedResult'),
             copyBtn: document.getElementById('copyBtn'),
             toggleContainer: document.getElementById('toggleContainer'),
-            mobileAppButtons: document.getElementById('mobileAppButtons'),
-            mmcButtons: document.getElementById('mmcButtons'),
-            otherChecksButtons: document.getElementById('otherChecksButtons'),
+            AppButtons: document.getElementById('AppButtons'),
+            RequestButtons: document.getElementById('RequestButtons'),
+            MMCButtons: document.getElementById('MMCButtons'),
             tabsContent: document.getElementById('tabsContent'),
             kigInput: document.getElementById('kigInput'),
             searchKigBtn: document.getElementById('searchKigBtn'),
@@ -192,38 +190,36 @@ class UUIDToolsApp {
         };
     }
 
-    initMobileAppButtons() {
-        const mobileServices = this.config.urlTemplates.mobileServices;
-        Object.values(mobileServices).forEach(service => {
+    initAppButtons() {
+        const appServices = this.config.urlTemplates.appServices;
+        Object.values(appServices).forEach(service => {
             const button = document.createElement('button');
             button.className = `check-btn ${service.gradient}`;
             button.innerHTML = `<i class="${service.icon}"></i> ${service.name}`;
             button.addEventListener('click', () => this.openCheckUrl(service.url, this.elements.numberInput.value));
-            this.elements.mobileAppButtons.appendChild(button);
+            this.elements.AppButtons.appendChild(button);
         });
     }
 
-    initMmcButtons() {
-        const mmcRequests = this.config.urlTemplates.mmcRequests;
-        Object.values(mmcRequests).forEach(request => {
+    initRequestButtons() {
+        const requestsMobileApp = this.config.urlTemplates.requestsMobileApp;
+        Object.values(requestsMobileApp).forEach(request => {
             const button = document.createElement('button');
             button.className = `check-btn ${request.gradient}`;
             button.innerHTML = `<i class="${request.icon}"></i> ${request.name}`;
             button.addEventListener('click', () => this.openCheckUrl(request.url, this.elements.numberInput.value));
-            this.elements.mmcButtons.appendChild(button);
+            this.elements.RequestButtons.appendChild(button);
         });
     }
 
-    initOtherChecksButtons() {
-        const otherChecks = this.config.urlTemplates.otherChecks;
-        Object.values(otherChecks).forEach(check => {
+    initMMCButtons() {
+        const mmcServices = this.config.urlTemplates.mmcServices;
+        Object.values(mmcServices).forEach(service => {
             const button = document.createElement('button');
-            button.className = `check-btn ${check === otherChecks.yandexService ? 'yandex-service-btn' : 
-                              check === otherChecks.addressRepeated ? 'warning-group-btn' : 
-                              check === otherChecks.residenceRegistrationError ? 'danger-group-btn' : 'mso-group-btn'}`;
-            button.innerHTML = `<i class="${check.icon || 'fas fa-search'}"></i> ${check.name}`;
-            button.addEventListener('click', () => this.openCheckUrl(check.url, this.elements.numberInput.value));
-            this.elements.otherChecksButtons.appendChild(button);
+            button.className = `check-btn ${service.gradient}`;
+            button.innerHTML = `<i class="${service.icon}"></i> ${service.name}`;
+            button.addEventListener('click', () => this.openCheckUrl(service.url, this.elements.numberInput.value));
+            this.elements.MMCButtons.appendChild(button);
         });
     }
 
@@ -301,11 +297,6 @@ class UUIDToolsApp {
         // Валидация ввода UUID
         this.elements.numberInput.addEventListener('input', (e) => {
             this.validateUUIDInput(e.target);
-        });
-
-        // Очистка статистики
-        document.getElementById('sidebarClearStatsBtn').addEventListener('click', () => {
-            this.clearStats();
         });
     }
 
@@ -403,8 +394,7 @@ class UUIDToolsApp {
             
             this.elements.formattedResult.textContent = result;
             this.copyToClipboard(result);
-            
-            this.updateStats(cleanNumber);
+
         } catch (error) {
             this.showInputError(this.elements.numberInput);
         }
@@ -505,68 +495,4 @@ class UUIDToolsApp {
         this.state.activeTab = tabId;
     }
 
-    // Статистика
-    getStatsKey() {
-        const today = new Date().toISOString().split('T')[0];
-        return `${this.config.stats.storageKeyPrefix}${today}`;
-    }
-
-    loadStats() {
-        const statsKey = this.getStatsKey();
-        const savedStats = localStorage.getItem(statsKey);
-        
-        if (savedStats) {
-            return JSON.parse(savedStats);
-        }
-        
-        return {
-            total: 0,
-            unique: [],
-            repeated: 0
-        };
-    }
-
-    saveStats() {
-        const statsKey = this.getStatsKey();
-        localStorage.setItem(statsKey, JSON.stringify(this.state.stats));
-        this.updateStatsDisplay();
-    }
-
-    updateStats(uuid) {
-        this.state.stats.total++;
-        
-        if (!this.state.stats.unique.includes(uuid)) {
-            this.state.stats.unique.push(uuid);
-        }
-        
-        this.state.stats.repeated = this.state.stats.total - this.state.stats.unique.length;
-        this.saveStats();
-    }
-
-    updateStatsDisplay() {
-        const sidebarStatTotal = document.getElementById('sidebarStatTotal');
-        const sidebarStatUnique = document.getElementById('sidebarStatUnique');
-        const sidebarStatRepeated = document.getElementById('sidebarStatRepeated');
-        const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
-        
-        if (sidebarStatTotal) sidebarStatTotal.textContent = this.state.stats.total;
-        if (sidebarStatUnique) sidebarStatUnique.textContent = this.state.stats.unique.length;
-        if (sidebarStatRepeated) sidebarStatRepeated.textContent = this.state.stats.repeated;
-        if (sidebarStatsContainer) {
-            sidebarStatsContainer.style.display = this.state.stats.total > 0 ? 'block' : 'none';
-        }
-    }
-
-    clearStats() {
-        if (this.state.stats.total === 0) return;
-        
-        if (confirm('Очистить статистику за сегодня?')) {
-            this.state.stats = {
-                total: 0,
-                unique: [],
-                repeated: 0
-            };
-            this.saveStats();
-        }
-    }
 }

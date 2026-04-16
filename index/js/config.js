@@ -2,7 +2,7 @@
 const toolsConfig = [
     {
         id: 'uuid',
-        version: 'v2.0',
+        version: 'v2.1',
         iconClass: 'uuid',
         icon: 'fas fa-fingerprint',
         title: 'UUID Tools',
