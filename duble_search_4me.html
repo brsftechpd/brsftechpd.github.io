@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket check 4me - Анализ таблицы заявок</title>
-    
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Стили -->
     <link rel="stylesheet" href="tools/css/common.css">
     <link rel="stylesheet" href="tools/css/components/header.css">
@@ -28,10 +29,10 @@
 <body class="theme-dark">
     <!-- Background Effects -->
     <div id="background-effects"></div>
-    
+
     <!-- Header -->
     <div id="header-container"></div>
-    
+
     <!-- Main Wrapper -->
     <div class="main-wrapper">
         <!-- Sidebar -->
@@ -42,11 +43,11 @@
                     <span>Категории</span>
                 </div>
             </div>
-            
+
             <div class="sidebar-nav-container">
                 <!-- Скрытый input для загрузки файла -->
                 <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
-                
+
                 <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="Навигация по категориям">
                     <!-- Навигационные вкладки с количеством -->
                     <button class="nav-tab" id="tab-all" data-tab="all">
@@ -80,7 +81,7 @@
                 </nav>
             </div>
         </aside>
-        
+
         <!-- Main Content -->
         <main class="content" id="content">
             <!-- Контейнер для контента вкладок -->
@@ -94,20 +95,19 @@
                                 <i class="fas fa-file-excel"></i>
                             </div>
                         </div>
-                        
+
                         <div class="upload-content">
                             <h1 class="upload-title">Загрузите файл Excel</h1>
                             <p class="upload-subtitle">
-                                Загрузите Excel файл выгруженный из системы 4me. 
-                                Поддерживаются файлы формата .xlsx и .xls
+                                Загрузите Excel файл выгруженный из системы 4me. Поддерживаются файлы формата .xlsx и .xls
                             </p>
                         </div>
-                        
+
                         <button class="upload-btn-main" id="uploadBtnMain">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <span>Выбрать файл Excel</span>
                         </button>
-                        
+
                         <div class="upload-hint">
                             <p>Перетащите файл сюда или нажмите для выбора</p>
                         </div>
@@ -116,49 +116,43 @@
             </div>
         </main>
     </div>
-    
+
     <!-- Footer -->
     <div id="footer-container"></div>
 
     <!-- Подключаем библиотеку для работы с Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
+
     <!-- Подключаем конфиг и компоненты -->
     <script src="index/js/config.js"></script>
     <script src="tools/js/components/header.js"></script>
     <script src="tools/js/components/footer.js"></script>
     <script src="tools/js/components/background-effects.js"></script>
-    
+
     <script>
         // ПОЛНЫЙ JavaScript код для duble_search_4me
         document.addEventListener('DOMContentLoaded', function() {
             // Загружаем конфиг для текущего инструмента
             const toolId = '4me';
             const toolConfig = toolsConfig.find(tool => tool.id === toolId);
-            
             if (!toolConfig) {
                 console.error('Конфиг для инструмента не найден');
                 return;
             }
-
             // Инициализация компонентов
             // Фоновые эффекты
             const backgroundEffects = new BackgroundEffects();
             document.getElementById('background-effects').innerHTML = backgroundEffects.render();
-
             // Шапка
             const header = new Header(toolConfig);
             document.getElementById('header-container').innerHTML = header.render();
             header.initEventListeners();
-
             // Подвал
             const footer = new Footer();
             document.getElementById('footer-container').innerHTML = footer.render();
-
             // Управление темой (уже инициализировано в Header, но для надежности)
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
             if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
                 document.body.classList.remove('theme-dark');
                 document.body.classList.add('theme-light');
@@ -168,7 +162,6 @@
                     themeIcon.classList.add('fa-sun');
                 }
             }
-
             // DOM элементы
             const elements = {
                 fileInput: document.getElementById('fileInput'),
@@ -181,7 +174,6 @@
                 countNonStandard: document.getElementById('count-nonStandard'),
                 countUnique: document.getElementById('count-unique')
             };
-
             // Состояние приложения
             const state = {
                 duplicates: {},
@@ -191,129 +183,99 @@
                 currentTab: 'duplicates',
                 fileLoaded: false
             };
-
             // Утилиты
             const utils = {
                 // Нормализация инициатора запроса
                 normalizeInitiator: (initiator) => {
                     if (!initiator) return null;
-                    
                     // Удаляем текст " - ИНОСТРАННЫЕ ГРАЖДАНЕ" и " - Граждане"
                     let cleaned = initiator
                         .replace(/\s*-\s*ИНОСТРАННЫЕ\s*ГРАЖДАНЕ/gi, '')
                         .replace(/\s*-\s*Граждане/gi, '')
                         .trim();
-                    
                     // Расширенное регулярное выражение для поиска паттерна
                     const pattern = /^([aа])\s*([aаbбв])\s*(\d{7})\s*(.*)?$/i;
                     const match = cleaned.match(pattern);
-                    
                     if (match) {
                         const firstChar = match[1].toUpperCase() === 'А' ? 'A' : match[1].toUpperCase();
                         let secondChar = match[2].toUpperCase();
-                        
                         // Преобразуем кириллические символы в латинские
                         const cyrToLat = {
                             'А': 'A',
-                            'Б': 'B', 
+                            'Б': 'B',
                             'В': 'B'
                         };
-                        
                         secondChar = cyrToLat[secondChar] || secondChar;
-                        
                         const digits = match[3];
-                        
                         return firstChar + secondChar + digits;
                     }
-                    
                     // Дополнительная попытка найти паттерн без учета пробелов и текста
                     const loosePattern = /([aа])\s*([aаbбв])\s*(\d{7})/i;
                     const looseMatch = cleaned.match(loosePattern);
-                    
                     if (looseMatch) {
                         const firstChar = looseMatch[1].toUpperCase() === 'А' ? 'A' : looseMatch[1].toUpperCase();
                         let secondChar = looseMatch[2].toUpperCase();
-                        
                         // Преобразуем кириллические символы в латинские
                         const cyrToLat = {
                             'А': 'A',
-                            'Б': 'B', 
+                            'Б': 'B',
                             'В': 'B'
                         };
-                        
                         secondChar = cyrToLat[secondChar] || secondChar;
-                        
                         const digits = looseMatch[3];
-                        
                         return firstChar + secondChar + digits;
                     }
-                    
                     return null;
                 },
-                
                 // Очистка инициатора от лишнего текста для отображения
                 cleanInitiatorForDisplay: (initiator) => {
                     if (!initiator) return '';
-                    
                     // Удаляем текст " - ИНОСТРАННЫЕ ГРАЖДАНЕ" и " - Граждане"
                     let cleaned = initiator
                         .replace(/\s*-\s*ИНОСТРАННЫЕ\s*ГРАЖДАНЕ/gi, '')
                         .replace(/\s*-\s*Граждане/gi, '')
                         .trim();
-                    
                     // Расширенное регулярное выражение для поиска паттерна
                     const pattern = /^([aа])\s*([aаbбв])\s*(\d{7})\s*(.*)?$/i;
                     const match = cleaned.match(pattern);
-                    
                     if (match) {
                         const firstChar = match[1].toUpperCase() === 'А' ? 'A' : match[1].toUpperCase();
                         let secondChar = match[2].toUpperCase();
-                        
                         // Преобразуем кириллические символы в латинские
                         const cyrToLat = {
                             'А': 'A',
-                            'Б': 'B', 
+                            'Б': 'B',
                             'В': 'B'
                         };
-                        
                         secondChar = cyrToLat[secondChar] || secondChar;
                         const digits = match[3];
-                        
                         // Форматируем для отображения: A B 1234567
                         return `${firstChar}${secondChar}${digits}`;
                     }
-                    
                     // Дополнительная попытка найти паттерн без учета пробелов и текста
                     const loosePattern = /([aа])\s*([aаbбв])\s*(\d{7})/i;
                     const looseMatch = cleaned.match(loosePattern);
-                    
                     if (looseMatch) {
                         const firstChar = looseMatch[1].toUpperCase() === 'А' ? 'A' : looseMatch[1].toUpperCase();
                         let secondChar = looseMatch[2].toUpperCase();
-                        
                         // Преобразуем кириллические символы в латинские
                         const cyrToLat = {
                             'А': 'A',
-                            'Б': 'B', 
+                            'Б': 'B',
                             'В': 'B'
                         };
-                        
                         secondChar = cyrToLat[secondChar] || secondChar;
                         const digits = looseMatch[3];
-                        
                         // Форматируем для отображения: A B 1234567
                         return `${firstChar}${secondChar}${digits}`;
                     }
-                    
                     // Если паттерн не найден, возвращаем очищенную строку
                     return cleaned;
                 },
-                
                 // Копирование текста в буфер обмена
                 copyToClipboard: (text) => {
                     return navigator.clipboard.writeText(text);
                 },
-                
                 // Функция для удаления записи
                 removeRecord: (id, tableType) => {
                     // Удаляем запись из соответствующих данных
@@ -339,25 +301,19 @@
                         state.nonStandard = state.nonStandard.filter(item => item.id !== id);
                         state.unique = state.unique.filter(item => item.id !== id);
                     }
-
                     // Удаляем запись из всех данных
                     state.allData = state.allData.filter(item => item.id !== id);
-
                     // Обновляем отображение без анимации
                     renderCurrentTab(false, true);
-
                     // Обновляем статистику в сайдбаре
                     updateSidebarCounts();
                 },
-
                 // Экспорт таблицы в Excel
                 exportTableToExcel: (tableId, filename) => {
                     const table = document.getElementById(tableId);
-                    
                     // Создаем копию таблицы без столбца "Действия"
                     const clonedTable = table.cloneNode(true);
                     const rows = clonedTable.getElementsByTagName('tr');
-                    
                     // Удаляем столбец "Действия" (последний столбец) из каждой строки
                     for (let i = 0; i < rows.length; i++) {
                         const cells = rows[i].cells;
@@ -365,23 +321,21 @@
                             rows[i].deleteCell(cells.length - 1);
                         }
                     }
-                    
                     // Экспортируем клонированную таблицу
-                    const wb = XLSX.utils.table_to_book(clonedTable, {sheet: "Sheet1"});
+                    const wb = XLSX.utils.table_to_book(clonedTable, {
+                        sheet: "Sheet1"
+                    });
                     XLSX.writeFile(wb, filename);
                 }
             };
-
             // Обработка данных
             const dataProcessor = {
                 // Обработка данных из Excel
                 processData: (data) => {
                     // Пропускаем заголовок
                     const rows = data.slice(1);
-                    
                     // Собираем нужные столбцы: ID (B), Инициатор запроса (C), Тема (D)
                     const requests = [];
-                    
                     rows.forEach(row => {
                         if (row.length >= 4) {
                             requests.push({
@@ -391,10 +345,8 @@
                             });
                         }
                     });
-                    
                     // Сохраняем все данные
                     state.allData = requests;
-                    
                     // Нормализуем инициаторов и группируем
                     const normalizedRequests = requests.map(req => {
                         return {
@@ -403,11 +355,9 @@
                             cleanInitiator: utils.cleanInitiatorForDisplay(req.initiator)
                         };
                     });
-                    
                     // Группируем по нормализованным инициаторам
                     const grouped = {};
                     const nonStandard = [];
-                    
                     normalizedRequests.forEach(req => {
                         if (req.normalizedInitiator) {
                             if (!grouped[req.normalizedInitiator]) {
@@ -418,11 +368,9 @@
                             nonStandard.push(req);
                         }
                     });
-                    
                     // Отделяем дублирующиеся и уникальные
                     const duplicates = {};
                     const unique = [];
-                    
                     Object.keys(grouped).forEach(key => {
                         if (grouped[key].length > 1) {
                             duplicates[key] = grouped[key];
@@ -430,49 +378,38 @@
                             unique.push(grouped[key][0]);
                         }
                     });
-                    
                     // Сохраняем состояние
                     state.duplicates = duplicates;
                     state.nonStandard = nonStandard;
                     state.unique = unique;
                     state.fileLoaded = true;
-                    
                     // Скрываем контейнер загрузки
                     elements.uploadContainer.style.display = 'none';
-                    
                     // Обновляем статистику в сайдбаре
                     updateSidebarCounts();
-                    
                     // Отображаем данные
                     renderCurrentTab();
                 }
             };
-
             // Обновление счетчиков в сайдбаре
             const updateSidebarCounts = () => {
                 // Общее количество
                 elements.countAll.textContent = state.allData.length;
-                
                 // Количество дублирующихся
                 let duplicateCount = 0;
                 Object.values(state.duplicates).forEach(group => {
                     duplicateCount += group.length;
                 });
                 elements.countDuplicates.textContent = duplicateCount;
-                
                 // Количество несоответствующих формату
                 elements.countNonStandard.textContent = state.nonStandard.length;
-                
                 // Количество уникальных
                 elements.countUnique.textContent = state.unique.length;
             };
-
             // Рендер текущей вкладки
             const renderCurrentTab = (forceAnimation = false, skipAnimation = false) => {
                 if (!state.fileLoaded) return;
-                
                 let content = '';
-                
                 // Создаем заголовок
                 const tabTitles = {
                     all: 'Все записи',
@@ -480,31 +417,26 @@
                     nonStandard: 'Не соответствующие формату',
                     unique: 'Уникальные верные'
                 };
-                
                 const tabDescriptions = {
                     all: 'Все записи из загруженного файла',
                     duplicates: 'Записи с повторяющимися инициаторами запроса',
                     nonStandard: 'Записи, не соответствующие стандартному формату',
                     unique: 'Уникальные записи, соответствующие формату'
                 };
-                
                 const tabIcons = {
                     all: 'fas fa-list',
                     duplicates: 'fas fa-copy',
                     nonStandard: 'fas fa-exclamation-triangle',
                     unique: 'fas fa-check-circle'
                 };
-                
                 const tabColors = {
                     all: 'var(--gradient-info)',
                     duplicates: 'var(--gradient-warning)',
                     nonStandard: 'var(--gradient-error)',
                     unique: 'var(--gradient-success)'
                 };
-                
                 // Добавляем анимацию только если не пропускать анимацию
                 const animationClass = (forceAnimation || !skipAnimation) ? 'animation: fadeInUp 0.6s ease-out;' : '';
-                
                 content += `
                     <div class="category-header" style="${animationClass}">
                         <div class="category-icon" style="background: ${tabColors[state.currentTab]};">
@@ -516,7 +448,6 @@
                         </div>
                     </div>
                 `;
-                
                 // Создаем панель управления
                 content += `
                     <div class="controls-panel" style="${animationClass}">
@@ -531,14 +462,11 @@
                         </div>
                     </div>
                 `;
-                
                 // Создаем таблицу
                 let tableContent = '';
-                
                 // Получаем данные для текущей вкладки
                 let currentData = [];
                 let isEmpty = false;
-                
                 if (state.currentTab === 'all') {
                     currentData = state.allData;
                     isEmpty = currentData.length === 0;
@@ -555,7 +483,6 @@
                     currentData = state.unique;
                     isEmpty = currentData.length === 0;
                 }
-                
                 if (isEmpty) {
                     let emptyMessage = '';
                     if (state.currentTab === 'all') {
@@ -567,7 +494,6 @@
                     } else if (state.currentTab === 'unique') {
                         emptyMessage = 'Уникальных верных записей не найдено';
                     }
-                    
                     tableContent = `
                         <tr>
                             <td colspan="4" style="text-align: center; padding: 60px; color: var(--color-text-tertiary);">
@@ -582,7 +508,6 @@
                             // Определяем, к какой категории относится запись
                             let tableType = 'all';
                             let found = false;
-                            
                             // Проверяем дублирующиеся
                             for (const initiator in state.duplicates) {
                                 if (state.duplicates[initiator].some(item => item.id === request.id)) {
@@ -591,16 +516,13 @@
                                     break;
                                 }
                             }
-                            
                             if (!found && state.nonStandard.some(item => item.id === request.id)) {
                                 tableType = 'nonStandard';
                             } else if (!found && state.unique.some(item => item.id === request.id)) {
                                 tableType = 'unique';
                             }
-                            
                             // Очищаем инициатора для отображения
                             const cleanInitiator = utils.cleanInitiatorForDisplay(request.initiator);
-                            
                             tableContent += `
                                 <tr>
                                     <td>
@@ -634,7 +556,6 @@
                                     </td>
                                 </tr>
                             `;
-                            
                             // Добавляем записи группы
                             state.duplicates[initiator].forEach(request => {
                                 tableContent += `
@@ -713,9 +634,7 @@
                         });
                     }
                 }
-                
                 const tableAnimationClass = (forceAnimation || !skipAnimation) ? 'animation: fadeInUp 1s ease-out;' : '';
-                
                 content += `
                     <div class="table-container" style="${tableAnimationClass}">
                         <table id="${state.currentTab}Table">
@@ -733,13 +652,10 @@
                         </table>
                     </div>
                 `;
-                
                 elements.contentContainer.innerHTML = content;
-                
                 // Добавляем обработчики событий для новой таблицы
                 setupTableEventListeners();
             };
-
             // Настройка обработчиков событий для таблицы
             const setupTableEventListeners = () => {
                 // Поиск в таблице
@@ -749,22 +665,18 @@
                         const searchTerm = searchInput.value.toLowerCase();
                         const rows = document.getElementById(`${state.currentTab}Body`).getElementsByTagName('tr');
                         let visibleRows = 0;
-                        
                         for (let row of rows) {
                             // Пропускаем заголовки групп
                             if (row.classList.contains('group-header')) {
                                 let groupHasVisibleRows = false;
                                 let nextRow = row.nextElementSibling;
-                                
                                 // Проверяем все строки после заголовка группы
                                 while (nextRow && !nextRow.classList.contains('group-header')) {
                                     let rowText = '';
                                     const cells = nextRow.getElementsByTagName('td');
-                                    
                                     for (let cell of cells) {
                                         rowText += cell.textContent.toLowerCase() + ' ';
                                     }
-                                    
                                     if (rowText.includes(searchTerm)) {
                                         groupHasVisibleRows = true;
                                         nextRow.style.display = '';
@@ -772,10 +684,8 @@
                                     } else {
                                         nextRow.style.display = 'none';
                                     }
-                                    
                                     nextRow = nextRow.nextElementSibling;
                                 }
-                                
                                 // Показываем или скрываем заголовок группы
                                 if (groupHasVisibleRows || searchTerm === '') {
                                     row.style.display = '';
@@ -786,11 +696,9 @@
                             } else {
                                 let rowText = '';
                                 const cells = row.getElementsByTagName('td');
-                                
                                 for (let cell of cells) {
                                     rowText += cell.textContent.toLowerCase() + ' ';
                                 }
-                                
                                 if (rowText.includes(searchTerm)) {
                                     row.style.display = '';
                                     visibleRows++;
@@ -799,7 +707,6 @@
                                 }
                             }
                         }
-                        
                         // Если нет видимых строк и есть поисковый запрос, показываем сообщение
                         if (visibleRows === 0 && searchTerm !== '') {
                             const tbody = document.getElementById(`${state.currentTab}Body`);
@@ -814,13 +721,11 @@
                         }
                     });
                 }
-                
                 // Экспорт
                 const exportBtn = document.getElementById(`export${state.currentTab.charAt(0).toUpperCase() + state.currentTab.slice(1)}`);
                 if (exportBtn) {
                     exportBtn.addEventListener('click', () => {
                         let filename;
-                        
                         if (state.currentTab === 'all') {
                             filename = 'Все_записи.xlsx';
                         } else if (state.currentTab === 'duplicates') {
@@ -830,11 +735,9 @@
                         } else if (state.currentTab === 'unique') {
                             filename = 'Уникальные_верные.xlsx';
                         }
-                        
                         utils.exportTableToExcel(`${state.currentTab}Table`, filename);
                     });
                 }
-                
                 // Обработка кликов по кнопкам в таблице
                 const tableBody = document.getElementById(`${state.currentTab}Body`);
                 if (tableBody) {
@@ -846,19 +749,16 @@
                                 window.open(`https://sc-tech-solutions.itsm.mos.ru/requests/${id}`, '_blank');
                             }
                         }
-                        
                         // Обработка клика по кнопке инициатора
                         if (e.target.classList.contains('initiator-button')) {
                             const button = e.target.closest('.initiator-button');
                             const initiator = button.getAttribute('data-initiator');
                             const originalText = button.textContent;
-                            
                             utils.copyToClipboard(initiator)
                                 .then(() => {
                                     // Меняем цвет кнопки и текст
                                     button.classList.add('copied');
                                     button.textContent = 'Скопировано';
-                                    
                                     // Возвращаем обратно через 1.5 секунды
                                     setTimeout(() => {
                                         button.classList.remove('copied');
@@ -869,27 +769,23 @@
                                     console.error('Ошибка копирования: ', err);
                                 });
                         }
-                        
                         // Обработка клика по кнопке удаления
                         if (e.target.closest('.delete-btn')) {
                             const button = e.target.closest('.delete-btn');
                             const id = button.getAttribute('data-id');
                             const tableType = button.getAttribute('data-table');
-                            
                             // Удаляем запись сразу без подтверждения
                             utils.removeRecord(id, tableType);
                         }
                     });
                 }
             };
-
             // Обработчики событий
             const setupEventListeners = () => {
                 // Загрузка файла через кнопку в основном контенте
                 elements.uploadBtnMain.addEventListener('click', () => {
                     elements.fileInput.click();
                 });
-                
                 // Drag and drop для загрузки файла
                 elements.uploadContainer.addEventListener('dragover', (e) => {
                     e.preventDefault();
@@ -901,7 +797,6 @@
                         uploadCard.style.transform = 'translateY(-4px)';
                     }
                 });
-                
                 elements.uploadContainer.addEventListener('dragleave', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -912,7 +807,6 @@
                         uploadCard.style.transform = 'translateY(0)';
                     }
                 });
-                
                 elements.uploadContainer.addEventListener('drop', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -922,7 +816,6 @@
                         uploadCard.style.boxShadow = 'var(--shadow-xl)';
                         uploadCard.style.transform = 'translateY(0)';
                     }
-                    
                     if (e.dataTransfer.files.length) {
                         const file = e.dataTransfer.files[0];
                         if (file.name.match(/\.(xlsx|xls)$/i)) {
@@ -930,25 +823,20 @@
                         }
                     }
                 });
-                
                 elements.fileInput.addEventListener('change', function() {
                     if (this.files.length > 0) {
                         const file = this.files[0];
                         processFile(file);
                     }
                 });
-                
                 // Переключение вкладок
                 elements.tabs.forEach(tab => {
                     tab.addEventListener('click', function() {
                         if (this.classList.contains('active')) return;
-                        
                         elements.tabs.forEach(t => t.classList.remove('active'));
                         this.classList.add('active');
-                        
                         const tabName = this.getAttribute('data-tab');
                         state.currentTab = tabName;
-                        
                         // Обновляем отображение только если файл загружен
                         if (state.fileLoaded) {
                             renderCurrentTab(true);
@@ -956,49 +844,99 @@
                     });
                 });
             };
-            
             // Функция обработки файла
             const processFile = (file) => {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        
-                        // Предполагаем, что данные находятся на первом листе
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        
-                        // Преобразуем лист в JSON
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                        
-                        // Обрабатываем данные
-                        dataProcessor.processData(jsonData);
-                    } catch (error) {
-                        console.error('Ошибка при обработке файла:', error);
-                        alert('Произошла ошибка при обработке файла. Убедитесь, что файл имеет правильный формат Excel.');
-                    }
-                };
-                
-                reader.onerror = function() {
-                    alert('Ошибка при чтении файла. Попробуйте еще раз.');
-                };
-                
-                reader.readAsArrayBuffer(file);
+                // Первая попытка: ArrayBuffer
+                tryReader('arraybuffer', file);
             };
 
+            function tryReader(readType, file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        let data;
+                        let options = {
+                            cellDates: false
+                        };
+                        if (readType === 'arraybuffer') {
+                            data = new Uint8Array(e.target.result);
+                            options.type = 'array';
+                        } else if (readType === 'binary') {
+                            data = e.target.result; // это строка
+                            options.type = 'binary';
+                        }
+                        const workbook = XLSX.read(data, options);
+                        if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+                            throw new Error('Файл не содержит листов.');
+                        }
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        if (!worksheet) {
+                            throw new Error(`Лист "${firstSheetName}" не найден.`);
+                        }
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                            header: 1,
+                            defval: ''
+                        });
+                        if (!Array.isArray(jsonData) || jsonData.length <= 1) {
+                            throw new Error('Файл не содержит данных.');
+                        }
+                        dataProcessor.processData(jsonData);
+                    } catch (error) {
+                        console.error('Ошибка при обработке файла (' + readType + '):', error);
+                        // Если пробовали через ArrayBuffer и упали — пробуем через бинарную строку
+                        if (readType === 'arraybuffer') {
+                            tryReader('binary', file);
+                            return;
+                        }
+                        // Обе попытки неудачны — анализируем ошибку
+                        const errorMsg = error.message.toLowerCase();
+                        let userMessage = 'Произошла ошибка при обработке файла.\n\n' + error.message;
+                        // Расширенный список признаков защищённого/повреждённого файла
+                        if (
+                            errorMsg.includes('unsupported') ||
+                            errorMsg.includes('corrupt') ||
+                            errorMsg.includes('invalid') ||
+                            errorMsg.includes('not a valid') ||
+                            errorMsg.includes('formats') ||
+                            errorMsg.includes('array buffer allocation failed') ||
+                            errorMsg.includes('failed to read') ||
+                            errorMsg.includes('parse error') ||
+                            errorMsg.includes('unknown format')
+                        ) {
+                            userMessage += '\n\n' +
+                                '⚠️  Вероятная причина: файл находится в режиме «защищённого просмотра» или повреждён.\n\n' +
+                                '📌  Что нужно сделать:\n' +
+                                '1. Откройте файл в Microsoft Excel.\n' +
+                                '2. Если появится предупреждение «Защищённый просмотр», нажмите «Разрешить редактирование».\n' +
+                                '3. Сохраните файл (Файл → Сохранить как) в формате Excel (.xlsx).\n' +
+                                '4. Повторите загрузку в этот инструмент.';
+                        } else {
+                            userMessage += '\n\n' +
+                                'Убедитесь, что файл является корректной книгой Excel (.xlsx/.xls) и не содержит макросов.';
+                        }
+                        alert(userMessage);
+                    }
+                };
+                reader.onerror = function() {
+                    alert('Ошибка при чтении файла. Попробуйте ещё раз.');
+                };
+                if (readType === 'arraybuffer') {
+                    reader.readAsArrayBuffer(file);
+                } else if (readType === 'binary') {
+                    reader.readAsBinaryString(file);
+                }
+            }
             // Инициализация приложения
             const init = () => {
                 setupEventListeners();
-                
                 // Инициализируем счетчики в сайдбаре
                 updateSidebarCounts();
             };
-
             // Запуск приложения
             init();
         });
     </script>
 </body>
+
 </html>
