@@ -231,7 +231,7 @@
         /* Левый блок - Категории */
         .categories-list {
             flex: 1;
-            overflow-y: auto;
+            overflow-x: hidden;
             padding: 16px;
             scrollbar-width: thin;
             scrollbar-color: var(--bg-accent) transparent;
@@ -307,7 +307,7 @@
         .left-column.collapsed .category-item.active::before {
             content: '';
             position: absolute;
-            left: -8px;
+            left: -5px;
             top: 50%;
             transform: translateY(-50%);
             height: 24px;
