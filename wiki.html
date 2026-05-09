@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Темная тема (по умолчанию) */
             --bg-primary: #0f1629;
             --bg-secondary: #1a2238;
             --bg-tertiary: #242e48;
@@ -29,16 +27,18 @@
             --radius: 8px;
             --radius-sm: 6px;
             --transition: all 0.2s ease;
-            --glass-bg: rgba(26, 34, 56, 0.95);
+            --glass-bg: rgba(26, 34, 56, 0.85);
             --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             --gradient-secondary: linear-gradient(135deg, #1a2238 0%, #0f1629 100%);
             --sidebar-width: 280px;
             --sidebar-collapsed: 70px;
             --text-placeholder: #94a3b8;
-            --header-height: 60px;
+            --scroll-thumb: #4f46e5;
+            --logo-color: #4f46e5;
+            --hover-ring: rgba(255, 255, 255, 0.05);
+            --logo-text-bg: var(--gradient-primary);
         }
 
-        /* Светлая тема */
         .light-theme {
             --bg-primary: #f8fafc;
             --bg-secondary: #f5f5f5;
@@ -57,10 +57,14 @@
             --border-light: rgba(0, 0, 0, 0.08);
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-bg: rgba(255, 255, 255, 0.85);
             --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             --gradient-secondary: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
             --text-placeholder: #94a3b8;
+            --scroll-thumb: #94a3b8;
+            --logo-color: #1e293b;
+            --hover-ring: rgba(0, 0, 0, 0.05);
+            --logo-text-bg: none;
         }
 
         * {
@@ -78,131 +82,12 @@
             transition: var(--transition);
         }
 
-        /* Шапка */
-        .main-header {
-            height: var(--header-height);
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Кнопка домой */
-        .home-btn {
-            background: var(--bg-accent);
-            border: none;
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .home-btn:hover {
-            background: #4338ca;
-            transform: translateY(-2px);
-        }
-
-        .home-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Название приложения */
-        .app-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .app-title i {
-            color: var(--bg-accent);
-            font-size: 20px;
-        }
-
-        /* Кнопка переключения темы в шапке */
-        .theme-toggle {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--bg-accent);
-        }
-
-        .light-theme .theme-toggle:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .theme-toggle .theme-icon {
-            font-size: 16px;
-        }
-
-        .theme-toggle .sun-icon {
-            display: none;
-        }
-
-        .theme-toggle .moon-icon {
-            display: block;
-        }
-
-        .light-theme .theme-toggle .sun-icon {
-            display: block;
-            color: #f59e0b;
-        }
-
-        .light-theme .theme-toggle .moon-icon {
-            display: none;
-        }
-
-        /* Основной контейнер */
         .main-container {
             display: flex;
-            height: calc(100vh - var(--header-height));
+            height: 100vh;
             overflow: hidden;
         }
 
-        /* Основные колонки */
         .column {
             height: 100%;
             display: flex;
@@ -215,9 +100,10 @@
         .left-column {
             width: var(--sidebar-width);
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             border-right: 1px solid var(--border-light);
             position: relative;
+            transition: width 0.3s ease;
         }
 
         .left-column.collapsed {
@@ -228,6 +114,8 @@
             width: 320px;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
         }
 
         .right-column {
@@ -237,143 +125,125 @@
             flex-direction: column;
         }
 
-        /* Заголовки блоков */
-        .block-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 16px;
-            font-weight: 600;
+        /* Логотип / кнопка домой */
+        .sidebar-top {
+            padding: 14px 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: rgba(15, 22, 41, 0.8);
+            justify-content: flex-start;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+            min-height: 56px;
+            transition: justify-content 0.3s, padding 0.3s;
         }
 
-        .light-theme .block-header {
-            background: rgba(248, 250, 252, 0.8);
+        .left-column.collapsed .sidebar-top {
+            justify-content: center;
+            padding: 10.5px 8px;
         }
 
-        .block-header span {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .left-column.collapsed .block-header span {
-            display: none;
-        }
-
-        /* Кнопки */
-        .btn {
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: var(--gradient-primary);
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: var(--transition);
+        .home-logo {
             display: flex;
             align-items: center;
             gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s;
-        }
-
-        .btn:hover::after {
-            left: 100%;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-        }
-
-        .btn-copy {
             background: transparent;
-            border: 1px solid #10b981;
-            color: #10b981;
-        }
-
-        .light-theme .btn-copy {
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .btn-copy:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #10b981;
-        }
-
-        .light-theme .btn-copy:hover {
-            background: rgba(16, 185, 129, 0.15);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-color);
+            border: none;
             color: var(--text-secondary);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--border-color);
-        }
-
-        .light-theme .btn-outline:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-sm {
             padding: 6px 12px;
-            font-size: 13px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: padding 0.3s, gap 0.3s, width 0.3s, height 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;            /* усилено */
+            letter-spacing: 0;           /* убран отрицательный */
         }
 
-        .btn-icon {
-            padding: 8px;
-            width: 36px;
-            height: 36px;
+        .left-column.collapsed .home-logo {
+            padding: 0;
+            gap: 0;
+            width: 40px;
+            height: 40px;
             justify-content: center;
-            border-radius: var(--radius-sm);
+            border-radius: 50%;
         }
 
-        .btn-tiny {
-            padding: 4px 8px;
-            font-size: 12px;
-            min-width: auto;
+        .home-logo i {
+            font-size: 20px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
-        /* Кнопка сворачивания */
+        .home-logo-text {
+            max-width: 200px;
+            opacity: 1;
+            transition: max-width 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+            background: var(--text-secondary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            white-space: nowrap;
+        }
+
+        .light-theme .home-logo-text {
+            background: none;
+            color: #1e293b;
+        }
+
+        .left-column.collapsed .home-logo-text {
+            max-width: 0;
+            opacity: 0;
+            margin: 0;
+        }
+
+        .block-header {
+            padding: 6px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+            transition: padding 0.3s;
+        }
+
+        .left-column.collapsed .block-header {
+            justify-content: center;
+            padding: 6px 0;
+        }
+
+        .left-column.collapsed .block-header .collapse-btn {
+            margin: 0 auto;
+        }
+
+        .categories-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 250px;
+            opacity: 1;
+            transition: max-width 0.3s ease, opacity 0.3s ease, gap 0.3s ease;
+        }
+
+        .left-column.collapsed .categories-title {
+            max-width: 0;
+            opacity: 0;
+            gap: 0;
+        }
+
+        .categories-title i {
+            color: var(--bg-accent);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
         .collapse-btn {
             background: transparent;
             border: none;
@@ -386,40 +256,50 @@
             align-items: center;
             justify-content: center;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .collapse-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .light-theme .collapse-btn:hover {
-            background: rgba(0, 0, 0, 0.1);
+            background: var(--hover-ring);
         }
 
         .left-column.collapsed .collapse-btn i {
             transform: rotate(180deg);
         }
 
-        /* Левый блок - Категории */
+        /* Список категорий */
         .categories-list {
             flex: 1;
             overflow-x: hidden;
+            overflow-y: auto;
             padding: 16px;
             scrollbar-width: thin;
-            scrollbar-color: var(--bg-accent) transparent;
+            scrollbar-color: var(--scroll-thumb) transparent;
         }
 
         .categories-list::-webkit-scrollbar {
             width: 4px;
         }
-
         .categories-list::-webkit-scrollbar-track {
             background: transparent;
         }
-
         .categories-list::-webkit-scrollbar-thumb {
-            background: var(--bg-accent);
+            background: var(--scroll-thumb);
             border-radius: 2px;
+        }
+
+        .left-column.collapsed .categories-list {
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            scrollbar-width: none;
+			gap: 15px;
+        }
+
+        .left-column.collapsed .categories-list::-webkit-scrollbar {
+            display: none;
         }
 
         .category-item {
@@ -428,7 +308,7 @@
             border-radius: var(--radius-sm);
             background: transparent;
             cursor: pointer;
-            transition: var(--transition);
+            transition: background 0.2s ease, border-radius 0.3s, width 0.3s, height 0.3s, margin 0.3s;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -463,31 +343,24 @@
             border-radius: 0 2px 2px 0;
         }
 
-        /* Discord-стиль для свернутой панели */
-        .left-column.collapsed .categories-list {
-            padding: 16px 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .left-column.collapsed .category-item.active {
-            position: relative;
-            background: transparent !important;
-            border-radius: 50%;
+        /* Свёрнутое состояние */
+        .left-column.collapsed .category-item {
+            padding: 0;
+            justify-content: center;
+            margin: 0 0 0 0;
+            border-radius: 10px;
             width: 48px;
             height: 48px;
-            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 0 8px 0;
+            background: transparent;
         }
 
         .left-column.collapsed .category-item.active::before {
             content: '';
             position: absolute;
-            left: -5px;
+            left: -11px;
             top: 50%;
             transform: translateY(-50%);
             height: 24px;
@@ -496,30 +369,8 @@
             border-radius: 0 3px 3px 0;
         }
 
-        .left-column.collapsed .category-item.active .category-icon-wrapper {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(79, 70, 229, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .light-theme .left-column.collapsed .category-item.active .category-icon-wrapper {
-            background: rgba(79, 70, 229, 0.1);
-        }
-
-        .left-column.collapsed .category-item {
-            padding: 0;
-            justify-content: center;
-            margin: 0 0 8px 0;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .left-column.collapsed .category-item:hover {
+            background: transparent;
         }
 
         .category-icon-wrapper {
@@ -530,26 +381,23 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            position: relative;
+            transition: all 0.3s ease;
         }
 
         .left-column.collapsed .category-item .category-icon-wrapper {
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+
+        .left-column.collapsed .category-item.active .category-icon-wrapper {
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px var(--hover-ring);
         }
 
         .left-column.collapsed .category-item:hover .category-icon-wrapper {
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .light-theme .left-column.collapsed .category-item:hover .category-icon-wrapper {
-            background: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 0 5px var(--hover-ring);
         }
 
         .category-icon {
@@ -560,6 +408,7 @@
         .category-content {
             flex: 1;
             min-width: 0;
+            transition: opacity 0.3s ease;
         }
 
         .left-column.collapsed .category-content {
@@ -582,23 +431,47 @@
             margin-top: 2px;
         }
 
+        /* Разделители категорий */
         .category-divider {
             height: 1px;
             background: var(--border-light);
             margin: 12px 0;
             width: 100%;
+            position: relative;
+            transition: margin 0.3s, width 0.3s, opacity 0.3s;
+            flex-shrink: 0;
         }
 
         .left-column.collapsed .category-divider {
             width: 36px;
-            margin: 12px auto;
+            height: 2px;
+            margin: 10px auto;
+            background: var(--border-color);
+            opacity: 0.9;
         }
 
-        .left-column.collapsed .category-divider[style*="position: relative"] {
-            display: none !important;
+        .main-divider .divider-text {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            padding: 0 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            z-index: 2;
+            transition: opacity 0.3s;
         }
 
-        /* Иконка избранного для категорий */
+        .left-column.collapsed .main-divider .divider-text {
+            display: none;
+        }
+
+        .light-theme .main-divider .divider-text {
+            background: var(--bg-secondary);
+        }
+
         .favorite-star {
             color: var(--text-muted);
             font-size: 12px;
@@ -610,11 +483,7 @@
         }
 
         .favorite-star:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .light-theme .favorite-star:hover {
-            background: rgba(0, 0, 0, 0.1);
+            background: var(--hover-ring);
         }
 
         .favorite-star.active {
@@ -629,15 +498,13 @@
             display: none;
         }
 
-        /* Импорт/Экспорт панель */
         .data-actions-panel {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             border-top: 1px solid var(--border-light);
             padding: 16px;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 8px;
-            display: none; /* По умолчанию скрыта */
         }
 
         .left-column.collapsed .data-actions-panel {
@@ -660,38 +527,192 @@
             height: 36px;
         }
 
-        /* Центральный блок - Функции и Шаблоны */
-        .functions-block {
-            padding: 20px;
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .left-column.collapsed .sidebar-footer {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .footer-btn.icon-only {
+            flex: 0 0 auto;
+            width: 37px;
+            height: 37px;
+            padding: 0;
+            aspect-ratio: 1 / 1;
+        }
+
+        .footer-btn.icon-only span {
+            display: none;
+        }
+
+        .footer-btn:hover {
+            background: var(--hover-ring);
+            border-color: var(--bg-accent);
+        }
+
+        .left-column.collapsed .footer-btn {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            flex: 0 0 auto;
+        }
+
+        .left-column.collapsed .footer-btn span {
+            display: none;
+        }
+
+        .theme-toggle-btn .sun-icon,
+        .theme-toggle-btn .moon-icon {
+            font-size: 16px;
+            width: 16px;
+        }
+
+        .light-theme .theme-toggle-btn .sun-icon {
+            display: inline-block;
+            color: #f59e0b;
+        }
+
+        .light-theme .theme-toggle-btn .moon-icon {
+            display: none;
+        }
+
+        .theme-toggle-btn .moon-icon {
+            display: inline-block;
+        }
+
+        .theme-toggle-btn .sun-icon {
+            display: none;
+        }
+
+        /* Центральная колонка */
+        .search-container {
+            padding: 10px 20px;
             border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--bg-accent);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .category-title-bar {
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 15px;
+            background: linear-gradient(90deg, var(--bg-accent-light) 0%, transparent 70%);
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .category-title-bar i {
+            font-size: 16px;
+            color: var(--bg-accent);
+        }
+
+        .category-badge {
+            background: var(--bg-accent);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .light-theme .category-badge {
+            background: var(--bg-accent);
+            color: white;
+        }
+
+        .templates-list-wrapper {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .templates-list {
+            height: 100%;
+            overflow-y: auto;
+            padding: 16px;
+            background: var(--bg-secondary);
+        }
+
+        .functions-block {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border-light);
             background: var(--bg-secondary);
         }
 
         .function-item {
             background: var(--bg-tertiary);
             border-radius: var(--radius-sm);
-            padding: 16px;
-            margin-bottom: 0;
+            padding: 5.5px 16px;
             border: 1px solid var(--border-light);
-        }
-
-        .function-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            gap: 16px;
+        }
+
+        .function-item:hover {
+            background: var(--bg-accent-light);
         }
 
         .function-label {
             font-size: 14px;
             color: var(--text-secondary);
             font-weight: 500;
-        }
-
-        .function-description {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.4;
         }
 
         .switch {
@@ -743,37 +764,36 @@
             transform: translateX(20px);
         }
 
-        .search-container {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-light);
-            background: var(--bg-secondary);
+        .scroll-to-top-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
+            z-index: 10;
+            font-size: 16px;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: var(--transition);
+        .scroll-to-top-btn.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--bg-accent);
-        }
-
-        .search-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .templates-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            background: var(--bg-secondary);
+        .scroll-to-top-btn:hover {
+            background: #6366f1;
+            transform: translateY(-2px);
         }
 
         .template-item {
@@ -856,7 +876,6 @@
             background: rgba(79, 70, 229, 0.1);
         }
 
-        /* Бейдж типа шаблона */
         .template-type-badge {
             font-size: 10px;
             padding: 2px 6px;
@@ -903,7 +922,6 @@
             background: rgba(139, 92, 246, 0.15);
         }
 
-        /* Правый блок - Переработанный дизайн без вкладок */
         .template-detail-view {
             display: flex;
             flex-direction: column;
@@ -918,7 +936,6 @@
             overflow: hidden;
         }
 
-        /* Оверлей для копирования */
         .template-header-copy-overlay {
             position: absolute;
             top: 0;
@@ -949,21 +966,10 @@
         }
 
         @keyframes fadeInOut {
-            0% {
-                opacity: 0;
-            }
-
-            20% {
-                opacity: 1;
-            }
-
-            80% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
         }
 
         .template-title-large {
@@ -971,10 +977,8 @@
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 16px;
-            padding-right: 0;
         }
 
-        /* Измененный стиль для кнопки копирования в нижней части шапки */
         .template-header-actions {
             display: flex;
             width: 100%;
@@ -984,6 +988,70 @@
         .template-header-actions .btn {
             width: 100%;
             justify-content: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--gradient-primary);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .btn-copy {
+            background: transparent;
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .light-theme .btn-copy {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-copy:hover {
+            background: var(--hover-ring);
+            border: 1px solid #10b981;
         }
 
         .template-meta-grid {
@@ -1034,7 +1102,6 @@
             background: rgba(0, 0, 0, 0.07);
         }
 
-        /* Контейнер для отображения содержимого шаблона */
         .template-content-container {
             flex: 1;
             display: flex;
@@ -1043,29 +1110,14 @@
             overflow: hidden;
         }
 
-        .template-content-header {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid var(--border-light);
-            background: var(--bg-secondary);
-        }
-
-        .template-content-header .btn {
-            margin-right: 8px;
-        }
-
         .template-content-view {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             line-height: 1.6;
             font-size: 14px;
-            position: relative;
-            z-index: 2;
         }
 
-        /* Стили для содержимого шаблона */
         .template-content-view ul,
         .template-content-view ol {
             padding-left: 40px;
@@ -1087,7 +1139,6 @@
             background-color: rgba(0, 0, 0, 0.2);
         }
 
-        /* Пустое состояние */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -1116,21 +1167,17 @@
             line-height: 1.5;
         }
 
-        /* Улучшенный скроллбар */
         ::-webkit-scrollbar {
             width: 6px;
         }
-
         ::-webkit-scrollbar-track {
             background: transparent;
         }
-
         ::-webkit-scrollbar-thumb {
-            background: var(--bg-accent);
+            background: var(--scroll-thumb);
             border-radius: 3px;
         }
 
-        /* Заголовки групп шаблонов */
         .template-group-header {
             padding: 8px 0;
             margin: 16px 0 8px 0;
@@ -1152,1056 +1199,427 @@
             color: var(--text-muted);
         }
 
-        /* Адаптивность */
+        .custom-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            pointer-events: none;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            white-space: nowrap;
+            max-width: 325px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-tooltip.show {
+            opacity: 1;
+        }
+
+        .light-theme .custom-tooltip {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+        .modal-container p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        .modal-container a {
+            color: var(--bg-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .modal-container button {
+            background: var(--bg-accent);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+        }
+
         @media (max-width: 1200px) {
             .center-column {
                 width: 280px;
             }
         }
-
         @media (max-width: 992px) {
             .main-container {
                 flex-direction: column;
                 height: auto;
             }
-
             .column {
                 height: auto;
                 width: 100% !important;
             }
-
             .left-column,
             .center-column {
                 border-right: none;
                 border-bottom: 1px solid var(--border-light);
                 max-height: 40vh;
             }
-
             .left-column.collapsed {
                 width: 100%;
             }
         }
-
         input[type="text"]::placeholder,
         textarea::placeholder {
             color: var(--text-placeholder);
         }
     </style>
 </head>
-
 <body>
-    <!-- Шапка -->
-    <header class="main-header">
-        <div class="header-left">
-            <button class="home-btn" id="homeBtn" title="Главная">
-                <i class="fas fa-home"></i>
-            </button>
-        </div>
-        
-        <div class="header-center">
-            <div class="app-title">
-                <i class="fas fa-book"></i>
-                <span>База знаний тех.поддержки</span>
-            </div>
-        </div>
-        
-        <div class="header-right">
-            <button class="theme-toggle" id="themeToggleBtn" title="Переключить тему">
-                <i class="fas fa-moon theme-icon moon-icon"></i>
-                <i class="fas fa-sun theme-icon sun-icon"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Основной контейнер -->
+    <div id="customTooltip" class="custom-tooltip"></div>
     <div class="main-container">
-        <!-- Левый блок - Категории -->
         <div class="column left-column" id="leftColumn">
+            <div class="sidebar-top">
+                <button class="home-logo" id="homeBtn" title="На главную">
+                    <i class="fas fa-home"></i>
+                    <span class="home-logo-text">База знаний</span>
+                </button>
+            </div>
             <div class="block-header">
-                <span><i class="fas fa-folder"></i> Категории</span>
+                <div class="categories-title">
+                    <i class="fas fa-folder"></i> Категории
+                </div>
                 <button class="collapse-btn" id="collapseBtn">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
-
-            <div class="categories-list" id="categoriesList">
-                <!-- Категории будут добавляться здесь динамически -->
-            </div>
-
+            <div class="categories-list" id="categoriesList"></div>
             <div class="data-actions-panel" id="dataActionsPanel">
                 <button class="btn btn-success btn-sm" id="refreshDataBtn">
                     <i class="fas fa-sync-alt"></i>
                     <span>Обновить данные</span>
                 </button>
             </div>
+            <div class="sidebar-footer">
+                <button class="footer-btn theme-toggle-btn" id="themeToggleBtn" title="Сменить тему">
+                    <i class="fas fa-moon moon-icon"></i>
+                    <i class="fas fa-sun sun-icon"></i>
+                    <span class="theme-label">Темная тема</span>
+                </button>
+                <button class="footer-btn icon-only" id="contactBtn" title="Связаться">
+                    <i class="fas fa-headset"></i>
+                    <span>Связаться</span>
+                </button>
+            </div>
         </div>
-
-        <!-- Центральный блок - Функции и Шаблоны -->
         <div class="column center-column">
+            <div class="search-container"><input type="text" class="search-input" id="searchInput" placeholder="Поиск"></div>
+            <div class="category-title-bar" id="categoryTitleBar"></div>
+            <div class="templates-list-wrapper" id="templatesListWrapper">
+                <div class="templates-list" id="templatesList"></div>
+                <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Прокрутить вверх"><i class="fas fa-arrow-up"></i></button>
+            </div>
             <div class="functions-block">
-                <div class="function-item">
-                    <div class="function-header">
-                        <div class="function-label">Копировать при клике</div>
-                        <label class="switch">
-                            <input type="checkbox" id="copyOnClickToggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="function-description">
-                        Автоматически копировать шаблон при клике
-                    </div>
+                <div class="function-item" data-tooltip="Автоматически копировать шаблон при клике">
+                    <div class="function-label">Копировать при клике</div>
+                    <label class="switch"><input type="checkbox" id="copyOnClickToggle"><span class="slider"></span></label>
                 </div>
             </div>
-
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по названию, тегам, описанию...">
-            </div>
-
-            <div class="templates-list" id="templatesList">
-                <!-- Шаблоны будут добавляться здесь динамически -->
-            </div>
         </div>
-
-        <!-- Правый блок - Переработанный дизайн без вкладок -->
         <div class="column right-column">
             <div id="templateDetailView" class="template-detail-view">
-                <div class="template-header-section">
-                    <!-- Оверлей для копирования -->
-                    <div class="template-header-copy-overlay" id="templateHeaderCopyOverlay">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Скопировано в буфер обмена для ответа</span>
-                    </div>
-
-                    <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
-
-                    <div id="templateMetaGrid" class="template-meta-grid">
-                        <!-- Мета-информация будет добавлена динамически -->
-                    </div>
-
-                    <div id="tagsContainer" class="tags-container">
-                        <!-- Теги будут добавлены динамически -->
-                    </div>
-
-                    <!-- Кнопка "Скопировать для ответа" теперь находится внизу и на всю ширину -->
-                    <div class="template-header-actions" id="templateHeaderActions">
-                        <button class="btn btn-copy" id="copyAnswerBtn">
-                            <i class="fas fa-copy"></i> Скопировать для ответа
-                        </button>
-                    </div>
+                <div class="template-header-section"><div class="template-header-copy-overlay" id="templateHeaderCopyOverlay"><i class="fas fa-check-circle"></i><span>Скопировано в буфер обмена для ответа</span></div>
+                <div class="template-title-large" id="templateTitleLarge">Шаблон не выбран</div>
+                <div id="templateMetaGrid" class="template-meta-grid"></div>
+                <div id="tagsContainer" class="tags-container"></div>
+                <div class="template-header-actions" id="templateHeaderActions"><button class="btn btn-copy" id="copyAnswerBtn"><i class="fas fa-copy"></i> Скопировать для ответа</button></div>
                 </div>
-
-                <div class="template-content-container">
-                    <div class="template-content-view" id="templateContentView">
-                        <!-- Содержимое шаблона будет отображаться здесь -->
-                    </div>
-                </div>
+                <div class="template-content-container"><div class="template-content-view" id="templateContentView"></div></div>
             </div>
-
-            <div id="emptyStateView" class="empty-state" style="display: none;">
-                <i class="fas fa-file-alt"></i>
-                <h3>Шаблон не выбран</h3>
-                <p>Выберите шаблон из списка</p>
-            </div>
+            <div id="emptyStateView" class="empty-state" style="display: none;"><i class="fas fa-file-alt"></i><h3>Шаблон не выбран</h3><p>Выберите шаблон из списка</p></div>
         </div>
     </div>
+    <div id="modalOverlay" class="modal-overlay"><div class="modal-container"><p>Есть вопрос или предложение? Пиши в телегу <a href="https://t.me/shilov_dv" target="_blank">@shilov_dv</a></p><button id="closeModalBtn">Закрыть</button></div></div>
 
     <script>
-        // Глобальные переменные приложения
-        let categories = [];
-        let templates = [];
-        let currentCategoryId = 'all';
-        let currentTemplateId = null;
-        let isSidebarCollapsed = false;
-        let updateCheckInterval = null;
-        let isLightTheme = false;
+        let categories = [], templates = [], currentCategoryId = 'all', currentTemplateId = null, isSidebarCollapsed = false, updateCheckInterval = null, isLightTheme = false;
+        const tooltipEl = document.getElementById('customTooltip');
 
-        // Инициализация приложения
         document.addEventListener('DOMContentLoaded', function() {
-            loadThemePreference();
-            loadInitialData();
-            setupEventListeners();
-            
-            // Запускаем проверку обновлений каждый 10 минут
+            loadThemePreference(); loadInitialData(); setupEventListeners(); updateThemeToggleLabel();
             updateCheckInterval = setInterval(checkForUpdates, 600000);
+            setupTooltipListeners();
+            setupScrollToTopButton();
         });
 
-        // Загрузка предпочтения темы
-        function loadThemePreference() {
-            const savedTheme = localStorage.getItem('support-kb-theme');
-            isLightTheme = savedTheme === 'light';
-            
-            if (isLightTheme) {
-                document.body.classList.add('light-theme');
-            }
-            
-            // Обновляем иконку темы
-            updateThemeIcon();
-        }
+        function loadThemePreference() { const savedTheme = localStorage.getItem('support-kb-theme'); isLightTheme = savedTheme === 'light'; if (isLightTheme) document.body.classList.add('light-theme'); }
+        function toggleTheme() { isLightTheme = !isLightTheme; document.body.classList.toggle('light-theme', isLightTheme); localStorage.setItem('support-kb-theme', isLightTheme ? 'light' : 'dark'); updateThemeToggleLabel(); }
+        function updateThemeToggleLabel() { const label = document.querySelector('.theme-label'); if(label) label.textContent = isLightTheme ? 'Светлая тема' : 'Темная тема'; }
 
-        // Обновление иконки темы
-        function updateThemeIcon() {
-            // CSS переменные уже обновляются через :root и .light-theme
-            // Ничего дополнительно делать не нужно
-        }
-
-        // Переключение темы
-        function toggleTheme() {
-            isLightTheme = !isLightTheme;
-            
-            if (isLightTheme) {
-                document.body.classList.add('light-theme');
-                localStorage.setItem('support-kb-theme', 'light');
-            } else {
-                document.body.classList.remove('light-theme');
-                localStorage.setItem('support-kb-theme', 'dark');
-            }
-        }
-
-        // Загрузка начальных данных
         function loadInitialData() {
-            const savedCategories = localStorage.getItem('support-kb-categories');
-            const savedTemplates = localStorage.getItem('support-kb-templates');
-            
-            if (savedCategories && savedTemplates) {
-                // Сначала загружаем текущие данные из localStorage
-                try {
-                    categories = JSON.parse(savedCategories);
-                    templates = JSON.parse(savedTemplates);
-                    console.log('Данные загружены из localStorage');
-                } catch (error) {
-                    console.error('Ошибка при загрузке данных из localStorage:', error);
-                    // Если данные повреждены, загружаем с сервера
-                    loadDataFromServer();
-                    return;
-                }
-                
-                // Данные есть в localStorage, обновляем их
-                console.log('Обновление данных с сервера...');
-                updateLocalDataFromServer();
-                console.log('Запущено обновление данных');
-            } else {
-                // Данных нет в localStorage, загружаем из data.js
-                console.log('Данных нет в localStorage, загружаем из data.js');
-                loadDataFromServer();
-                // После загрузки данных с сервера функция сама вызовет инициализацию
-                return;
-            }
-            
-            // Загружаем состояние боковой панели
+            const savedCategories = localStorage.getItem('support-kb-categories'), savedTemplates = localStorage.getItem('support-kb-templates');
+            if(savedCategories && savedTemplates) { try { categories = JSON.parse(savedCategories); templates = JSON.parse(savedTemplates); } catch(e) { loadDataFromServer(); return; } updateLocalDataFromServer(); }
+            else { loadDataFromServer(); return; }
             const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
             isSidebarCollapsed = savedSidebarState === 'true';
-            if (isSidebarCollapsed) {
-                document.getElementById('leftColumn').classList.add('collapsed');
-            }
-            
-           // Инициализируем интерфейс
+            if(isSidebarCollapsed) document.getElementById('leftColumn').classList.add('collapsed');
             initApp();
         }
 
-        // Загрузка данных с сервера (из data.js) - для первоначальной загрузки
         function loadDataFromServer() {
-            console.log('Загрузка данных с сервера...');
-            // Добавляем временную метку, чтобы избежать кэширования
-            fetch('wiki/data.js?' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(jsCode => {
-                    try {
-                        // Извлекаем данные из JavaScript кода
-                        // Создаем временную функцию для выполнения кода и получения исходных данных
-                        const tempFunction = new Function(`
-                            ${jsCode};
-                            // В data.js функция initAppData() должна возвращать исходные данные
-                            // без учета localStorage
-                            return initAppData();
-                        `);
-                        const data = tempFunction();
-                        
-                        if (data && data.categories && data.templates) {
-                            // Инициализируем категории с параметрами isFavorite и favoritedAt
-                            categories = data.categories.map(category => ({
-                                ...category,
-                                isFavorite: category.isFavorite || false,
-                                favoritedAt: category.favoritedAt || null
-                            }));
-                            
-                            templates = data.templates;
-                            
-                            // Сохраняем в localStorage
-                            saveDataToLocalStorage();
-                            
-                            console.log('Данные загружены с сервера и сохранены в localStorage');
-                            
-                            // Загружаем состояние боковой панели
-                            const savedSidebarState = localStorage.getItem('support-kb-sidebar-collapsed');
-                            isSidebarCollapsed = savedSidebarState === 'true';
-                            if (isSidebarCollapsed) {
-                                document.getElementById('leftColumn').classList.add('collapsed');
-                            }
-                            
-                            // Инициализируем интерфейс
-                            initApp();
-                        } else {
-                            console.error('Неверный формат данных в data.js');
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при обработке данных:', error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки данных:', error);
-                });
+            fetch('wiki/data.js?' + new Date().getTime()).then(res => res.text()).then(jsCode => {
+                try { const fn = new Function(`${jsCode}; return initAppData();`); const data = fn(); if(data && data.categories && data.templates) { categories = data.categories.map(c => ({ ...c, isFavorite: c.isFavorite || false, favoritedAt: c.favoritedAt || null })); templates = data.templates; saveDataToLocalStorage(); const saved = localStorage.getItem('support-kb-sidebar-collapsed'); isSidebarCollapsed = saved === 'true'; if(isSidebarCollapsed) document.getElementById('leftColumn').classList.add('collapsed'); initApp(); } } catch(e) { console.error(e); } }).catch(e => console.error(e));
         }
 
-        // Проверка обновлений данных - вызывается каждые 10 минут
-        function checkForUpdates() {
-            console.log('Проверка обновлений...');
-            
-            // Всегда загружаем данные с сервера для проверки
-            fetch('wiki/data.js?' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(jsCode => {
-                    try {
-                        const tempFunction = new Function(`
-                            ${jsCode};
-                            return initAppData();
-                        `);
-                        const data = tempFunction();
-                        
-                        if (data && data.categories && data.templates) {
-                            const serverData = {
-                                categories: JSON.parse(JSON.stringify(data.categories)),
-                                templates: JSON.parse(JSON.stringify(data.templates))
-                            };
-                            
-                            // Проверяем, есть ли обновления
-                            checkForDataUpdates(serverData);
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при загрузке данных для проверки:', error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки данных для проверки:', error);
-                });
+        function checkForUpdates() { fetch('wiki/data.js?' + new Date().getTime()).then(res => res.text()).then(jsCode => { try { const fn = new Function(`${jsCode}; return initAppData();`); const data = fn(); if(data && data.categories && data.templates) checkForDataUpdates({ categories: data.categories, templates: data.templates }); } catch(e) {} }).catch(e => {}); }
+
+        function checkForDataUpdates(serverData) { if(!serverData) return;
+            const localCats = categories.map(({ isFavorite, favoritedAt, ...rest }) => rest).sort((a,b)=>a.id.localeCompare(b.id));
+            const serverCats = serverData.categories.map(({ isFavorite, favoritedAt, ...rest }) => rest).sort((a,b)=>a.id.localeCompare(b.id));
+            const localTemps = [...templates].sort((a,b)=>a.id.localeCompare(b.id)); const serverTemps = [...serverData.templates].sort((a,b)=>a.id.localeCompare(b.id));
+            if(JSON.stringify(localCats)!==JSON.stringify(serverCats) || JSON.stringify(localTemps)!==JSON.stringify(serverTemps)) document.getElementById('dataActionsPanel').style.display = 'flex'; else document.getElementById('dataActionsPanel').style.display = 'none';
         }
 
-        // Проверка различий между локальными данными и данными сервера
-        function checkForDataUpdates(serverData) {
-            if (!serverData) return;
-            
-            // Создаем копии текущих данных без параметров isFavorite и favoritedAt для сравнения
-            const localCategoriesForCompare = categories.map(category => {
-                const { isFavorite, favoritedAt, ...rest } = category;
-                return rest;
-            }).sort((a, b) => a.id.localeCompare(b.id));
-            
-            const serverCategoriesForCompare = serverData.categories.map(category => {
-                const { isFavorite, favoritedAt, ...rest } = category;
-                return rest;
-            }).sort((a, b) => a.id.localeCompare(b.id));
-            
-            // Сортируем шаблоны для сравнения
-            const localTemplatesSorted = [...templates].sort((a, b) => a.id.localeCompare(b.id));
-            const serverTemplatesSorted = [...serverData.templates].sort((a, b) => a.id.localeCompare(b.id));
-            
-            // Сравниваем категории
-            const categoriesChanged = !isEqual(localCategoriesForCompare, serverCategoriesForCompare);
-            
-            // Сравниваем шаблоны
-            const templatesChanged = !isEqual(localTemplatesSorted, serverTemplatesSorted);
-            
-            console.log('Результат проверки обновлений:');
-            console.log('Локальные категории:', localCategoriesForCompare.length, 'Серверные категории:', serverCategoriesForCompare.length);
-            console.log('Локальные шаблоны:', localTemplatesSorted.length, 'Серверные шаблоны:', serverTemplatesSorted.length);
-            console.log('Категории изменились:', categoriesChanged);
-            console.log('Шаблоны изменились:', templatesChanged);
-            
-            // Если есть изменения, показываем панель обновления
-            if (categoriesChanged || templatesChanged) {
-                console.log('Обнаружены обновления данных');
-                document.getElementById('dataActionsPanel').style.display = 'flex';
-            } else {
-                console.log('Данные актуальны');
-                document.getElementById('dataActionsPanel').style.display = 'none';
-            }
-        }
+        function saveDataToLocalStorage() { localStorage.setItem('support-kb-categories', JSON.stringify(categories)); localStorage.setItem('support-kb-templates', JSON.stringify(templates)); }
+        function initApp() { renderCategories(); renderTemplates(); showEmptyStateView(); }
 
-        // Функция для глубокого сравнения объектов
-        function isEqual(obj1, obj2) {
-            return JSON.stringify(obj1) === JSON.stringify(obj2);
-        }
-
-        // Сохранение данных в localStorage
-        function saveDataToLocalStorage() {
-            localStorage.setItem('support-kb-categories', JSON.stringify(categories));
-            localStorage.setItem('support-kb-templates', JSON.stringify(templates));
-        }
-
-        // Инициализация приложения
-        function initApp() {
-            renderCategories();
-            renderTemplates();
-            showEmptyStateView();
-        }
-
-        // Настройка обработчиков событий
         function setupEventListeners() {
-            // Сворачивание боковой панели
             document.getElementById('collapseBtn').addEventListener('click', toggleSidebar);
-
-            // Переключение темы
             document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
-
-            // Кнопка "Домой"
-            document.getElementById('homeBtn').addEventListener('click', function() {
-                window.location.href = '/';
-            });
-
-            // Копирование ответа
+            document.getElementById('homeBtn').addEventListener('click', () => { window.location.href = '/'; });
             document.getElementById('copyAnswerBtn').addEventListener('click', copyAnswerToClipboard);
-
-            // Обновление данных
-            document.getElementById('refreshDataBtn').addEventListener('click', function() {
-                updateLocalDataFromServer();
-            });
-
-            // Поиск
+            document.getElementById('refreshDataBtn').addEventListener('click', updateLocalDataFromServer);
             document.getElementById('searchInput').addEventListener('input', filterTemplates);
-
-            // Переключатель функций
-            document.getElementById('copyOnClickToggle').addEventListener('change', updateCopyOnClick);
-
+            document.getElementById('copyOnClickToggle').addEventListener('change', function(){});
+            document.getElementById('contactBtn').addEventListener('click', () => { document.getElementById('modalOverlay').classList.add('active'); });
+            document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('modalOverlay').classList.remove('active'); });
+            document.getElementById('modalOverlay').addEventListener('click', (e) => { if(e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('active'); });
         }
 
-        // Обновление локальных данных из серверных данных
+        function setupScrollToTopButton() {
+            const list = document.getElementById('templatesList');
+            const btn = document.getElementById('scrollToTopBtn');
+            if (!list || !btn) return;
+
+            function toggleVisibility() {
+                if (list.scrollTop > 200) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            }
+
+            list.addEventListener('scroll', toggleVisibility);
+            btn.addEventListener('click', () => {
+                list.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Вызываем один раз для начального состояния (после рендера)
+            toggleVisibility();
+        }
+
+        function setupTooltipListeners() {
+            const list = document.getElementById('categoriesList');
+            list.addEventListener('mouseover', function(e) {
+                const item = e.target.closest('.category-item');
+                if (!item || !isSidebarCollapsed) { hideTooltip(); return; }
+                const nameEl = item.querySelector('.category-name');
+                if (!nameEl || !nameEl.textContent.trim()) { hideTooltip(); return; }
+                tooltipEl.textContent = nameEl.textContent.trim();
+                tooltipEl.classList.add('show');
+                const rect = item.getBoundingClientRect();
+                tooltipEl.style.left = rect.right + 10 + 'px';
+                tooltipEl.style.top = rect.top + rect.height/2 + 'px';
+                tooltipEl.style.transform = 'translateY(-50%)';
+            });
+            list.addEventListener('mouseout', function(e) {
+                if (!e.target.closest('.category-item')) hideTooltip();
+            });
+            list.addEventListener('scroll', hideTooltip);
+
+            // Тултип для function-item
+            const funcItem = document.querySelector('.function-item');
+            if (funcItem) {
+                const tooltipText = funcItem.getAttribute('data-tooltip') || 'Автоматически копировать шаблон при клике';
+                funcItem.addEventListener('mouseenter', function(e) {
+                    tooltipEl.textContent = tooltipText;
+                    tooltipEl.classList.add('show');
+                    const rect = funcItem.getBoundingClientRect();
+                    tooltipEl.style.left = rect.left + rect.width / 2 + 'px';
+                    tooltipEl.style.top = rect.top - 10 + 'px';
+                    tooltipEl.style.transform = 'translate(-50%, -100%)';
+                });
+                funcItem.addEventListener('mouseleave', function(e) {
+                    hideTooltip();
+                });
+                // Скрываем тултип при скролле страницы или окна
+                window.addEventListener('scroll', hideTooltip);
+            }
+
+            // Дополнительно: скрываем тултип при скролле в списке шаблонов
+            const templatesListEl = document.getElementById('templatesList');
+            if (templatesListEl) {
+                templatesListEl.addEventListener('scroll', hideTooltip);
+            }
+            window.addEventListener('resize', hideTooltip);
+        }
+
+        function hideTooltip() {
+            tooltipEl.classList.remove('show');
+        }
+
         function updateLocalDataFromServer() {
-            console.log('Обновление данных с сервера...');
-            
-            // Загружаем данные с сервера
-            fetch('wiki/data.js?' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(jsCode => {
-                    try {
-                        const tempFunction = new Function(`
-                            ${jsCode};
-                            return initAppData();
-                        `);
-                        const data = tempFunction();
-                        
-                        if (data && data.categories && data.templates) {
-                            const serverData = {
-                                categories: JSON.parse(JSON.stringify(data.categories)),
-                                templates: JSON.parse(JSON.stringify(data.templates))
-                            };
-                            
-                            // Обновляем категории, сохраняя isFavorite и favoritedAt из локальных данных
-                            const updatedCategories = serverData.categories.map(serverCategory => {
-                                const localCategory = categories.find(c => c.id === serverCategory.id);
-                                
-                                if (localCategory) {
-                                    // Сохраняем параметры isFavorite и favoritedAt из локальных данных
-                                    return {
-                                        ...serverCategory,
-                                        isFavorite: localCategory.isFavorite,
-                                        favoritedAt: localCategory.favoritedAt
-                                    };
-                                } else {
-                                    // Новая категория
-                                    return {
-                                        ...serverCategory,
-                                        isFavorite: false,
-                                        favoritedAt: null
-                                    };
-                                }
-                            });
-                            
-                            // Обновляем шаблоны
-                            const updatedTemplates = serverData.templates;
-                            
-                            // Сохраняем обновленные данные
-                            categories = updatedCategories;
-                            templates = updatedTemplates;
-                            
-                            // Сохраняем в localStorage
-                            saveDataToLocalStorage();
-                            
-                            // Скрываем панель обновления
-                            document.getElementById('dataActionsPanel').style.display = 'none';
-                            
-                            // Обновляем интерфейс
-                            renderCategories();
-                            renderTemplates();
-                            
-                            // Если выбран шаблон, который мог быть удален, сбрасываем выбор
-                            if (currentTemplateId && !templates.find(t => t.id === currentTemplateId)) {
-                                currentTemplateId = null;
-                                showEmptyStateView();
-                            }
-                            
-                            console.log('Данные обновлены с сервера');
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при обновлении данных:', error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка загрузки данных для обновления:', error);
-                });
+            fetch('wiki/data.js?' + new Date().getTime()).then(res => res.text()).then(jsCode => {
+                try { const fn = new Function(`${jsCode}; return initAppData();`); const data = fn(); if(data && data.categories && data.templates) {
+                    const serverData = { categories: data.categories, templates: data.templates };
+                    categories = serverData.categories.map(sc => { const local = categories.find(c => c.id === sc.id); return { ...sc, isFavorite: local ? local.isFavorite : false, favoritedAt: local ? local.favoritedAt : null }; });
+                    templates = serverData.templates; saveDataToLocalStorage(); document.getElementById('dataActionsPanel').style.display = 'none'; renderCategories(); renderTemplates();
+                    if(currentTemplateId && !templates.find(t=>t.id===currentTemplateId)) { currentTemplateId = null; showEmptyStateView(); }
+                } } catch(e) { console.error(e); }
+            }).catch(e => console.error(e));
         }
 
-        // Рендеринг категорий
         function renderCategories() {
-            const categoriesList = document.getElementById('categoriesList');
+            const list = document.getElementById('categoriesList');
+            list.innerHTML = '';
 
-            // Очищаем список
-            categoriesList.innerHTML = '';
+            const allItem = document.createElement('div');
+            allItem.className = `category-item ${currentCategoryId === 'all' ? 'active' : ''}`;
+            allItem.innerHTML = `<div class="category-icon-wrapper" style="background: linear-gradient(135deg, #64748b, #475569);"><i class="category-icon fas fa-th-list"></i></div><div class="category-content"><div class="category-name">Все шаблоны</div><div class="category-count">${templates.length} ${pluralize(templates.length)}</div></div>`;
+            allItem.addEventListener('click', () => { currentCategoryId = 'all'; renderCategories(); renderTemplates(); });
+            list.appendChild(allItem);
 
-            // 1. Все шаблоны
-            const allTemplatesItem = document.createElement('div');
-            allTemplatesItem.className = `category-item ${currentCategoryId === 'all' ? 'active' : ''}`;
-            const allTemplatesCount = templates.length;
-            allTemplatesItem.innerHTML = `
-                <div class="category-icon-wrapper" style="background: linear-gradient(135deg, #64748b, #475569);">
-                    <i class="category-icon fas fa-th-list"></i>
-                </div>
-                <div class="category-content">
-                    <div>
-                        <div class="category-name">Все шаблоны</div>
-                        <div class="category-count">${allTemplatesCount} ${pluralizeTemplates(allTemplatesCount)}</div>
-                    </div>
-                </div>
-            `;
-            allTemplatesItem.addEventListener('click', function() {
-                currentCategoryId = 'all';
-                renderCategories();
-                renderTemplates();
-            });
+            const mainDivider = document.createElement('div');
+            mainDivider.className = 'category-divider main-divider';
+            const favCats = categories.filter(c=>c.isFavorite).sort((a,b)=>new Date(a.favoritedAt)-new Date(b.favoritedAt));
+            if (favCats.length > 0) {
+                const span = document.createElement('span');
+                span.className = 'divider-text';
+                span.innerHTML = '<i class="fas fa-star" style="color: #fbbf24; margin-right: 4px;"></i>Избранное';
+                mainDivider.appendChild(span);
+            }
+            list.appendChild(mainDivider);
 
-            categoriesList.appendChild(allTemplatesItem);
-
-            // Разделитель
-            const divider = document.createElement('div');
-            divider.className = 'category-divider';
-            categoriesList.appendChild(divider);
-
-            // 2. Избранные категории (сортировка по дате добавления в избранное)
-            const favoriteCategories = categories
-                .filter(category => category.isFavorite)
-                .sort((a, b) => new Date(b.favoritedAt) - new Date(a.favoritedAt));
-
-            if (favoriteCategories.length > 0) {
-                // Заголовок для избранных
-                const favoriteHeader = document.createElement('div');
-                favoriteHeader.className = 'category-divider';
-                favoriteHeader.style.position = 'relative';
-                favoriteHeader.innerHTML = `
-                    <div style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); padding: 0 10px; font-size: 11px; color: var(--text-muted);">
-                        <i class="fas fa-star" style="color: #fbbf24; margin-right: 4px;"></i>Избранное
-                    </div>
-                `;
-                categoriesList.appendChild(favoriteHeader);
-
-                // Избранные категории
-                favoriteCategories.forEach(category => {
-                    renderCategoryItem(category, categoriesList);
-                });
-
-                // Разделитель между избранными и обычными
-                const favoritesDivider = document.createElement('div');
-                favoritesDivider.className = 'category-divider';
-                categoriesList.appendChild(favoritesDivider);
+            if (favCats.length > 0) {
+                favCats.forEach(c => renderCategoryItem(c, list));
+                const afterFavDivider = document.createElement('div');
+                afterFavDivider.className = 'category-divider';
+                list.appendChild(afterFavDivider);
             }
 
-            // 3. Остальные категории
-            const regularCategories = categories.filter(category => !category.isFavorite);
-            regularCategories.forEach(category => {
-                renderCategoryItem(category, categoriesList);
-            });
+            categories.filter(c=>!c.isFavorite).forEach(c=>renderCategoryItem(c,list));
+
+            if(isSidebarCollapsed) addTooltipsToCategories();
         }
 
-        // Рендер одной категории
         function renderCategoryItem(category, container) {
-            const categoryItem = document.createElement('div');
-            categoryItem.className = `category-item ${currentCategoryId === category.id ? 'active' : ''}`;
-            categoryItem.dataset.categoryId = category.id;
+            const item = document.createElement('div');
+            item.className = `category-item ${currentCategoryId === category.id ? 'active' : ''}`;
+            const count = templates.filter(t => t.categoryId === category.id).length;
+            const starClass = category.isFavorite ? 'fas fa-star' : 'far fa-star';
+            item.innerHTML = `<div class="category-icon-wrapper" style="background: ${category.color};"><i class="category-icon ${category.icon || 'fas fa-folder'}"></i></div><div class="category-content"><div class="category-name">${category.name}</div><div class="category-count">${count} ${pluralize(count)}</div></div><div class="favorite-star ${category.isFavorite ? 'active' : ''}" data-action="toggleFavorite"><i class="${starClass}"></i></div>`;
+            item.addEventListener('click', function(e) { if(e.target.closest('.favorite-star')) { toggleCategoryFavorite(category.id); return; } currentCategoryId = category.id; renderCategories(); renderTemplates(); });
+            container.appendChild(item);
+        }
 
-            const isFavorite = category.isFavorite;
-            const favoriteIcon = isFavorite ? 'fas fa-star' : 'far fa-star';
-            const favoriteTitle = isFavorite ? 'Убрать из избранного' : 'Добавить в избранное';
-
-            const categoryTemplatesCount = templates.filter(t => t.categoryId === category.id).length;
-
-            const categoryHtml = `
-                <div class="category-icon-wrapper" style="background: ${category.color};">
-                    <i class="category-icon ${category.icon || 'fas fa-folder'}"></i>
-                </div>
-                <div class="category-content">
-                    <div>
-                        <div class="category-name">${category.name}</div>
-                        <div class="category-count">${categoryTemplatesCount} ${pluralizeTemplates(categoryTemplatesCount)}</div>
-                    </div>
-                </div>
-                <div class="favorite-star ${isFavorite ? 'active' : ''}" title="${favoriteTitle}" data-action="toggleFavorite">
-                    <i class="${favoriteIcon}"></i>
-                </div>
-            `;
-
-            categoryItem.innerHTML = categoryHtml;
-
-            // Обработчик клика по категории
-            categoryItem.addEventListener('click', function(e) {
-                // Если клик был по звездочке, обработаем отдельно
-                if (e.target.closest('.favorite-star')) {
-                    toggleCategoryFavorite(category.id);
-                    return;
-                }
-
-                currentCategoryId = category.id;
-                renderCategories();
-                renderTemplates();
+        function addTooltipsToCategories() {
+            document.querySelectorAll('.category-item').forEach(item => {
+                const nameDiv = item.querySelector('.category-name');
+                if(nameDiv && nameDiv.textContent) item.setAttribute('data-cat-name', nameDiv.textContent);
+                else item.removeAttribute('data-cat-name');
             });
-
-            container.appendChild(categoryItem);
         }
 
-        // Переключение избранного для категории
-        function toggleCategoryFavorite(categoryId) {
-            const categoryIndex = categories.findIndex(c => c.id === categoryId);
-            if (categoryIndex === -1) return;
+        function toggleCategoryFavorite(categoryId) { const idx = categories.findIndex(c=>c.id===categoryId); if(idx===-1) return; categories[idx].isFavorite = !categories[idx].isFavorite; categories[idx].favoritedAt = categories[idx].isFavorite ? new Date().toISOString() : null; saveDataToLocalStorage(); renderCategories(); }
+        function stripHtml(html) { const tmp = document.createElement('div'); tmp.innerHTML = html; return tmp.textContent || tmp.innerText || ''; }
 
-            categories[categoryIndex].isFavorite = !categories[categoryIndex].isFavorite;
-
-            if (categories[categoryIndex].isFavorite) {
-                categories[categoryIndex].favoritedAt = new Date().toISOString();
-            } else {
-                categories[categoryIndex].favoritedAt = null;
-            }
-
-            saveDataToLocalStorage();
-            renderCategories();
-        }
-
-        // Рендеринг шаблонов с сортировкой по типам
         function renderTemplates() {
+            const list = document.getElementById('templatesList'); const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = templates; if(currentCategoryId !== 'all') filtered = filtered.filter(t=>t.categoryId===currentCategoryId);
+            if(query) filtered = filtered.filter(t=> t.title.toLowerCase().includes(query) || t.description.toLowerCase().includes(query) || (t.tags && t.tags.some(tag=>tag.toLowerCase().includes(query))) || stripHtml(t.content).toLowerCase().includes(query));
+            const titleBar = document.getElementById('categoryTitleBar');
+            let titleHtml = ''; let countVal = filtered.length;
+            if(query) titleHtml = `<span>Результаты поиска: "${query}"</span><span class="category-badge">${countVal}</span>`;
+            else if(currentCategoryId === 'all') titleHtml = `<span>Все шаблоны</span><span class="category-badge">${countVal}</span>`;
+            else { const cat = categories.find(c=>c.id===currentCategoryId); titleHtml = cat ? `<span>${cat.name}</span><span class="category-badge">${countVal}</span>` : `<span><i class="fas fa-folder"></i> Категория</span><span class="category-badge">${countVal}</span>`; }
+            titleBar.innerHTML = titleHtml; titleBar.style.display = 'flex';
+            list.innerHTML = '';
+            if(filtered.length===0) { list.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>Шаблоны не найдены</h3><p>Попробуйте изменить критерии поиска</p></div>`; return; }
+            const typeOrder = { recommendation:1, information:2, check:3, other:4 }; filtered.sort((a,b)=>typeOrder[a.type]-typeOrder[b.type]);
+            const grouped = {}; filtered.forEach(t=>{ if(!grouped[t.type]) grouped[t.type]=[]; grouped[t.type].push(t); });
+            const groupNames = { recommendation:'Рекомендации', information:'Информация', check:'Проверки', other:'Остальное' };
+            ['recommendation','information','check','other'].forEach(type=>{ if(grouped[type] && grouped[type].length){
+                const gh = document.createElement('div'); gh.className='template-group-header'; gh.innerHTML=`<span>${groupNames[type]}</span><span class="template-group-count">${grouped[type].length}</span>`; list.appendChild(gh);
+                grouped[type].forEach(template=>{ const category=categories.find(c=>c.id===template.categoryId); const item=document.createElement('div'); item.className=`template-item ${currentTemplateId===template.id?'active':''}`; const showCat=currentCategoryId==='all' && category; const typeClass={recommendation:'type-recommendation',information:'type-information',check:'type-check',other:'type-other'}[template.type]; const typeText={recommendation:'Рекомендация',information:'Информация',check:'Проверка',other:'Остальное'}[template.type];
+                    item.innerHTML=`<div class="template-header ${showCat?'':'no-margin'}"><div class="kb-match-indicator kb-match-${template.kbMatch}"></div><div class="template-title">${template.title}</div><span class="template-type-badge ${typeClass}">${typeText}</span></div>${showCat?`<div class="template-category-badge">${category.name}</div>`:''}`;
+                    item.addEventListener('click',()=>{ selectTemplate(template.id); if(document.getElementById('copyOnClickToggle').checked) copyOnClickWithEffect(template.id); });
+                    list.appendChild(item);
+                });
+            }});
+
+            // После рендера шаблонов проверяем видимость кнопки прокрутки вверх
+            const btn = document.getElementById('scrollToTopBtn');
             const templatesList = document.getElementById('templatesList');
-            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-
-            // Фильтрация шаблонов
-            let filteredTemplates = templates;
-
-            if (currentCategoryId !== 'all') {
-                filteredTemplates = filteredTemplates.filter(t => t.categoryId === currentCategoryId);
-            }
-
-            if (searchQuery) {
-                filteredTemplates = filteredTemplates.filter(t =>
-                    t.title.toLowerCase().includes(searchQuery) ||
-                    t.description.toLowerCase().includes(searchQuery) ||
-                    (t.tags && t.tags.some(tag => tag.toLowerCase().includes(searchQuery)))
-                );
-            }
-
-            // Очищаем список
-            templatesList.innerHTML = '';
-
-            if (filteredTemplates.length === 0) {
-                const emptyState = document.createElement('div');
-                emptyState.className = 'empty-state';
-                emptyState.innerHTML = `
-                    <i class="fas fa-search"></i>
-                    <h3>Шаблоны не найдены</h3>
-                    <p>Попробуйте изменить критерии поиска</p>
-                `;
-                templatesList.appendChild(emptyState);
-                return;
-            }
-
-            // Определяем порядок сортировки по типам
-            const typeOrder = {
-                'recommendation': 1,
-                'information': 2,
-                'check': 3,
-                'other': 4
-            };
-
-            // Сортируем шаблоны по типу
-            filteredTemplates.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
-
-            // Группируем шаблоны по типу
-            const groupedTemplates = {};
-            filteredTemplates.forEach(template => {
-                if (!groupedTemplates[template.type]) {
-                    groupedTemplates[template.type] = [];
+            if (btn && templatesList) {
+                if (templatesList.scrollTop > 200) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
                 }
-                groupedTemplates[template.type].push(template);
-            });
-
-            // Рендерим группы в заданном порядке
-            const typesOrder = ['recommendation', 'information', 'check', 'other'];
-
-            typesOrder.forEach(type => {
-                if (groupedTemplates[type] && groupedTemplates[type].length > 0) {
-                    // Добавляем заголовок группы
-                    let groupTitle = '';
-                    switch (type) {
-                        case 'recommendation':
-                            groupTitle = 'Рекомендации';
-                            break;
-                        case 'information':
-                            groupTitle = 'Информация';
-                            break;
-                        case 'check':
-                            groupTitle = 'Проверки';
-                            break;
-                        default:
-                            groupTitle = 'Остальное';
-                    }
-
-                    const groupHeader = document.createElement('div');
-                    groupHeader.className = 'template-group-header';
-                    groupHeader.innerHTML = `
-                        <span>${groupTitle}</span>
-                        <span class="template-group-count">${groupedTemplates[type].length}</span>
-                    `;
-                    templatesList.appendChild(groupHeader);
-
-                    // Рендерим шаблоны в группе
-                    groupedTemplates[type].forEach(template => {
-                        const category = categories.find(c => c.id === template.categoryId);
-                        const templateItem = document.createElement('div');
-                        templateItem.className = `template-item ${currentTemplateId === template.id ? 'active' : ''}`;
-                        templateItem.dataset.templateId = template.id;
-
-                        // Определяем, нужно ли показывать категорию
-                        const showCategory = currentCategoryId === 'all' && category;
-                        const showMarginBottom = currentCategoryId === 'all';
-
-                        // Определяем тип шаблона
-                        let typeText = '';
-                        let typeClass = '';
-                        switch (template.type) {
-                            case 'recommendation':
-                                typeText = 'Рекомендация';
-                                typeClass = 'type-recommendation';
-                                break;
-                            case 'information':
-                                typeText = 'Информация';
-                                typeClass = 'type-information';
-                                break;
-                            case 'check':
-                                typeText = 'Проверка';
-                                typeClass = 'type-check';
-                                break;
-                            default:
-                                typeText = 'Остальное';
-                                typeClass = 'type-other';
-                        }
-
-                        templateItem.innerHTML = `
-                            <div class="template-header ${showMarginBottom ? '' : 'no-margin'}">
-                                <div class="kb-match-indicator kb-match-${template.kbMatch}"></div>
-                                <div class="template-title">${template.title}</div>
-                                <span class="template-type-badge ${typeClass}">${typeText}</span>
-                            </div>
-                            ${showCategory ? `<div class="template-category-badge">${category.name}</div>` : ''}
-                        `;
-
-                        templateItem.addEventListener('click', function(e) {
-                            // Всегда открываем шаблон для просмотра
-                            selectTemplate(template.id);
-
-                            // Если включено копирование по клику, то копируем
-                            const copyOnClick = document.getElementById('copyOnClickToggle').checked;
-                            if (copyOnClick) {
-                                copyOnClickWithEffect(template.id);
-                            }
-                        });
-
-                        templatesList.appendChild(templateItem);
-                    });
-                }
-            });
-        }
-
-        // Показать детальную информацию о шаблоне
-        function showTemplateDetail(templateId) {
-            const template = templates.find(t => t.id === templateId);
-            if (!template) return;
-
-            const category = categories.find(c => c.id === template.categoryId);
-
-            document.getElementById('templateDetailView').style.display = 'flex';
-            document.getElementById('emptyStateView').style.display = 'none';
-
-            // Заголовок
-            document.getElementById('templateTitleLarge').textContent = template.title;
-
-            // Определяем тип шаблона
-            let typeText = '';
-            switch (template.type) {
-                case 'recommendation':
-                    typeText = 'Рекомендация';
-                    break;
-                case 'information':
-                    typeText = 'Информация';
-                    break;
-                case 'check':
-                    typeText = 'Проверка';
-                    break;
-                default:
-                    typeText = 'Остальное';
-            }
-
-            let kbMatchText = '';
-            if (template.kbMatch === 'true') kbMatchText = 'Соответствует';
-            else if (template.kbMatch === 'partial') kbMatchText = 'Частично';
-            else kbMatchText = 'Не соответствует';
-
-            const metaHtml = `
-                <div class="meta-item">
-                    <div class="meta-label">Категория</div>
-                    <div class="meta-value">
-                        <i class="fas fa-folder" style="color: ${category?.color || '#64748b'};"></i>
-                        <span>${category?.name || 'Без категории'}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Тип шаблона</div>
-                    <div class="meta-value">
-                        <i class="fas fa-tag"></i>
-                        <span>${typeText}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Соответствие БЗ</div>
-                    <div class="meta-value">
-                        <div class="kb-match-indicator kb-match-${template.kbMatch}"></div>
-                        <span>${kbMatchText}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Дата создания</div>
-                    <div class="meta-value">
-                        <i class="far fa-calendar"></i>
-                        <span>${formatDate(template.createdAt)}</span>
-                    </div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Дата обновления</div>
-                    <div class="meta-value">
-                        <i class="fas fa-history"></i>
-                        <span>${formatDate(template.updatedAt)}</span>
-                    </div>
-                </div>
-                <div class="meta-item" style="grid-column: 1 / -1;">
-                    <div class="meta-label">Описание</div>
-                    <div class="meta-value">${template.description || 'Описание отсутствует'}</div>
-                </div>
-            `;
-            document.getElementById('templateMetaGrid').innerHTML = metaHtml;
-
-            // Теги
-            const tagsHtml = template.tags && template.tags.length > 0 ?
-                template.tags.map(tag => `<span class="tag">${tag}</span>`).join('') :
-                '<span class="tag" style="opacity: 0.5;">Теги не указаны</span>';
-            document.getElementById('tagsContainer').innerHTML = tagsHtml;
-
-            // Содержимое шаблона - очищаем атрибуты у <hr>
-            let content = template.content;
-
-            // Очищаем атрибуты у тега <hr>
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-
-            // Находим все <hr> элементы и удаляем у них все атрибуты
-            const hrElements = tempDiv.querySelectorAll('hr');
-            hrElements.forEach(hr => {
-                // Сохраняем родительский элемент
-                const parent = hr.parentNode;
-
-                // Создаем новый чистый <hr> без атрибутов
-                const newHr = document.createElement('hr');
-
-                // Заменяем старый <hr> на новый
-                parent.replaceChild(newHr, hr);
-            });
-
-            content = tempDiv.innerHTML;
-            document.getElementById('templateContentView').innerHTML = content;
-        }
-
-        // Показать пустое состояние
-        function showEmptyStateView() {
-            document.getElementById('templateDetailView').style.display = 'none';
-            document.getElementById('emptyStateView').style.display = 'flex';
-        }
-
-        // Выбор шаблона
-        function selectTemplate(templateId) {
-            currentTemplateId = templateId;
-            renderTemplates();
-            showTemplateDetail(templateId);
-        }
-
-        // Сворачивание/разворачивание боковой панели
-        function toggleSidebar() {
-            const leftColumn = document.getElementById('leftColumn');
-            isSidebarCollapsed = !isSidebarCollapsed;
-
-            if (isSidebarCollapsed) {
-                leftColumn.classList.add('collapsed');
-            } else {
-                leftColumn.classList.remove('collapsed');
-            }
-
-            localStorage.setItem('support-kb-sidebar-collapsed', isSidebarCollapsed);
-        }
-
-        // Показать оверлей копирования
-        function showCopyOverlay() {
-            const overlay = document.getElementById('templateHeaderCopyOverlay');
-
-            // Сбрасываем предыдущую анимацию
-            overlay.classList.remove('show');
-
-            // Принудительный reflow для сброса анимации
-            void overlay.offsetWidth;
-
-            // Запускаем анимацию
-            overlay.classList.add('show');
-
-            // Через 2 секунды скрываем оверлей (анимация завершится сама)
-            setTimeout(() => {
-                overlay.classList.remove('show');
-            }, 2000);
-        }
-
-        // Копирование по клику с показом оверлея
-        function copyOnClickWithEffect(templateId) {
-            const template = templates.find(t => t.id === templateId);
-            if (!template) return;
-
-            copyTemplateContentToClipboard(template);
-            showCopyOverlay();
-        }
-
-        // Копирование ответа в буфер обмена (для кнопки)
-        function copyAnswerToClipboard() {
-            if (!currentTemplateId) return;
-
-            const template = templates.find(t => t.id === currentTemplateId);
-            if (!template) return;
-
-            copyTemplateContentToClipboard(template);
-            showCopyOverlay();
-        }
-
-        // Функция копирования содержимого шаблона
-        function copyTemplateContentToClipboard(template) {
-            // Создаем временный элемент для копирования HTML
-            const tempElement = document.createElement('div');
-            tempElement.innerHTML = template.content;
-
-            // Создаем элемент для копирования текста
-            const textElement = document.createElement('textarea');
-            textElement.value = tempElement.textContent || tempElement.innerText || '';
-            document.body.appendChild(textElement);
-            textElement.select();
-
-            try {
-                // Пытаемся скопировать HTML
-                const htmlBlob = new Blob([template.content], {
-                    type: 'text/html'
-                });
-                const textBlob = new Blob([textElement.value], {
-                    type: 'text/plain'
-                });
-
-                const clipboardItem = new ClipboardItem({
-                    'text/html': htmlBlob,
-                    'text/plain': textBlob
-                });
-
-                navigator.clipboard.write([clipboardItem]).then(() => {
-                    showCopyOverlay();
-                }).catch(err => {
-                    // Если не поддерживается Clipboard API с HTML, копируем текст
-                    navigator.clipboard.writeText(textElement.value).then(() => {
-                        showCopyOverlay();
-                    }).catch(err => {
-                        console.error('Ошибка копирования: ', err);
-                    });
-                });
-            } catch (err) {
-                // Fallback для старых браузеров
-                document.execCommand('copy');
-                showCopyOverlay();
-            } finally {
-                document.body.removeChild(textElement);
             }
         }
 
-        // Обновление функции копирования при клике
-        function updateCopyOnClick() {
-            const copyOnClick = document.getElementById('copyOnClickToggle').checked;
-            const templatesList = document.getElementById('templatesList');
-
-            if (copyOnClick) {
-                // Меняем курсор на copy для всех шаблонов
-                const templateItems = templatesList.querySelectorAll('.template-item');
-                templateItems.forEach(item => {
-                    item.style.cursor = 'copy';
-                });
-            } else {
-                // Возвращаем обычный курсор
-                const templateItems = templatesList.querySelectorAll('.template-item');
-                templateItems.forEach(item => {
-                    item.style.cursor = 'pointer';
-                });
-            }
+        function showTemplateDetail(templateId){ const template=templates.find(t=>t.id===templateId); if(!template) return; const category=categories.find(c=>c.id===template.categoryId);
+            document.getElementById('templateDetailView').style.display='flex'; document.getElementById('emptyStateView').style.display='none'; document.getElementById('templateTitleLarge').textContent=template.title;
+            const typeMap={recommendation:'Рекомендация',information:'Информация',check:'Проверка',other:'Остальное'}; const kbMap={true:'Соответствует',partial:'Частично',false:'Не соответствует'};
+            document.getElementById('templateMetaGrid').innerHTML=`<div class="meta-item"><div class="meta-label">Категория</div><div class="meta-value"><i class="fas fa-folder" style="color:${category?.color||'#64748b'}"></i> ${category?.name||'—'}</div></div><div class="meta-item"><div class="meta-label">Тип шаблона</div><div class="meta-value"><i class="fas fa-tag"></i> ${typeMap[template.type]}</div></div><div class="meta-item"><div class="meta-label">Соответствие БЗ</div><div class="meta-value"><div class="kb-match-indicator kb-match-${template.kbMatch}"></div> ${kbMap[template.kbMatch]}</div></div><div class="meta-item"><div class="meta-label">Дата создания</div><div class="meta-value"><i class="far fa-calendar"></i> ${formatDate(template.createdAt)}</div></div><div class="meta-item"><div class="meta-label">Дата обновления</div><div class="meta-value"><i class="fas fa-history"></i> ${formatDate(template.updatedAt)}</div></div><div class="meta-item" style="grid-column:1/-1;"><div class="meta-label">Описание</div><div class="meta-value">${template.description||'Описание отсутствует'}</div></div>`;
+            document.getElementById('tagsContainer').innerHTML=template.tags&&template.tags.length?template.tags.map(t=>`<span class="tag">${t}</span>`).join(''):'<span class="tag" style="opacity:0.5;">Теги не указаны</span>';
+            const tempDiv=document.createElement('div'); tempDiv.innerHTML=template.content; tempDiv.querySelectorAll('hr').forEach(hr=>{ const newHr=document.createElement('hr'); hr.parentNode.replaceChild(newHr,hr); });
+            document.getElementById('templateContentView').innerHTML=tempDiv.innerHTML;
         }
 
-        // Фильтрация шаблонов
-        function filterTemplates() {
-            renderTemplates();
-        }
-
-        // Форматирование даты
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        }
-
-        // Вспомогательная функция для склонения слова "шаблон"
-        function pluralizeTemplates(count) {
-            if (count % 10 === 1 && count % 100 !== 11) {
-                return 'шаблон';
-            } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
-                return 'шаблона';
-            } else {
-                return 'шаблонов';
-            }
-        }
+        function showEmptyStateView(){ document.getElementById('templateDetailView').style.display='none'; document.getElementById('emptyStateView').style.display='flex'; }
+        function selectTemplate(id){ currentTemplateId=id; renderTemplates(); showTemplateDetail(id); }
+        function toggleSidebar(){ const col=document.getElementById('leftColumn'); isSidebarCollapsed=!isSidebarCollapsed; col.classList.toggle('collapsed',isSidebarCollapsed); localStorage.setItem('support-kb-sidebar-collapsed',isSidebarCollapsed); hideTooltip(); renderCategories(); }
+        function showCopyOverlay(){ const overlay=document.getElementById('templateHeaderCopyOverlay'); overlay.classList.remove('show'); void overlay.offsetWidth; overlay.classList.add('show'); setTimeout(()=>overlay.classList.remove('show'),2000); }
+        function copyOnClickWithEffect(id){ const template=templates.find(t=>t.id===id); if(template) copyTemplateContentToClipboard(template); showCopyOverlay(); }
+        function copyAnswerToClipboard(){ if(!currentTemplateId) return; const template=templates.find(t=>t.id===currentTemplateId); if(template) copyTemplateContentToClipboard(template); showCopyOverlay(); }
+        function copyTemplateContentToClipboard(template){ const div=document.createElement('div'); div.innerHTML=template.content; const textarea=document.createElement('textarea'); textarea.value=div.textContent||div.innerText||''; document.body.appendChild(textarea); textarea.select(); try{ const htmlBlob=new Blob([template.content],{type:'text/html'}); const textBlob=new Blob([textarea.value],{type:'text/plain'}); const item=new ClipboardItem({'text/html':htmlBlob,'text/plain':textBlob}); navigator.clipboard.write([item]).catch(()=>navigator.clipboard.writeText(textarea.value)); }catch(e){ document.execCommand('copy'); }finally{ document.body.removeChild(textarea); } }
+        function filterTemplates(){ renderTemplates(); }
+        function formatDate(dateString){ const date=new Date(dateString); return date.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+        function pluralize(n){ const mod10=n%10, mod100=n%100; if(mod10===1&&mod100!==11) return 'шаблон'; if([2,3,4].includes(mod10)&&![12,13,14].includes(mod100)) return 'шаблона'; return 'шаблонов'; }
     </script>
 </body>
-
 </html>
