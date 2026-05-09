@@ -211,7 +211,7 @@
         .template-detail-view { display:flex; flex-direction:column; height:100%; }
 
         .template-header-bar {
-            padding: 18px 20px;
+            padding: 16.5px 20px;
             border-bottom: 1px solid var(--border-light);
             display: flex;
             align-items: center;
@@ -230,8 +230,8 @@
             overflow: visible;
         }
         .kb-indicator {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             flex-shrink: 0;
             position: relative;
@@ -262,7 +262,7 @@
         .kb-tooltip {
             position: absolute;
             top: 50%;
-            left: calc(100% + 8px);
+            left: calc(100% + 10px);
             transform: translateY(-50%);
             background: var(--bg-tertiary);
             color: var(--text-primary);
@@ -289,6 +289,7 @@
             to { opacity: 1; transform: translateY(-50%) translateX(0); }
         }
         .title-text {
+            font-size: 20px;
             font-weight: 600;
             color: var(--text-primary);
             white-space: nowrap;
@@ -522,7 +523,7 @@
             </div>
         </div>
         <div class="column right-column">
-            <div id="templateDetailView" class="template-detail-view">
+            <div id="templateDetailView" class="template-detail-view" style="display:none;">
                 <div class="template-header-bar" id="templateHeaderBar"></div>
                 <div class="tags-section">
                     <div class="tags-container" id="tagsContainer"></div>
@@ -539,7 +540,7 @@
                     <div class="template-content-view" id="templateContentView"></div>
                 </div>
             </div>
-            <div id="emptyStateView" class="empty-state"><i class="fas fa-file-alt"></i><h3>Шаблон не выбран</h3><p>Выберите шаблон из списка</p></div>
+            <div id="emptyStateView" class="empty-state" style="display:none;"><i class="fas fa-file-alt"></i><h3>Шаблон не выбран</h3><p>Выберите шаблон из списка</p></div>
             <div id="skeletonDetail" class="skeleton-detail" style="display:none;">
                 <div class="skeleton-detail-block"></div>
                 <div class="skeleton-detail-block" style="width:40%;"></div>
@@ -659,7 +660,6 @@
             document.getElementById('skeletonList').style.display = 'none';
             document.getElementById('skeletonDetail').style.display = 'none';
             document.getElementById('templatesList').style.display = '';
-            document.getElementById('templateDetailView').style.display = 'flex';
         }
 
         function checkForUpdates() {

@@ -52,7 +52,7 @@ const toolsConfig = [
     },
     {
         id: 'wiki',
-        version: 'v1.0',
+        version: 'v2.0',
         iconClass: 'wiki',
         icon: 'fas fa-book',
         title: 'База знаний',
