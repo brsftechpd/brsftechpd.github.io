@@ -107,7 +107,7 @@ const defaultCategories = [
       "id": "cat1766477977902",
       "name": "РКЛ",
       "color": "#ef4444",
-      "icon": "fas fa-folder",
+      "icon": "fas fa-file-signature",
       "isFavorite": false,
       "favoritedAt": null
     },
@@ -115,7 +115,7 @@ const defaultCategories = [
       "id": "cat1766478260812",
       "name": "Правовые аспекты",
       "color": "#10b981",
-      "icon": "fas fa-folder",
+      "icon": "fa-solid fa-gavel",
       "isFavorite": false,
       "favoritedAt": null
     },
@@ -123,7 +123,7 @@ const defaultCategories = [
       "id": "cat1766478947317",
       "name": "Другое",
       "color": "#3b82f6",
-      "icon": "fas fa-folder",
+      "icon": "fa-brands fa-buffer",
       "isFavorite": false,
       "favoritedAt": null
     },
@@ -131,7 +131,7 @@ const defaultCategories = [
       "id": "cat1769419367955",
       "name": "Эскалация на 3-ю линию",
       "color": "#84cc16",
-      "icon": "fas fa-folder",
+      "icon": "fas fa-file-export",
       "isFavorite": false,
       "favoritedAt": null
     }
