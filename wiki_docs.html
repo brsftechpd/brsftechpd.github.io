@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - База знаний</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    <link rel="stylesheet" href="tools/css/check_mp.css">
+    <style>
+        /* Дополнительные стили для инструкций (аналогично uuid_docs) */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Вкладки UUID в Sidebar (точно как в uuid_docs) */
+        .uuid-tabs-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .uuid-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .uuid-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .uuid-tab-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .uuid-tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .uuid-tab-btn i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* === Исправление видимости вкладок === */
+        /* По умолчанию все вкладки скрыты */
+        .tab-content {
+            display: none;
+        }
+
+        /* Только активная вкладка видна */
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Скрываем статистику в сайдбаре для инструкций */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Вкладки инструкций -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор инструмента
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="categories">
+                            <i class="fas fa-layer-group"></i> Категории и шаблоны
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="search">
+                            <i class="fas fa-search"></i> Поиск и фильтрация
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="copying">
+                            <i class="fas fa-copy"></i> Копирование и шаринг
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="settings">
+                            <i class="fas fa-cog"></i> Настройки и внешний вид
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+
+                    <!-- Блок статистики скрыт -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;">
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента инструкций -->
+            <div class="tabs-content">
+                <!-- Раздел: Обзор инструмента -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>База знаний — это структурированное хранилище шаблонов ответов, рекомендаций и проверок для поддержки пользователей.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Назначение</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент предоставляет быстрый доступ к готовым ответам и инструкциям, разделённым по категориям. Каждый шаблон содержит текстовое содержимое и метаданные:</p>
+                            <ul>
+                                <li><strong>Тип шаблона:</strong> рекомендация, информация, проверка</li>
+                                <li><strong>Теги</strong> для быстрого поиска</li>
+                                <li><strong>Индикатор соответствия базе знаний</strong> (полное, частичное, отсутствует)</li>
+                                <li><strong>Даты создания и обновления</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Все шаблоны загружаются из централизованного источника и периодически обновляются.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Базовый сценарий</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>1. Выберите нужную категорию в боковой панели или воспользуйтесь поиском</p>
+                            <p>2. Найдите подходящий шаблон по названию или тегам</p>
+                            <p>3. Нажмите на шаблон, чтобы увидеть полное содержимое</p>
+                            <p>4. Скопируйте готовый ответ кнопкой «Копировать для ответа» или поделитесь ссылкой</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Категории и шаблоны -->
+                <div class="tab-content instruction-content" id="tab-categories">
+                    <div class="section-header">
+                        <h2>Категории и шаблоны</h2>
+                        <p>Организация знаний по тематическим группам.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Навигация по категориям</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В левой боковой панели расположен список категорий с иконками и количеством шаблонов. Кликните по категории, чтобы отфильтровать список шаблонов. Категория «Все шаблоны» показывает полный перечень.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример боковой панели:</div>
+                            <div class="nav-tabs static-example" style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="nav-tab active" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: rgba(59,130,246,0.15); color: white; border-radius: 10px;">
+                                    <i class="fas fa-th-list" style="margin-right: 10px;"></i> Все шаблоны
+                                </button>
+                                <button class="nav-tab" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: transparent; color: #94a3b8; border-radius: 10px;">
+                                    <i class="fas fa-headset" style="margin-right: 10px;"></i> Поддержка
+                                </button>
+                                <button class="nav-tab" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: transparent; color: #94a3b8; border-radius: 10px;">
+                                    <i class="fas fa-shield-alt" style="margin-right: 10px;"></i> Безопасность
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Избранные категории</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Любую категорию можно добавить в избранное, нажав на звёздочку рядом с названием. Избранные категории отображаются вверху списка и позволяют быстрее находить нужные разделы.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Шаблоны и их типы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В центральной колонке отображаются шаблоны выбранной категории. Они сгруппированы по типу:</p>
+                            <ul>
+                                <li><strong>Рекомендации</strong> — готовые тексты для ответа пользователям</li>
+                                <li><strong>Информация</strong> — справочные материалы</li>
+                                <li><strong>Проверки</strong> — алгоритмы диагностики проблем</li>
+                            </ul>
+                            <p>Каждый шаблон имеет цветной индикатор соответствия базе знаний (зелёный — полное, оранжевый — частичное, красный — не соответствует).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Поиск и фильтрация -->
+                <div class="tab-content instruction-content" id="tab-search">
+                    <div class="section-header">
+                        <h2>Поиск и фильтрация</h2>
+                        <p>Быстрый поиск по содержимому шаблонов.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Поиск по ключевым словам</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В верхней части центральной колонки находится поле поиска. Введите запрос — фильтр применяется мгновенно. Поиск ищет совпадения в названии, описании, тегах и тексте шаблона.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример поиска:</div>
+                            <div style="background: var(--bg-tertiary); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-search" style="color: var(--text-muted);"></i>
+                                <span style="color: var(--text-muted);">восстановление пароля</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Фильтрация по тегам</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>При просмотре шаблона в правой части отображаются теги. Нажатие на тег копирует его в буфер обмена, и вы можете вставить его в поисковую строку для быстрого фильтра.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Копирование и шаринг -->
+                <div class="tab-content instruction-content" id="tab-copying">
+                    <div class="section-header">
+                        <h2>Копирование и шаринг</h2>
+                        <p>Быстрое получение готового ответа и обмен ссылками.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Копирование для ответа</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Копировать для ответа»</strong> копирует содержимое выбранного шаблона в буфер обмена в формате HTML и обычного текста. Кнопка временно меняет цвет и текст, подтверждая действие.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Процесс копирования:</div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <button class="action-btn check-btn static-example" style="pointer-events: none;">Копировать для ответа</button>
+                                <button class="copy-btn static-example" style="pointer-events: none; background: var(--gradient-success); color: white;">
+                                    <i class="fas fa-check"></i> Скопировано!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Режим «Копировать при клике»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В нижней части центральной колонки есть переключатель <strong>«Копировать при клике»</strong>. Если он активирован, то при выборе шаблона его содержимое автоматически копируется в буфер обмена. Это ускоряет работу с часто используемыми ответами.</p>
+                        </div>
+                        
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Используйте этот режим, если вам нужно быстро отвечать на типовые запросы без лишних кликов.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Поделиться ссылкой на ответ</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Поделиться ссылкой на ответ»</strong> копирует в буфер обмена прямую ссылку на текущий шаблон. Отправив эту ссылку коллеге, он сразу откроет нужный шаблон в своей Базе знаний.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Настройки и внешний вид -->
+                <div class="tab-content instruction-content" id="tab-settings">
+                    <div class="section-header">
+                        <h2>Настройки и внешний вид</h2>
+                        <p>Персонализация интерфейса под ваши предпочтения.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Переключение темы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В левом нижнем углу находится кнопка переключения темы. Доступны три режима:</p>
+                            <ul>
+                                <li><strong>Тёмная тема</strong> (по умолчанию)</li>
+                                <li><strong>Светлая тема</strong></li>
+                                <li><strong>Авто</strong> — тема следует системным настройкам</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Кнопка темы:</div>
+                            <button class="footer-btn theme-toggle-btn static-example" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: transparent; border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-secondary);">
+                                <i class="fas fa-moon"></i> Тёмная тема
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Сворачивание боковой панели</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка со стрелкой в заголовке «Категории» сворачивает левую панель, оставляя только иконки категорий. Повторное нажатие разворачивает панель обратно. Состояние сохраняется между сессиями.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Обновление данных</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Данные автоматически проверяются на обновления каждые 10 минут. При обнаружении изменений внизу левой панели появляется кнопка «Обновить данные». Нажмите её, чтобы загрузить актуальную версию шаблонов.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по использованию</h2>
+                        <p>Рекомендации для эффективной работы с Базой знаний.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Добавьте часто используемые категории в избранное для мгновенного доступа</li>
+                                <li>Используйте поиск по тегам, копируя их кликом в детальном виде</li>
+                                <li>Включите режим «Копировать при клике» для ускорения ответов на типовые запросы</li>
+                                <li>Делитесь прямыми ссылками на шаблоны с коллегами — это экономит время на поиск</li>
+                                <li>Следите за индикатором соответствия БЗ: зелёный — проверенный ответ, красный — требует уточнения</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Содержимое шаблонов обновляется централизованно. Если вы заметили устаревшую информацию, сообщите администратору.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="wiki.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту «База знаний»
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем конфиг и компоненты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для текущего инструмента
+            const toolId = 'wiki';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
+
+            // Инициализация компонентов
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкций
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Инициализация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в sidebar
+            const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
+            if (sidebarStatsContainer) {
+                sidebarStatsContainer.style.display = 'none';
+            }
+
+            // Изменяем подзаголовок в шапке
+            function changeLogoSubtitle() {
+                const logoSubtitle = document.querySelector('.logo-subtitle');
+                if (logoSubtitle) {
+                    logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                    return true;
+                }
+                return false;
+            }
+
+            if (!changeLogoSubtitle()) {
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

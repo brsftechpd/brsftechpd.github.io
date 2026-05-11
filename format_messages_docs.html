@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - fMessage</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    <style>
+        /* Дополнительные стили для инструкций (аналогично check_mp_docs) */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Вкладки UUID в Sidebar (точно как в check_mp_docs) */
+        .uuid-tabs-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .uuid-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .uuid-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .uuid-tab-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .uuid-tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .uuid-tab-btn i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* === Исправление видимости вкладок === */
+        /* По умолчанию все вкладки скрыты */
+        .tab-content {
+            display: none;
+        }
+
+        /* Только активная вкладка видна */
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Скрываем статистику в сайдбаре для инструкций */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+
+        /* Дополнительные стили для примеров полей ввода */
+        .input-example {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .input-example input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-input-bg, rgba(255,255,255,0.08));
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: 0.95rem;
+        }
+
+        .button-group-example {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .button-example {
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: var(--gradient-primary);
+        }
+
+        .history-example {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Вкладки инструкций -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор инструмента
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="input">
+                            <i class="fas fa-pencil-alt"></i> Ввод данных
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="generation">
+                            <i class="fas fa-cogs"></i> Генерация сообщений
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="history">
+                            <i class="fas fa-history"></i> История и копирование
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+
+                    <!-- Блок статистики скрыт -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;">
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента инструкций -->
+            <div class="tabs-content">
+                <!-- Раздел: Обзор инструмента -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>Инструмент «Формирование текста для Telegram» позволяет быстро создавать стандартизированные сообщения с данными заявок для отправки в рабочие чаты.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Назначение</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент генерирует готовые текстовые блоки на основе введённых данных (номер заявки, UUID, дата) для трёх категорий:</p>
+                            <ul>
+                                <li><strong>Аутентификация</strong> — сообщение о статусе процесса аутентификации.</li>
+                                <li><strong>МСО</strong> — различные сообщения об ошибках или статусах обработки в МСО (process, docValidTo, middleName, ФЛ из ЕСФЛ, birthCountryId, firstNameLat, birthPlace).</li>
+                                <li><strong>Телеметрия</strong> — сообщение об отсутствии данных в навигаторе.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Все сгенерированные сообщения автоматически копируются в буфер обмена и сохраняются в историю для повторного использования.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Базовый сценарий</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>1. Заполните поля «Номер заявки», «UUID» (23 цифры) и выберите дату.</p>
+                            <p>2. Выберите нужную категорию и нажмите соответствующую кнопку (например, «Аутентификация», «Process»).</p>
+                            <p>3. Сообщение появится в поле результата и автоматически скопируется в буфер обмена.</p>
+                            <p>4. При необходимости скопируйте сообщение вручную кнопкой «Копировать» или используйте историю для повторной отправки.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Ввод данных -->
+                <div class="tab-content instruction-content" id="tab-input">
+                    <div class="section-header">
+                        <h2>Ввод данных</h2>
+                        <p>Поля для заполнения и особенности их поведения.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Поле «Номер заявки»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Предназначено для ввода номера заявки (произвольный набор цифр). Принимает только цифры, нецифровые символы игнорируются. Поле обязательно для генерации любого сообщения.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Поле «UUID»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Ожидает 23 цифры (идентификатор пользователя). Ввод ограничен 23 символами, все нецифровые знаки автоматически удаляются. Если вставить из буфера обмена строку длиннее 23 цифр, она будет обрезана.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример поля UUID:</div>
+                            <input type="text" class="static-example" value="12345678901234567890123" readonly style="width:100%; padding:12px; background:rgba(255,255,255,0.08); border:1px solid var(--color-border); border-radius:8px; color:var(--color-text-primary);">
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Поле «Дата»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Стандартное поле выбора даты. При загрузке страницы автоматически устанавливается сегодняшняя дата. Используется в сообщениях, требующих указания даты (например, «Аутентификация в статусе process: ДД.ММ.ГГГГ»).</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <h3 class="step-title">«Умная» вставка из буфера обмена</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Если фокус не находится в полях ввода, при нажатии <kbd>Ctrl+V</kbd> скрипт анализирует содержимое буфера обмена: числовые данные длиной ≤ 23 символа вставляются в поле UUID, более длинные — в поле «Номер заявки». Это ускоряет заполнение при копировании данных из других систем.</p>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Вставка сработает, только если в буфере обмена есть хотя бы одна цифра. Иначе появится предупреждение.</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-note">
+                        <p><i class="fas fa-exclamation-triangle"></i> <strong>Валидация:</strong> Если какое-либо поле не заполнено или заполнено некорректно, при нажатии на кнопку генерации появится уведомление об ошибке, а некорректные поля подсветятся красной рамкой.</p>
+                    </div>
+                </div>
+
+                <!-- Раздел: Генерация сообщений -->
+                <div class="tab-content instruction-content" id="tab-generation">
+                    <div class="section-header">
+                        <h2>Генерация сообщений</h2>
+                        <p>Описание всех кнопок и шаблонов генерируемых сообщений.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Группа «Аутентификация»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Аутентификация»</strong> формирует сообщение:</p>
+                            <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; color: #e2e8f0;">Номер заявки: {номер}<br>UUID: {uuid}<br>Аутентификация в статусе process: {дата}</pre>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Группа «МСО»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Содержит семь кнопок для различных ситуаций обработки в МСО:</p>
+                            <ul>
+                                <li><strong>Process</strong> — «МСО в статусе process: {дата}»</li>
+                                <li><strong>docValidTo</strong> — «МСО в статусе failedStop: Дата окончания действия документа находится в прошлом или формат переданных данных неверен.»</li>
+                                <li><strong>middleName</strong> — «МСО в статусе failedStop: Отчество содержит недопустимые символы.»</li>
+                                <li><strong>ФЛ из ЕСФЛ</strong> — «МСО в статусе failedStop: Произошла непредвиденная ошибка при отождествлении ФЛ в ЕСФЛ.»</li>
+                                <li><strong>birthCountryId</strong> — «МСО в статусе failedStop: В заявлении отсутствует информация о стране рождения.»</li>
+                                <li><strong>firstNameLat</strong> — «МСО в статусе failedStop: Имя содержит недопустимые символы.»</li>
+                                <li><strong>birthPlace</strong> — «МСО в статусе failedStop: Место рождения содержит недопустимые символы.»</li>
+                            </ul>
+                            <p>Все сообщения начинаются с «Номер заявки: ...» и «UUID: ...», что делает их универсальными для рабочего чата.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример отображения кнопок МСО:</div>
+                            <div class="button-group-example static-example">
+                                <button class="button-example">Process</button>
+                                <button class="button-example" style="background: var(--gradient-success);">docValidTo</button>
+                                <button class="button-example" style="background: var(--gradient-purple);">middleName</button>
+                                <button class="button-example" style="background: var(--gradient-danger);">ФЛ из ЕСФЛ</button>
+                                <button class="button-example" style="background: var(--gradient-teal);">birthCountryId</button>
+                                <button class="button-example" style="background: var(--gradient-pink);">firstNameLat</button>
+                                <button class="button-example" style="background: var(--gradient-cyan);">birthPlace</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Группа «Телеметрия»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Нет телеметрии»</strong> генерирует сообщение:</p>
+                            <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; color: #e2e8f0;">Номер заявки: {номер}<br>UUID: {uuid}<br>Информация: Отсутствуют данные в навигаторе.</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: История и копирование -->
+                <div class="tab-content instruction-content" id="tab-history">
+                    <div class="section-header">
+                        <h2>История и копирование</h2>
+                        <p>Работа с историей сообщений и сохранение результатов.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Отображение результата</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Сгенерированное сообщение сразу появляется в блоке «Сформированное сообщение» под полями ввода. Рядом находится кнопка <strong>«Копировать»</strong> — она дублирует автоматическое копирование. Если сообщение ещё не было сгенерировано, при нажатии на кнопку появится предупреждение.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример блока результата:</div>
+                            <div class="static-example" style="display:flex; gap:10px; align-items:stretch;">
+                                <div style="flex:1; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; font-family:monospace; color:white;">Номер заявки: 12345<br>UUID: 12345678901234567890123<br>Аутентификация в статусе process: 11.05.2026</div>
+                                <button class="button-example" style="background: var(--gradient-success); white-space: nowrap;"><i class="fas fa-copy"></i> Копировать</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Панель истории</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Справа от основного блока (или под ним на мобильных устройствах) расположена история последних 20 сгенерированных сообщений. Каждая запись кликабельна — при нажатии она подставляется в поле результата. При наведении появляются кнопки:</p>
+                            <ul>
+                                <li><i class="fas fa-redo"></i> — использовать сообщение (аналог клика)</li>
+                                <li><i class="fas fa-times"></i> — удалить запись из истории</li>
+                            </ul>
+                            <p>Кнопка <strong>«Очистить историю»</strong> полностью удаляет все записи (с подтверждением). История автоматически сохраняется в localStorage браузера, поэтому доступна даже после перезагрузки страницы. Дубликаты сообщений не сохраняются — новое вхождение перемещается в начало списка.</p>
+                        </div>
+                        
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Используйте историю, чтобы быстро повторять часто отправляемые типовые сообщения без повторного ввода данных.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Уведомления</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В правом верхнем углу экрана появляются временные уведомления (зелёные — успех, красные — ошибка). Они сообщают о статусе копирования, ошибках валидации или других действиях. Уведомления исчезают автоматически через 3 секунды.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по использованию</h2>
+                        <p>Рекомендации для эффективной работы с инструментом.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Горячие клавиши</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li><strong>Ctrl+V</strong> (когда поля ввода не в фокусе) — «умная» вставка числовых данных из буфера обмена в нужное поле.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Если нужно быстро сообщить о нескольких ошибках по одной заявке, после первой генерации просто нажимайте другие кнопки — поля остаются заполненными.</li>
+                                <li>Для однотипных заявок с разными UUID используйте вставку из буфера обмена, чтобы переключаться между ними.</li>
+                                <li>Дата всегда подставляется сегодняшняя; если требуется указать другую дату, измените её вручную перед генерацией.</li>
+                                <li>Историю можно использовать как «избранное» для часто используемых шаблонов — просто не очищайте её.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Для корректной работы инструмента необходим доступ к буферу обмена. При использовании в защищённых средах (например, HTTP-страницы) функция копирования может быть ограничена — используйте HTTPS.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="format_messages.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту «fMessage»
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем конфиг и компоненты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для текущего инструмента
+            const toolId = 'format';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
+
+            // Инициализация компонентов
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкций
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Инициализация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в sidebar
+            const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
+            if (sidebarStatsContainer) {
+                sidebarStatsContainer.style.display = 'none';
+            }
+
+            // Изменяем подзаголовок в шапке
+            function changeLogoSubtitle() {
+                const logoSubtitle = document.querySelector('.logo-subtitle');
+                if (logoSubtitle) {
+                    logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                    return true;
+                }
+                return false;
+            }
+
+            if (!changeLogoSubtitle()) {
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - Ticket check 4me</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    <!-- Инструментальный CSS не требуется для страницы инструкции -->
+    <style>
+        /* Дополнительные стили для инструкций (аналогично uuid_docs) */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Вкладки в сайдбаре (как в check_mp_docs) */
+        .uuid-tabs-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .uuid-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .uuid-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .uuid-tab-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .uuid-tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .uuid-tab-btn i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Отображение вкладок */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Скрываем статистику в сайдбаре для инструкций */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+
+        /* Дополнительные стили для статичных примеров загрузки */
+        .upload-example {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--color-border);
+        }
+
+        .upload-example .upload-btn-static {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-example {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0,0,0,0.2);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table-example th,
+        .table-example td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .table-example th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .example-id-btn,
+        .example-initiator-btn {
+            background: transparent;
+            border: 1px solid var(--primary-500);
+            color: var(--primary-400);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            cursor: default;
+        }
+
+        .example-delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Вкладки инструкций -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор инструмента
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="upload">
+                            <i class="fas fa-upload"></i> Загрузка файла
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="categories">
+                            <i class="fas fa-layer-group"></i> Категории записей
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="table">
+                            <i class="fas fa-table"></i> Работа с таблицей
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="copying">
+                            <i class="fas fa-copy"></i> Копирование и экспорт
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+
+                    <!-- Блок статистики скрыт -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;">
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента инструкций -->
+            <div class="tabs-content">
+                <!-- Раздел: Обзор инструмента -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>Ticket check 4me — это инструмент для анализа выгрузки заявок из системы 4me, который помогает быстро находить дублирующиеся, нестандартные и уникальные записи по инициатору запроса.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Назначение</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент обрабатывает Excel-файл, выгруженный из 4me, и выполняет:</p>
+                            <ul>
+                                <li><strong>Нормализацию</strong> инициатора запроса (очистка от лишнего текста, приведение к стандартному формату).</li>
+                                <li><strong>Группировку</strong> записей по нормализованному инициатору.</li>
+                                <li><strong>Классификацию</strong> на дублирующиеся (повторяющиеся инициаторы), несоответствующие формату и уникальные верные.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Файл должен быть оригинальной выгрузкой из 4me в формате .xlsx или .xls. Обработка происходит полностью в браузере, данные не передаются на сервер.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Базовый сценарий</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>1. Загрузите Excel-файл с помощью кнопки или перетаскивания.</p>
+                            <p>2. Переключайтесь между вкладками «Все», «Дублирующиеся», «Несоответствующие», «Уникальные» для просмотра разных групп записей.</p>
+                            <p>3. Нажимайте на ID заявки, чтобы открыть её в 4me.</p>
+                            <p>4. Копируйте инициатора запроса кликом по нему.</p>
+                            <p>5. При необходимости удаляйте лишние записи или экспортируйте результат в Excel.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Загрузка файла -->
+                <div class="tab-content instruction-content" id="tab-upload">
+                    <div class="section-header">
+                        <h2>Загрузка файла</h2>
+                        <p>Поддерживаемые форматы и способы загрузки данных.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Выбор файла</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Нажмите кнопку <strong>«Выбрать файл Excel»</strong> или перетащите файл прямо в область загрузки. Поддерживаются файлы с расширениями .xlsx и .xls.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример интерфейса загрузки:</div>
+                            <div class="upload-example static-example">
+                                <i class="fas fa-file-excel" style="font-size: 3rem; color: var(--primary-400); margin-bottom: 1rem;"></i>
+                                <p style="font-weight: 500; margin-bottom: 1.5rem;">Загрузите файл Excel</p>
+                                <button class="upload-btn-static">
+                                    <i class="fas fa-cloud-upload-alt"></i> Выбрать файл Excel
+                                </button>
+                                <p style="font-size: 0.875rem; color: var(--color-text-tertiary); margin-top: 1rem;">Перетащите файл сюда или нажмите для выбора</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Устранение проблем с защищённым просмотром</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Если после загрузки файла появляется сообщение об ошибке, вероятная причина — файл находится в режиме «Защищённый просмотр».</p>
+                            <p>Чтобы это исправить:</p>
+                            <ul>
+                                <li>Откройте файл в Microsoft Excel.</li>
+                                <li>Если появится предупреждение, нажмите кнопку <strong>«Разрешить редактирование»</strong>.</li>
+                                <li>Сохраните файл (<strong>Файл → Сохранить как</strong>) и загрузите его заново.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="warning-note">
+                            <p><i class="fas fa-exclamation-triangle"></i> <strong>Внимание:</strong> Инструмент не работает с файлами, защищёнными паролем или содержащими макросы.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Категории записей -->
+                <div class="tab-content instruction-content" id="tab-categories">
+                    <div class="section-header">
+                        <h2>Категории записей</h2>
+                        <p>Все заявки автоматически распределяются по четырём группам.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Навигация по категориям</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В левой боковой панели расположены вкладки с количеством записей в каждой категории. Нажмите на нужную, чтобы увидеть соответствующие записи.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример боковой панели:</div>
+                            <div class="nav-tabs static-example" style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="nav-tab active" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: rgba(59,130,246,0.15); color: white; border-radius: 10px;">
+                                    <i class="fas fa-list" style="margin-right: 10px;"></i> Все <span style="margin-left: auto;">25</span>
+                                </button>
+                                <button class="nav-tab" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: transparent; color: #94a3b8; border-radius: 10px;">
+                                    <i class="fas fa-copy" style="margin-right: 10px;"></i> Дублирующиеся <span style="margin-left: auto;">8</span>
+                                </button>
+                                <button class="nav-tab" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: transparent; color: #94a3b8; border-radius: 10px;">
+                                    <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i> Несоответствующие <span style="margin-left: auto;">3</span>
+                                </button>
+                                <button class="nav-tab" style="justify-content: flex-start; padding: 10px 15px; margin: 0; border: none; background: transparent; color: #94a3b8; border-radius: 10px;">
+                                    <i class="fas fa-check-circle" style="margin-right: 10px;"></i> Уникальные <span style="margin-left: auto;">14</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Описание категорий</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li><strong>Все</strong> — полный список заявок из файла.</li>
+                                <li><strong>Дублирующиеся</strong> — записи, у которых нормализованный инициатор повторяется (два и более раза).</li>
+                                <li><strong>Несоответствующие</strong> — инициатор запроса не соответствует стандартному формату (например, отсутствует шаблон «A B 1234567»).</li>
+                                <li><strong>Уникальные верные</strong> — записи с корректным форматом инициатора, которые встречаются в файле только один раз.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Работа с таблицей -->
+                <div class="tab-content instruction-content" id="tab-table">
+                    <div class="section-header">
+                        <h2>Работа с таблицей</h2>
+                        <p>Основные действия с данными после загрузки.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Интерактивные элементы строки</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Каждая строка таблицы содержит:</p>
+                            <ul>
+                                <li><strong>ID</strong> — кнопка, при нажатии открывает заявку в 4me.</li>
+                                <li><strong>Инициатор запроса</strong> — кнопка, при нажатии копирует нормализованный инициатор в буфер обмена.</li>
+                                <li><strong>Тема</strong> — краткое описание заявки.</li>
+                                <li><strong>Действия</strong> — кнопка «Удалить», удаляющая запись из текущей сессии.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример строки таблицы:</div>
+                            <table class="table-example static-example">
+                                <thead>
+                                    <tr><th>ID</th><th>Инициатор запроса</th><th>Тема</th><th>Действия</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><button class="example-id-btn">123456</button></td>
+                                        <td><button class="example-initiator-btn">AB1234567</button></td>
+                                        <td>Проблема с регистрацией</td>
+                                        <td><button class="example-delete-btn">Удалить</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Поиск и фильтрация</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Над таблицей находится поле поиска. Введите любой текст — отфильтруются строки, содержащие его в любом столбце. При поиске в категории «Дублирующиеся» скрываются целые группы, если ни одна запись в группе не соответствует запросу.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Удаление записей</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка «Удалить» убирает запись только из текущего просмотра. Это полезно, если вы хотите временно скрыть обработанные позиции. <strong>После перезагрузки файла все записи восстанавливаются.</strong></p>
+                        </div>
+                        
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Если нужно зафиксировать изменения, сначала экспортируйте таблицу в Excel, а затем используйте полученный файл.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Копирование и экспорт -->
+                <div class="tab-content instruction-content" id="tab-copying">
+                    <div class="section-header">
+                        <h2>Копирование и экспорт</h2>
+                        <p>Способы извлечения данных для дальнейшей работы.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Копирование инициатора</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Нажмите на кнопку с инициатором запроса (например, <code>AB1234567</code>). Текст будет скопирован в буфер обмена, а кнопка на мгновение изменится на «Скопировано».</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">После нажатия:</div>
+                            <button class="example-initiator-btn static-example" style="background: var(--gradient-success); color: white; border-color: transparent;">Скопировано</button>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Экспорт в Excel</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Экспорт в Excel»</strong> сохраняет текущую таблицу (без столбца «Действия») в файл формата .xlsx. Имя файла соответствует названию категории, например «Дублирующиеся_записи.xlsx».</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по использованию</h2>
+                        <p>Рекомендации для эффективной обработки заявок.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Начинайте анализ с вкладки «Дублирующиеся» — она сразу показывает потенциальные проблемы (один и тот же человек в нескольких заявках).</li>
+                                <li>Используйте поиск, чтобы быстро найти конкретного инициатора или тему.</li>
+                                <li>Удаляйте уже обработанные записи, чтобы не отвлекаться на них при повторном просмотре.</li>
+                                <li>Если нужно передать результаты коллегам, экспортируйте нужную категорию в Excel.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Инструмент предназначен исключительно для работы с выгрузками из 4me. Использование файлов другой структуры может привести к некорректным результатам.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="duble_search_4me.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту «Ticket check 4me»
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем конфиг и компоненты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для основного инструмента 4me
+            const toolId = '4me';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
+
+            // Инициализация компонентов
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкций
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Инициализация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в sidebar
+            const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
+            if (sidebarStatsContainer) {
+                sidebarStatsContainer.style.display = 'none';
+            }
+
+            // Изменяем подзаголовок в шапке на "Инструкция по работе с инструментом"
+            function changeLogoSubtitle() {
+                const logoSubtitle = document.querySelector('.logo-subtitle');
+                if (logoSubtitle) {
+                    logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                    return true;
+                }
+                return false;
+            }
+
+            if (!changeLogoSubtitle()) {
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

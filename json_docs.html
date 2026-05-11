@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - JSON Editor S3</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    
+    <style>
+        /* Дополнительные стили для инструкций (аналогично check_mp_docs) */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Вкладки в сайдбаре (как в uuid_docs) */
+        .uuid-tabs-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .uuid-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .uuid-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .uuid-tab-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .uuid-tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .uuid-tab-btn i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Содержимое вкладок: активная видна, остальные скрыты */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Скрываем статистику в сайдбаре */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+
+        /* Стили для подсветки кода в примерах */
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #d4d4d4; }
+        pre.json-sample {
+            background: #1e1e2f;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Навигация по вкладкам инструкции -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="templates">
+                            <i class="fas fa-code"></i> Шаблоны JSON
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="editing">
+                            <i class="fas fa-edit"></i> Редактирование
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="status-fix">
+                            <i class="fas fa-wrench"></i> Исправление статусов
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="copy-export">
+                            <i class="fas fa-copy"></i> Копирование
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+                    <!-- Блок статистики скрыт -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;"></div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <div class="tabs-content">
+                <!-- Раздел: Обзор -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>JSON Editor — Мощный редактор для работы с JSON-данными, специализированный на обработке блоков миграционного учета.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Назначение</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент предназначен для:</p>
+                            <ul>
+                                <li><strong>Валидации и форматирования</strong> JSON-структур</li>
+                                <li><strong>Анализа блоков</strong> <code>residenceRegistration</code> и <code>residenceAddress</code></li>
+                                <li><strong>Быстрого исправления</strong> статусов постановки на учет</li>
+                                <li><strong>Копирования данных</strong> в формате Unicode для использования в запросах</li>
+                            </ul>
+                        </div>
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Ключевая особенность:</strong> Автоматическое определение статусов и подсказки по действиям для миграционных блоков.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Основные возможности</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Подсветка синтаксиса JSON</li>
+                                <li>Автоформатирование (pretty-print) при вставке</li>
+                                <li>Нумерация строк и изменение размера шрифта</li>
+                                <li>Интеллектуальный анализ полей <code>regStatus</code>, <code>unregistrationReasonId</code></li>
+                                <li>Кнопки для исправления статусов (1 или 5) с учётом таймеров</li>
+                                <li>Копирование JSON в Unicode-формате (экранирование кириллицы)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Шаблоны JSON -->
+                <div class="tab-content instruction-content" id="tab-templates">
+                    <div class="section-header">
+                        <h2>Шаблоны JSON блоков</h2>
+                        <p>Быстрая вставка заготовок через боковую панель.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Боковая панель «Шаблоны JSON блоков»</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В левой панели находятся две кнопки:</p>
+                            <ul>
+                                <li><strong>residenceAddress</strong> – шаблон блока адреса проживания</li>
+                                <li><strong>residenceRegistration</strong> – шаблон блока регистрации</li>
+                            </ul>
+                            <p>При клике соответствующий фрагмент JSON копируется в буфер обмена. Вы можете вставить его в редактор и дополнить своими данными.</p>
+                        </div>
+                        <div class="ui-example">
+                            <div class="example-label">Пример шаблона residenceRegistration:</div>
+                            <pre class="json-sample static-example">{
+  "residenceRegistration": {
+    "regStatus": 4,
+    "unregistrationReasonId": null,
+    "statusMessageCode": null,
+    "receiveDate": "2025-11-13T23:03:13.335Z",
+    "expirationDate": "2029-09-01T00:00:00",
+    "isRkl": false,
+    "changeDate": "2025-11-13T01:09:55Z"
+  }
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Структура residenceAddress</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Содержит поля адреса: <code>addressName</code>, <code>city</code>, <code>street</code>, <code>house</code>, <code>province</code>, <code>point</code> (геокоординаты), а также <code>residenceStatus</code>. Если <code>addressName</code> пуст, панель предупредит об этом.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Редактирование JSON -->
+                <div class="tab-content instruction-content" id="tab-editing">
+                    <div class="section-header">
+                        <h2>Работа с JSON</h2>
+                        <p>Редактирование, валидация и форматирование.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Вставка и валидация</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Вставьте JSON в основное поле редактора. Инструмент автоматически:</p>
+                            <ul>
+                                <li>Проверит корректность синтаксиса</li>
+                                <li>Отформатирует код с отступами (pretty print)</li>
+                                <li>Подсветит ключи, строки, числа и булевы значения разными цветами</li>
+                                <li>Покажет статус «Валидный JSON» или «Невалидный JSON» над редактором</li>
+                            </ul>
+                        </div>
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Автоматически удаляются лишние поля из residenceRegistration (addressName, flat, city и т.д.), которые могут случайно попасть в этот блок.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Настройка отображения</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li><strong>Размер шрифта:</strong> регулируется слайдером или кнопками «− / 14 / +» в боковой панели. Текущий размер сохраняется в браузере.</li>
+                                <li><strong>Нумерация строк:</strong> синхронизируется с содержимым редактора, помогает ориентироваться в объёмных JSON.</li>
+                                <li><strong>Очистка:</strong> кнопка «Очистить» удаляет всё содержимое редактора.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Исправление статусов -->
+                <div class="tab-content instruction-content" id="tab-status-fix">
+                    <div class="section-header">
+                        <h2>Исправление статусов residenceRegistration</h2>
+                        <p>Автоматические подсказки и кнопки для коррекции.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Анализ и панели состояния</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Если в загруженном JSON найден блок <code>residenceRegistration</code>, над редактором появятся информационные карточки:</p>
+                            <ul>
+                                <li><strong>residenceRegistration</strong> – показывает текущий <code>regStatus</code>, причину снятия (при статусе 7) и расшифровку состояния.</li>
+                                <li><strong>residenceAddress</strong> – информирует, заполнено ли поле <code>addressName</code>.</li>
+                            </ul>
+                            <p>Описание статуса можно скопировать кликом по карточке.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Доступные действия</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>В зависимости от текущего статуса и причины снятия появляются кнопки:</p>
+                            <ul>
+                                <li><strong>«Исправить на статус 1»</strong> – переводит <code>regStatus</code> в 1 (ожидание начала). Доступно при статусе 3 или при статусе 7 с определёнными причинами (1,2,3,6). Для причины 2 (отсутствие геоданных) кнопка становится активной только после таймера (4 дня + полночь).</li>
+                                <li><strong>«Исправить на статус 5»</strong> – устанавливает статус 5 (требуется повтор). Появляется при статусах 6 или 10.</li>
+                            </ul>
+                            <div class="important-note">
+                                <p><i class="fas fa-clock"></i> Если отображается обратный отсчёт – ожидайте окончания таймера, после чего кнопка автоматически станет доступной.</p>
+                            </div>
+                        </div>
+                        <div class="ui-example">
+                            <div class="example-label">Пример кнопок действий:</div>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <button class="btn-info primary static-example" style="background: var(--gradient-primary); border: none; padding: 8px 16px; border-radius: 8px;"><i class="fas fa-check-circle"></i> Исправить на статус 1</button>
+                                <button class="btn-info warning static-example" style="background: var(--gradient-error); border: none; padding: 8px 16px; border-radius: 8px;"><i class="fas fa-exclamation-triangle"></i> Исправить на статус 5</button>
+                                <div class="countdown-timer static-example" style="display: inline-flex; padding: 8px 12px;">⏱️ 2д 03:15:22</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Расшифровка статусов и причин</h3>
+                        </div>
+                        <div class="step-description">
+                            <p><strong>Статусы regStatus:</strong></p>
+                            <ul>
+                                <li>1 – Действий не требуется, пользователь видит кнопку «Начать».</li>
+                                <li>3 – В процессе обработки.</li>
+                                <li>4 – Состоит на учете.</li>
+                                <li>5 – Действий не требуется, пользователь видит кнопку «Повторить».</li>
+                                <li>6 – Отказ в постановке на учет.</li>
+                                <li>7 – Снятие с миграционного учета.</li>
+                                <li>10 – Не распространяются новые правила учета через приложение «Амина».</li>
+                            </ul>
+                            <p><strong>Причины снятия (unregistrationReasonId) при статусе 7:</strong></p>
+                            <ul>
+                                <li>1 – Пересечение границы РФ</li>
+                                <li>2 – Отсутствие геоданных</li>
+                                <li>3 – Постановка на учет в другом субъекте РФ</li>
+                                <li>4 – Данные ЗАГС (смерть)</li>
+                                <li>5 – Решение суда (безвестно отсутствующий)</li>
+                                <li>6 – Необходимо встать на миграционный учет по действующим правилам (выдан ВНЖ)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Копирование -->
+                <div class="tab-content instruction-content" id="tab-copy-export">
+                    <div class="section-header">
+                        <h2>Копирование и экспорт</h2>
+                        <p>Удобные форматы для обмена и интеграции.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Копирование JSON в Unicode-формате</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кнопка <strong>«Копировать»</strong> в шапке редактора преобразует текущий валидный JSON в строку с Unicode-экранированием (например, <code>\u041F\u0440\u0438\u0432\u0435\u0442</code>). Такой формат требуется для передачи данных в некоторые сервисы (например, в OpenSearch запросы).</p>
+                            <p>После успешного копирования появляется уведомление.</p>
+                        </div>
+                        <div class="important-note">
+                            <p><i class="fas fa-info-circle"></i> Копирование доступно только для корректного JSON. При ошибках валидации покажется предупреждение.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Копирование описаний статусов</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Кликните по любой информационной карточке (residenceRegistration или residenceAddress), чтобы скопировать расшифровку статуса или предупреждение об отсутствии адреса. Это удобно для добавления комментариев в задачи или отчёты.</p>
+                        </div>
+                        <div class="tip-note">
+                            <p><i class="fas fa-lightbulb"></i> Скопированный текст содержит полное пояснение статуса и, при необходимости, причину снятия.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по эффективной работе</h2>
+                        <p>Рекомендации для администраторов и разработчиков.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Перед массовым изменением статусов используйте функцию копирования Unicode, чтобы сохранить исходный JSON.</li>
+                                <li>Обращайте внимание на таймер обратного отсчёта – он помогает не выполнять действие раньше времени, когда причина снятия – отсутствие геоданных (статус 7, причина 2).</li>
+                                <li>Если JSON не проходит валидацию, проверьте кавычки, лишние запятые или неэкранированные символы. Редактор покажет строку с ошибкой.</li>
+                                <li>Используйте шаблоны из боковой панели для быстрого создания типовых блоков, затем изменяйте только нужные поля.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="warning-note">
+                        <p><i class="fas fa-exclamation-triangle"></i> <strong>Внимание:</strong> Изменение статусов через кнопки немедленно обновляет JSON в редакторе. Перед применением убедитесь, что данные соответствуют реальному состоянию учёта.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="json.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту «JSON Editor S3»
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем общие скрипты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для инструмента JSON
+            const toolId = 'json';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента JSON не найден');
+                return;
+            }
+
+            // Инициализация фоновых эффектов
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            // Инициализация шапки
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            // Инициализация подвала
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкции
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Активация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в сайдбаре (если есть)
+            const sidebarStats = document.getElementById('sidebarStatsContainer');
+            if (sidebarStats) sidebarStats.style.display = 'none';
+
+            // Меняем подзаголовок в шапке на "Инструкция по работе с инструментом"
+            function changeLogoSubtitle() {
+                const logoSubtitle = document.querySelector('.logo-subtitle');
+                if (logoSubtitle) {
+                    logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                    return true;
+                }
+                return false;
+            }
+
+            if (!changeLogoSubtitle()) {
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, { childList: true, subtree: true });
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
