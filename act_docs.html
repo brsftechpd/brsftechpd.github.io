@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструкция - Калькулятор отчета</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="tools/css/common.css">
+    <link rel="stylesheet" href="tools/css/components/header.css">
+    <link rel="stylesheet" href="tools/css/components/sidebar.css">
+    <link rel="stylesheet" href="tools/css/components/footer.css">
+    <link rel="stylesheet" href="tools/css/components/background-effects.css">
+    <style>
+        /* Дополнительные стили для инструкций (аналогично uuid_docs) */
+        .instruction-content {
+            background: var(--color-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .instruction-step {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .step-description ul {
+            margin: var(--spacing-md) 0;
+            padding-left: var(--spacing-lg);
+        }
+
+        .step-description li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .important-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-500);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .important-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .warning-note {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .warning-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .tip-note {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .tip-note p {
+            margin: 0;
+            color: var(--color-text-primary);
+            font-style: italic;
+        }
+
+        .section-header {
+            margin-bottom: 25px;
+            padding: 0 25px 0 25px;
+        }
+
+        /* Примеры UI элементов в инструкциях */
+        .ui-example {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--color-border);
+            margin-top: var(--spacing-md);
+        }
+
+        .example-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .static-example {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .static-example .result {
+            cursor: default;
+        }
+
+        .static-example .result:hover {
+            background: var(--color-bg-secondary);
+        }
+
+        .static-example button {
+            cursor: default;
+        }
+
+        .static-example button:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .back-to-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: var(--spacing-xl);
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-md);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-to-tool:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Вкладки в Sidebar */
+        .uuid-tabs-navigation {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .uuid-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: left;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .uuid-tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-primary);
+        }
+
+        .uuid-tab-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: -2px;
+        }
+
+        .uuid-tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .uuid-tab-btn i {
+            font-size: 0.875rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* === Исправление видимости вкладок === */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Скрываем статистику в сайдбаре для инструкций */
+        #sidebarStatsContainer {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="theme-dark">
+    <!-- Background Effects -->
+    <div id="background-effects"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-container">
+            <aside class="sidebar" id="sidebar" aria-label="Разделы инструкции">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-book" aria-hidden="true"></i>
+                        <span>Инструкции</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-nav-container">
+                    <!-- Вкладки инструкций -->
+                    <div class="uuid-tabs-navigation" id="tabsNavigation">
+                        <button class="uuid-tab-btn active" data-tab="overview">
+                            <i class="fas fa-info-circle"></i> Обзор инструмента
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="parameters">
+                            <i class="fas fa-sliders-h"></i> Исходные данные
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="services">
+                            <i class="fas fa-briefcase"></i> Услуги
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="calculation">
+                            <i class="fas fa-search-dollar"></i> Подбор цен
+                        </button>
+                        <button class="uuid-tab-btn" data-tab="tips">
+                            <i class="fas fa-lightbulb"></i> Советы
+                        </button>
+                    </div>
+
+                    <!-- Блок статистики скрыт -->
+                    <div class="sidebar-stats-container" id="sidebarStatsContainer" style="display: none;">
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="content" id="content">
+            <!-- Контейнер для контента инструкций -->
+            <div class="tabs-content">
+                <!-- Раздел: Обзор инструмента -->
+                <div class="tab-content instruction-content active" id="tab-overview">
+                    <div class="section-header">
+                        <h2>Обзор инструмента</h2>
+                        <p>Калькулятор зарплат и услуг помогает справедливо распределить общую сумму вознаграждения между несколькими оказанными услугами на основе затраченного времени.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Назначение</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Инструмент решает задачу: как назначить <strong>уникальные целые цены за час</strong> для каждой услуги, чтобы их суммарная стоимость точно совпала с общей заработанной суммой (до вычета НДФЛ).</p>
+                            <ul>
+                                <li>Рассчитывает ставку часа, налог и сумму на руки.</li>
+                                <li>Контролирует распределение фактических часов по услугам.</li>
+                                <li>Подбирает комбинацию цен перебором вариантов в заданном диапазоне.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="important-note">
+                            <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Все суммы и часы указываются целыми числами. Алгоритм гарантирует, что все стоимости услуг и все цены за час будут разными.</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Базовый сценарий</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>1. Заполните поля зарплаты и плановых часов в боковой панели.</p>
+                            <p>2. Введите фактические часы за период.</p>
+                            <p>3. Добавьте услуги и распределите по ним часы (сумма должна равняться фактическим часам).</p>
+                            <p>4. Нажмите «Подобрать цены» и ознакомьтесь с результатом.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Исходные данные -->
+                <div class="tab-content instruction-content" id="tab-parameters">
+                    <div class="section-header">
+                        <h2>Исходные данные</h2>
+                        <p>Параметры, которые задают общую сумму для распределения и контролируют баланс времени.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Зарплата по договору и плановые часы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Эти два поля определяют <strong>часовую ставку</strong>. Она вычисляется как <code>зарплата / плановые часы</code>.</p>
+                            <p>На основе фактических часов рассчитывается заработок (на руки), а затем восстанавливается сумма «грязными» (до вычета 13% НДФЛ). Именно эта сумма и распределяется по услугам.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример полей в боковой панели:</div>
+                            <div class="static-example" style="display:flex; flex-direction:column; gap:12px; max-width:260px;">
+                                <div>
+                                    <label style="font-size:0.7rem; color: var(--color-text-tertiary);">Зарплата по договору (₽)</label>
+                                    <input type="text" value="120 000" readonly style="width:100%; background:var(--color-bg-tertiary); border:1px solid var(--color-border); border-radius:20px; padding:0.5rem 1rem; color:white;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color: var(--color-text-tertiary);">Плановые часы/мес</label>
+                                    <input type="text" value="160" readonly style="width:100%; background:var(--color-bg-tertiary); border:1px solid var(--color-border); border-radius:20px; padding:0.5rem 1rem; color:white;">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color: var(--color-text-tertiary);">Фактические часы</label>
+                                    <input type="text" value="164" readonly style="width:100%; background:var(--color-bg-tertiary); border:1px solid var(--color-border); border-radius:20px; padding:0.5rem 1rem; color:white;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Фактические часы</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Сколько часов вы фактически отработали за период. Это число будет распределено между услугами. Оно также используется для расчёта суммы на руки.</p>
+                            <div class="warning-note">
+                                <p><i class="fas fa-exclamation-triangle"></i> <strong>Критично:</strong> Сумма часов всех услуг должна строго равняться фактическим часам, иначе подбор не будет выполнен.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Услуги -->
+                <div class="tab-content instruction-content" id="tab-services">
+                    <div class="section-header">
+                        <h2>Услуги</h2>
+                        <p>Список оказываемых услуг и распределение времени по ним.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Добавление и удаление</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Используйте кнопки <strong>«Добавить»</strong> и <strong>«Удалить»</strong> для управления списком. Минимальное количество услуг — одна. Каждая услуга имеет поле ввода часов и кнопку удаления (мусорная корзина).</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример карточки услуги:</div>
+                            <div class="static-example" style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); padding:0.8rem 1rem; border-radius:12px; max-width:500px;">
+                                <label style="display:flex; align-items:center; gap:6px; font-weight:600; color:var(--color-text-secondary);">
+                                    <i class="fas fa-briefcase"></i> Услуга 1:
+                                </label>
+                                <input type="text" value="82" readonly style="flex:1; background:var(--color-bg-tertiary); border:1px solid var(--color-border); border-radius:20px; padding:0.5rem 1rem; color:white;">
+                                <button style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#ef4444; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Индикатор распределения времени</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Над списком услуг расположена строка <strong>«Всего / Распред. / Осталось»</strong>. Она показывает, сколько часов уже распределено и сколько ещё нужно назначить. Как только остаток станет равным <strong>0</strong>, можно запускать подбор.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример индикатора:</div>
+                            <div class="static-example" style="display:flex; gap:16px; background:var(--gradient-surface); padding:0.7rem 1.2rem; border-radius:12px;">
+                                <span><i class="fas fa-clock"></i> Всего: <strong>164</strong></span>
+                                <span><i class="fas fa-chart-pie"></i> Распред.: <strong>164</strong></span>
+                                <span><i class="fas fa-check-circle" style="color:#10b981;"></i> Осталось: <strong style="color:#10b981;">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Подбор цен -->
+                <div class="tab-content instruction-content" id="tab-calculation">
+                    <div class="section-header">
+                        <h2>Подбор цен</h2>
+                        <p>Автоматический поиск комбинации цен за час, удовлетворяющей всем условиям.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Запуск и результат</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Нажмите <strong>«Подобрать цены»</strong>. Алгоритм перебирает целые цены в диапазоне ±K от средней ставки, пока не найдёт комбинацию, при которой:</p>
+                            <ul>
+                                <li>Сумма стоимостей всех услуг равна общей сумме до вычета.</li>
+                                <li>Все стоимости услуг <strong>уникальны</strong>.</li>
+                                <li>Все цены за час <strong>уникальны</strong>.</li>
+                            </ul>
+                            <p>Результат отображается в таблице. Для каждой услуги выводится её номер, часы, цена за час и итоговая стоимость.</p>
+                        </div>
+                        
+                        <div class="ui-example">
+                            <div class="example-label">Пример таблицы результата:</div>
+                            <table class="static-example" style="width:100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr><th>№</th><th>Часы</th><th>Цена за час (₽)</th><th>Стоимость (₽)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>82</td><td>835</td><td>68 470</td></tr>
+                                    <tr><td>2</td><td>82</td><td>839</td><td>68 798</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3 class="step-title">Поиск другого варианта</h3>
+                        </div>
+                        <div class="step-description">
+                            <p>Если найденное распределение вас не устраивает, нажмите <strong>«Найти другой вариант»</strong>. Алгоритм продолжит перебор, исключая уже найденную комбинацию цен, и предложит новую (если она существует в допустимом диапазоне).</p>
+                        </div>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3 class="step-title">Возможные ошибки</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li><strong>«Сумма часов услуг ... не равна фактическим часам»</strong> — проверьте распределение.</li>
+                                <li><strong>«Не удалось подобрать целые цены»</strong> — попробуйте немного изменить общую сумму или перераспределить часы. Иногда проблема в слишком жёстких ограничениях уникальности.</li>
+                                <li><strong>«Общая сумма не может быть меньше ...»</strong> — при слишком маленькой сумме не хватит денег на минимальные цены (1 ₽/час).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Раздел: Советы -->
+                <div class="tab-content instruction-content" id="tab-tips">
+                    <div class="section-header">
+                        <h2>Советы по использованию</h2>
+                        <p>Рекомендации для быстрого и точного подбора.</p>
+                    </div>
+
+                    <div class="instruction-step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3 class="step-title">Эффективная работа</h3>
+                        </div>
+                        <div class="step-description">
+                            <ul>
+                                <li>Сначала заполните зарплату и плановые часы, затем фактические — это сразу покажет ожидаемую сумму на руки.</li>
+                                <li>Распределяйте часы так, чтобы они максимально соответствовали реальным трудозатратам по каждой услуге.</li>
+                                <li>Если услуга занимает мало времени, дайте ей небольшое количество часов (но не менее 1).</li>
+                                <li>При большом количестве услуг (более 6) время подбора может возрасти, но алгоритм оптимизирован для ≤12 услуг.</li>
+                                <li>Следите за индикатором «Осталось» — он должен стать зелёным и равным нулю.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Напоминание:</strong> Цены и стоимости всегда целые. Если требуется копеечная точность, используйте калькулятор как основу и корректируйте вручную.</p>
+                    </div>
+
+                    <div class="tip-note">
+                        <p><i class="fas fa-lightbulb"></i> Подбор всегда стремится сделать цены близкими к средней ставке, чтобы распределение было справедливым.</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="act.html" class="back-to-tool">
+                            <i class="fas fa-arrow-left"></i> Перейти к инструменту «Калькулятор отчета»
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Подключаем конфиг и компоненты -->
+    <script src="index/js/config.js"></script>
+    <script src="tools/js/components/header.js"></script>
+    <script src="tools/js/components/footer.js"></script>
+    <script src="tools/js/components/background-effects.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загружаем конфиг для текущего инструмента
+            const toolId = 'act';
+            const toolConfig = toolsConfig.find(tool => tool.id === toolId);
+            
+            if (!toolConfig) {
+                console.error('Конфиг для инструмента не найден');
+                return;
+            }
+
+            // Инициализация компонентов
+            const backgroundEffects = new BackgroundEffects();
+            document.getElementById('background-effects').innerHTML = backgroundEffects.render();
+
+            const header = new Header(toolConfig);
+            document.getElementById('header-container').innerHTML = header.render();
+            header.initEventListeners();
+
+            const footer = new Footer();
+            document.getElementById('footer-container').innerHTML = footer.render();
+
+            // Логика переключения вкладок инструкций
+            const tabButtons = document.querySelectorAll('.uuid-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.tab === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabId}`) {
+                        content.classList.add('active');
+                    }
+                });
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Инициализация первой вкладки
+            switchTab('overview');
+
+            // Скрываем блок статистики в sidebar
+            const sidebarStatsContainer = document.getElementById('sidebarStatsContainer');
+            if (sidebarStatsContainer) {
+                sidebarStatsContainer.style.display = 'none';
+            }
+
+            // Изменяем подзаголовок в шапке
+            function changeLogoSubtitle() {
+                const logoSubtitle = document.querySelector('.logo-subtitle');
+                if (logoSubtitle) {
+                    logoSubtitle.textContent = 'Инструкция по работе с инструментом';
+                    return true;
+                }
+                return false;
+            }
+
+            if (!changeLogoSubtitle()) {
+                const observer = new MutationObserver(function(mutations) {
+                    for (let mutation of mutations) {
+                        if (mutation.addedNodes.length) {
+                            if (changeLogoSubtitle()) {
+                                observer.disconnect();
+                                break;
+                            }
+                        }
+                    }
+                });
+                
+                const headerContainer = document.getElementById('header-container');
+                if (headerContainer) {
+                    observer.observe(headerContainer, {
+                        childList: true,
+                        subtree: true
+                    });
+                    
+                    setTimeout(() => {
+                        observer.disconnect();
+                        changeLogoSubtitle();
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
