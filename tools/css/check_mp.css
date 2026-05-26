@@ -182,16 +182,18 @@
 }
 
 /* Category Colors */
-.auth .category-icon { background: var(--gradient-purple); }
-.residence .category-icon { background: var(--gradient-error); }
-.geo .category-icon { background: var(--gradient-primary); }
-.phone .category-icon { background: var(--gradient-cyan); }
-.push .category-icon { background: var(--gradient-pink); }
-.photo .category-icon { background: var(--gradient-warning); }
-.documents .category-icon { background: var(--gradient-success); }
-.faq .category-icon { background: var(--gradient-info); }
-.register .category-icon { background: var(--gradient-secondary); }
-.profile .category-icon { background: var(--gradient-accent); }
+.register .category-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.auth .category-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.residence .category-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.profile .category-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+.geo .category-icon { background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); }
+.photo .category-icon { background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); }
+.phone .category-icon { background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%); }
+.push .category-icon { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+.documents .category-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.faq .category-icon { background: linear-gradient(135deg, #FFCC00 0%, #ffa000 100%); }
+.migservice .category-icon { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+.erz .category-icon { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
 
 @media (max-width: 1024px) {
     .service-grid {
