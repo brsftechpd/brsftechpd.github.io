@@ -78,7 +78,7 @@ class UUIDToolsApp {
 
                         <!-- Сервисы ММЦ и ЕЦХД -->
                         <div class="button-group">
-                            <div class="group-title">Сервисы ММЦ и ЕЦХД (Внешние сервисы)</div>
+                            <div class="group-title">Сервисы ММЦ и ЕЦХД, ЕРЗ (Внешние сервисы)</div>
                             <div class="other-checks-buttons" id="MMCButtons"></div>
                         </div>
                     </div>
