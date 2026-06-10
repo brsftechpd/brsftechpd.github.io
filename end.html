@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мотиватор команды | Завершение смены</title>
+    <style>
+        :root {
+            --bg-start: #1a1a2e;
+            --bg-mid: #16213e;
+            --bg-end: #0f3460;
+            --card-bg: #1e2a3a;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0e6d3;
+            --text-secondary: #c4b7a6;
+            --accent-warm: #e8a85f;
+            --accent-bright: #f7c67c;
+            --accent-rose: #e07a5f;
+            --accent-teal: #81b29a;
+            --btn-copy: #3d7a6b;
+            --btn-copy-hover: #4a9d88;
+            --btn-next: #5c6b7a;
+            --btn-next-hover: #738290;
+            --btn-reset: #6b4e5e;
+            --btn-reset-hover: #856878;
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-btn: 0 4px 14px rgba(0, 0, 0, 0.25);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-main: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            min-height: 100vh;
+            background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 40%, var(--bg-end) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Декоративные элементы фона */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -180px;
+            right: -120px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(232, 168, 95, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBubble 18s ease-in-out infinite;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -200px;
+            left: -140px;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(224, 122, 95, 0.10) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBubble 22s ease-in-out infinite reverse;
+        }
+        @keyframes floatBubble {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(30px, -25px) scale(1.05);
+            }
+            50% {
+                transform: translate(-15px, -40px) scale(0.95);
+            }
+            75% {
+                transform: translate(-25px, 10px) scale(1.03);
+            }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 620px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Заголовок */
+        .header {
+            text-align: center;
+        }
+        .header .icon-row {
+            font-size: 42px;
+            margin-bottom: 6px;
+            animation: gentlePulse 3s ease-in-out infinite;
+        }
+        @keyframes gentlePulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        /* Переключатель режимов */
+        .mode-switcher {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-md);
+            padding: 5px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            transition: var(--transition);
+            background: transparent;
+            color: var(--text-secondary);
+            position: relative;
+            white-space: nowrap;
+        }
+        .mode-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .mode-btn.active {
+            background: rgba(232, 168, 95, 0.18);
+            color: var(--accent-bright);
+            box-shadow: 0 0 0 1px rgba(232, 168, 95, 0.3);
+        }
+        .mode-btn .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: 500;
+        }
+        .mode-btn.active .badge {
+            background: rgba(232, 168, 95, 0.3);
+            color: var(--accent-bright);
+        }
+
+        /* Карточка сообщения */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px 28px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-warm), var(--accent-rose), var(--accent-teal));
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .card .quote-mark {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            font-size: 60px;
+            line-height: 1;
+            color: rgba(232, 168, 95, 0.2);
+            pointer-events: none;
+            font-family: Georgia, serif;
+        }
+        .card .message-text {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+            padding-left: 8px;
+            word-wrap: break-word;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .card .message-text.fade-out {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        .card .message-text.fade-in {
+            animation: fadeSlideIn 0.4s ease forwards;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Прогресс-бар */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 4px;
+        }
+        .progress-bar-outer {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-warm));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            font-weight: 500;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* Кнопки */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 13px 22px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            flex: 1;
+            min-width: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .btn-next {
+            background: var(--btn-next);
+            color: #fff;
+        }
+        .btn-next:hover {
+            background: var(--btn-next-hover);
+        }
+        .btn-copy {
+            background: var(--btn-copy);
+            color: #fff;
+        }
+        .btn-copy:hover {
+            background: var(--btn-copy-hover);
+        }
+        .btn-reset {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+            flex: 0.4;
+            min-width: auto;
+            padding: 13px 16px;
+            font-size: 0.85rem;
+        }
+        .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.35);
+            color: var(--text-primary);
+        }
+        .btn .icon {
+            font-size: 1.2rem;
+        }
+
+        /* Тосты */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+            animation: slideInToast 0.4s ease forwards, fadeOutToast 0.5s ease 2s forwards;
+            pointer-events: auto;
+            max-width: 350px;
+            word-wrap: break-word;
+        }
+        .toast.success {
+            background: #3d7a6b;
+            border-left: 4px solid #81b29a;
+        }
+        .toast.info {
+            background: #4a6a8a;
+            border-left: 4px solid #7aa8c9;
+        }
+        .toast.warning {
+            background: #8a6d3b;
+            border-left: 4px solid #e8a85f;
+        }
+        @keyframes slideInToast {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOutToast {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+        }
+
+        /* Адаптив */
+        @media (max-width: 500px) {
+            .card {
+                padding: 24px 18px 20px;
+                min-height: 150px;
+            }
+            .card .message-text {
+                font-size: 1rem;
+                padding-left: 4px;
+            }
+            .card .quote-mark {
+                font-size: 42px;
+                top: 8px;
+                left: 12px;
+            }
+            .btn {
+                padding: 12px 14px;
+                font-size: 0.85rem;
+                gap: 4px;
+            }
+            .btn-row {
+                gap: 8px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .mode-btn {
+                padding: 10px 10px;
+                font-size: 0.8rem;
+            }
+            .mode-btn .badge {
+                font-size: 0.65rem;
+                padding: 2px 6px;
+                margin-left: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Заголовок -->
+        <div class="header">
+            <div class="icon-row">🌅</div>
+            <h1>Мотиватор команды</h1>
+            <p class="subtitle">Завершаем смену с благодарностью и теплом</p>
+        </div>
+
+        <!-- Переключатель режимов -->
+        <div class="mode-switcher" id="modeSwitcher">
+            <button class="mode-btn active" data-mode="regular" id="btnModeRegular">
+                🌤️ Обычный день <span class="badge">20</span>
+            </button>
+            <button class="mode-btn" data-mode="tough" id="btnModeTough">
+                💪 Тяжёлый день <span class="badge">15</span>
+            </button>
+        </div>
+
+        <!-- Карточка с сообщением -->
+        <div class="card" id="messageCard">
+            <span class="quote-mark">«</span>
+            <p class="message-text fade-in" id="messageText">
+                Загрузка...
+            </p>
+        </div>
+
+        <!-- Прогресс -->
+        <div class="progress-section">
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <span class="progress-label" id="progressLabel">0 / 20</span>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="btn-row">
+            <button class="btn btn-next" id="btnNext" title="Показать следующее сообщение">
+                <span class="icon">▶</span> Далее
+            </button>
+            <button class="btn btn-copy" id="btnCopy" title="Скопировать и пометить как использованное">
+                <span class="icon">📋</span> Копировать
+            </button>
+            <button class="btn btn-reset" id="btnReset" title="Сбросить цикл для текущего режима">
+                <span class="icon">🔄</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Контейнер для тостов -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ==================== СООБЩЕНИЯ ====================
+            const regularMessages = [
+                "Ребята, вы супер! Смена прошла на одном дыхании. Желаю вам тихого, уютного вечера и полной перезагрузки. Восполняйте силы, завтра нас ждут новые победы!",
+                "Команда, вы — огонь! Сегодня каждый вложил душу, и результат виден. Отключайтесь от работы, пусть вечер наполнится радостью и спокойствием. Хорошего отдыха!",
+                "Друзья, огромное спасибо за продуктивный день! Мы мощно отработали, горжусь каждым. Пусть вечер подарит вам вдохновение и улыбки. Восполняйте ресурс, вы это заслужили!",
+                "Коллеги, смена завершена на отлично! Вы невероятно крутые. Желаю уютного вечера без рабочих мыслей, приятных мелочей и глубокого отдыха. Набирайтесь энергии!",
+                "Ребята, вы показали класс! Задачи решены, клиенты довольны, настроение — бомба. Сейчас идеальное время для себя: любимая музыка, вкусный ужин, релакс. Восстанавливайтесь по полной!",
+                "Команда мечты, спасибо за сегодня! Слаженность и драйв сделали своё дело. Пусть вечер станет вашим маленьким праздником. Хорошего настроения и лёгкости! Заряжайтесь.",
+                "Дорогие мои, смена пролетела, а мы в очередной раз доказали, что вместе — сила. Отпускайте все тревоги, наслаждайтесь вечером и берегите свой внутренний покой. Восполняйте силы!",
+                "Всем отличного завершения дня! Вы красавчики, смена была суперпродуктивной. Наполните вечер теплом и позитивом, отключите уведомления и посвятите время любимым занятиям. Отдыхайте!",
+                "Ребята, вы молодцы! Каждая минута смены была заряжена вашей энергией. Сейчас выдохните, отпустите работу. Пусть вечер подарит уют, тишину и отличное настроение. Берегите себя.",
+                "Дорогая команда, спасибо за труд и позитив! День завершён на высокой ноте. Желаю волшебного вечера, где можно просто быть собой. Восполняйте силы — вы наша главная ценность.",
+                "Супер-коллеги, вы снова в топе! Смена была насыщенной, но мы справились с улыбкой. Окунитесь в атмосферу отдыха: прогулка, кино, тёплый плед. Пусть вечер перезагрузит вас на 100%!",
+                "Ребята, хочу сказать огромное спасибо! Сегодня каждый внёс вклад в общий успех. Желаю самого доброго вечера — лёгкого, радостного и без мыслей о будильнике. Восстанавливайтесь с удовольствием!",
+                "Команда, вы — моя гордость! Смена прошла без сучка и задоринки. Отпускаем работу, встречаем вечер с открытым сердцем. Пусть он будет полон тепла и заботы о себе. До завтрашних свершений!",
+                "Друзья, финальный аккорд дня — ваши улыбки! Мы отлично провели смену, теперь время для личного счастья. Желаю вечера, который восстановит все потраченные силы. Вы лучшие!",
+                "Коллеги, выражаю респект! Эффективность и драйв зашкаливали. Теперь — полный релакс. Пусть вечер будет вкусным, уютным и без рабочих уведомлений. Восполняйте энергию и сияйте!",
+                "Ребята, смена подошла к концу, и я в полном восторге от нашей работы! Желаю вам островка спокойствия: душ, книга, тишина. Вы заслужили самый лучший отдых. Восстанавливайтесь и будьте счастливы!",
+                "Команда, спасибо за настроение! Даже рутину вы превратили в драйв. Отдыхайте так же круто, как работали. Хорошего вечера, вдохновляющих моментов и глубокого сна. Зарядите батарейки!",
+                "Дорогие мои, мы опять показали, что можем всё. Смена была насыщенной, но мы с честью её провели. Наслаждайтесь вечером, ищите маленькие радости. Восполняйте силы — завтра будем снова на высоте!",
+                "Ребята, вы — мастера своего дела! Благодаря вам сегодня всё сложилось идеально. Отпускайте рабочие мысли, наполняйте вечер лёгкостью и смехом. Пусть отдых будет именно таким, как вам нужно. Берегите ресурс!",
+                "Команда-золото, конец смены — старт вашего личного времени. Спасибо за усилия, поддержку и драйв. Пусть вечер будет идеально уютным, тихим, с капелькой волшебства. Восполняйтесь и помните: вы невероятны!"
+            ];
+
+            const toughDayMessages = [
+                "Ребята, сегодня был настоящий марафон! Но мы выстояли и показали, из чего сделаны. Спасибо за вашу стойкость и профессионализм. Отдыхайте, вы это заслужили как никто другой!",
+                "Команда, день был непростой, но вы справились на все 100! Трудности только закалили нас. Горжусь каждым! Восполняйте силы и берегите нервы — вечер только для приятного.",
+                "Друзья, шторм пройден! Смена была тяжёлой, но мы показали настоящую командную работу. Спасибо за выдержку и поддержку друг друга. Идеального вам отдыха и полной перезагрузки!",
+                "Коллеги, этот день проверил нас на прочность, и мы не подвели! Каждый внёс свой вклад в общую победу над хаосом. Вечером — только покой и любимые занятия. Восстанавливайтесь, герои!",
+                "Ребята, бывают дни, которые закаляют характер. Сегодня был именно такой! Вы прошли через огонь и воду, не теряя человечности. Спасибо вам! Пусть вечер окутает теплом и тишиной.",
+                "Команда, сложные задачи позади, и мы стали только сильнее! Смена была тяжёлой, но наша сплочённость победила усталость. Отдыхайте душой и телом — завтра новый день, и мы снова в строю!",
+                "Дорогие мои, сегодня вы показали настоящий профессионализм под давлением! Не каждый день бывает лёгким, но именно в такие моменты раскрывается сила команды. Вечер — ваша награда, наслаждайтесь!",
+                "Ребята, снимаю шляпу! Смена была похожа на полосу препятствий, но мы дошли до финиша с улыбкой. Огромное спасибо за терпение и взаимовыручку. Заслуженный отдых ждёт вас!",
+                "Коллеги, день испытывал нас, но мы ответили ему сплочённостью и крутым результатом! Пусть вечерняя прохлада смоет усталость, а завтрашний день принесёт только приятные сюрпризы. Восполняйте ресурс!",
+                "Команда, тяжёлые смены — это наш трамплин к росту! Сегодня мы прыгнули выше головы. Спасибо за стойкость и за то, что даже в пиковые моменты оставались людьми. Отдых — ваша суперсила, используйте её!",
+                "Друзья, день был полон вызовов, но вы приняли каждый из них с достоинством! Никакой стресс не сломил наш дух. Пусть вечер принесёт умиротворение, а сон — глубокое восстановление. Вы — легенды!",
+                "Ребята, сегодня мы прошли проверку боем! Усталость чувствуется, но гордость за команду — ещё больше. Желаю вечера, где нет места звонкам и дедлайнам — только вы и ваше удовольствие. Заслужили!",
+                "Коллеги, тяжёлый день позади, а впереди — заслуженный отдых! Спасибо, что даже в цейтноте вы сохраняли ясность ума и доброе сердце. Отключитесь от всего и дайте себе лучшее восстановление.",
+                "Команда, сегодня мы с вами горы свернули! Было трудно, но мы напомнили себе, на что способны вместе. Пусть вечер будет безмятежным, как штиль после бури. Восполняйтесь и знайте: вы невероятны!",
+                "Дорогие мои, эта смена вошла в историю как одна из самых сложных, но мы записали её в актив! Горжусь нашей устойчивостью. Вечер — ваша территория счастья. Никаких рабочих мыслей, только радость и покой!"
+            ];
+
+            // ==================== СОСТОЯНИЕ ====================
+            const STORAGE_KEY_REGULAR_USED = 'motivator_regular_used';
+            const STORAGE_KEY_TOUGH_USED = 'motivator_tough_used';
+            const STORAGE_KEY_REGULAR_CURRENT = 'motivator_regular_current';
+            const STORAGE_KEY_TOUGH_CURRENT = 'motivator_tough_current';
+            const STORAGE_KEY_MODE = 'motivator_mode';
+
+            let currentMode = 'regular'; // 'regular' | 'tough'
+            let currentIndex = 0; // индекс текущего отображаемого сообщения
+            let usedIndexes = []; // массив использованных (скопированных) индексов
+
+            // ==================== DOM-ЭЛЕМЕНТЫ ====================
+            const btnModeRegular = document.getElementById('btnModeRegular');
+            const btnModeTough = document.getElementById('btnModeTough');
+            const messageText = document.getElementById('messageText');
+            const messageCard = document.getElementById('messageCard');
+            const progressBar = document.getElementById('progressBar');
+            const progressLabel = document.getElementById('progressLabel');
+            const btnNext = document.getElementById('btnNext');
+            const btnCopy = document.getElementById('btnCopy');
+            const btnReset = document.getElementById('btnReset');
+            const toastContainer = document.getElementById('toastContainer');
+            const modeSwitcher = document.getElementById('modeSwitcher');
+
+            // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+            function getMessages() {
+                return currentMode === 'regular' ? regularMessages : toughDayMessages;
+            }
+
+            function getTotalMessages() {
+                return getMessages().length;
+            }
+
+            function getUsedCount() {
+                return usedIndexes.length;
+            }
+
+            function getRemainingCount() {
+                return getTotalMessages() - getUsedCount();
+            }
+
+            function isAllUsed() {
+                return usedIndexes.length >= getTotalMessages();
+            }
+
+            // Загрузить состояние из localStorage
+            function loadState() {
+                // Режим
+                const savedMode = localStorage.getItem(STORAGE_KEY_MODE);
+                if (savedMode === 'regular' || savedMode === 'tough') {
+                    currentMode = savedMode;
+                } else {
+                    currentMode = 'regular';
+                }
+
+                // Использованные индексы
+                const usedKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_USED : STORAGE_KEY_TOUGH_USED;
+                const savedUsed = localStorage.getItem(usedKey);
+                if (savedUsed) {
+                    try {
+                        usedIndexes = JSON.parse(savedUsed);
+                        if (!Array.isArray(usedIndexes)) usedIndexes = [];
+                    } catch (e) {
+                        usedIndexes = [];
+                    }
+                } else {
+                    usedIndexes = [];
+                }
+
+                // Текущий индекс
+                const currentKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_CURRENT :
+                    STORAGE_KEY_TOUGH_CURRENT;
+                const savedCurrent = localStorage.getItem(currentKey);
+                if (savedCurrent !== null) {
+                    const parsed = parseInt(savedCurrent, 10);
+                    if (!isNaN(parsed) && parsed >= 0 && parsed < getTotalMessages()) {
+                        currentIndex = parsed;
+                    } else {
+                        currentIndex = findFirstUnused();
+                    }
+                } else {
+                    currentIndex = findFirstUnused();
+                }
+
+                // Если всё использовано — сбрасываем цикл автоматически при загрузке
+                if (isAllUsed()) {
+                    resetCycle(false); // тихий сброс без тоста
+                    currentIndex = 0;
+                }
+
+                // Валидация currentIndex
+                if (currentIndex >= getTotalMessages()) {
+                    currentIndex = findFirstUnused();
+                }
+            }
+
+            function saveState() {
+                const usedKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_USED : STORAGE_KEY_TOUGH_USED;
+                const currentKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_CURRENT :
+                    STORAGE_KEY_TOUGH_CURRENT;
+                localStorage.setItem(STORAGE_KEY_MODE, currentMode);
+                localStorage.setItem(usedKey, JSON.stringify(usedIndexes));
+                localStorage.setItem(currentKey, currentIndex.toString());
+            }
+
+            function findFirstUnused() {
+                const total = getTotalMessages();
+                for (let i = 0; i < total; i++) {
+                    if (!usedIndexes.includes(i)) return i;
+                }
+                return 0; // если все использованы — возвращаем 0 (для сброса)
+            }
+
+            function findNextUnused(fromIndex) {
+                const total = getTotalMessages();
+                // Ищем начиная с fromIndex+1 до конца
+                for (let i = fromIndex + 1; i < total; i++) {
+                    if (!usedIndexes.includes(i)) return i;
+                }
+                // Если не нашли — ищем с начала
+                for (let i = 0; i <= fromIndex; i++) {
+                    if (!usedIndexes.includes(i)) return i;
+                }
+                // Если вообще ничего не нашли (всё использовано) — возвращаем -1
+                return -1;
+            }
+
+            function resetCycle(showToast = true) {
+                usedIndexes = [];
+                currentIndex = 0;
+                saveState();
+                updateUI();
+                if (showToast) {
+                    showToast('Цикл сброшен! Все сообщения снова доступны.', 'info');
+                }
+            }
+
+            // ==================== ОТОБРАЖЕНИЕ ====================
+            function updateUI() {
+                const messages = getMessages();
+                const total = getTotalMessages();
+                const used = getUsedCount();
+                const remaining = getRemainingCount();
+
+                // Сообщение
+                if (currentIndex >= 0 && currentIndex < total) {
+                    messageText.textContent = messages[currentIndex];
+                } else {
+                    // Запасной вариант
+                    const firstUnused = findFirstUnused();
+                    if (firstUnused >= 0 && firstUnused < total) {
+                        currentIndex = firstUnused;
+                        messageText.textContent = messages[currentIndex];
+                    } else {
+                        messageText.textContent = messages[0];
+                        currentIndex = 0;
+                    }
+                }
+
+                // Прогресс
+                const progressPercent = total > 0 ? Math.round((used / total) * 100) : 0;
+                progressBar.style.width = progressPercent + '%';
+                progressLabel.textContent = `${used} / ${total} использовано`;
+
+                // Кнопка копирования
+                if (isAllUsed()) {
+                    btnCopy.disabled = true;
+                    btnCopy.style.opacity = '0.5';
+                    btnCopy.style.cursor = 'not-allowed';
+                    btnCopy.title = 'Все сообщения использованы. Нажмите «Сброс» или «Далее» для нового цикла.';
+                } else {
+                    btnCopy.disabled = false;
+                    btnCopy.style.opacity = '1';
+                    btnCopy.style.cursor = 'pointer';
+                    btnCopy.title = 'Скопировать и пометить как использованное';
+                }
+
+                // Режимные кнопки
+                btnModeRegular.classList.toggle('active', currentMode === 'regular');
+                btnModeTough.classList.toggle('active', currentMode === 'tough');
+
+                saveState();
+            }
+
+            function showMessageWithAnimation() {
+                messageText.classList.remove('fade-in');
+                messageText.classList.add('fade-out');
+                setTimeout(() => {
+                    updateUI();
+                    messageText.classList.remove('fade-out');
+                    messageText.classList.add('fade-in');
+                }, 200);
+            }
+
+            function showMessageInstant() {
+                messageText.classList.remove('fade-out', 'fade-in');
+                updateUI();
+                messageText.classList.add('fade-in');
+            }
+
+            // ==================== ДЕЙСТВИЯ ====================
+            function goToNext() {
+                const total = getTotalMessages();
+
+                // Если всё использовано — автоматический сброс цикла
+                if (isAllUsed()) {
+                    resetCycle(false);
+                    showToast('🎉 Все сообщения пройдены! Начинаем новый круг.', 'warning');
+                    currentIndex = 0;
+                    showMessageWithAnimation();
+                    return;
+                }
+
+                const nextIndex = findNextUnused(currentIndex);
+                if (nextIndex >= 0) {
+                    currentIndex = nextIndex;
+                } else {
+                    // Не должно случиться, но если что — сбрасываем
+                    resetCycle(false);
+                    currentIndex = 0;
+                    showToast('Цикл автоматически перезапущен.', 'info');
+                }
+                showMessageWithAnimation();
+            }
+
+            function copyCurrent() {
+                if (isAllUsed()) {
+                    showToast('⚠️ Все сообщения уже использованы. Сбросьте цикл.', 'warning');
+                    return;
+                }
+
+                const messages = getMessages();
+                const textToCopy = messages[currentIndex];
+
+                // Копирование в буфер обмена
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        markAsUsedAndProceed();
+                    }).catch(() => {
+                        // Fallback
+                        fallbackCopy(textToCopy);
+                    });
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+            }
+
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    markAsUsedAndProceed();
+                } catch (err) {
+                    showToast('❌ Не удалось скопировать. Попробуйте ещё раз.', 'warning');
+                }
+                document.body.removeChild(textarea);
+            }
+
+            function markAsUsedAndProceed() {
+                // Добавляем текущий индекс в использованные
+                if (!usedIndexes.includes(currentIndex)) {
+                    usedIndexes.push(currentIndex);
+                }
+                saveState();
+                updateUI();
+                showToast('✅ Скопировано! Сообщение помечено как использованное.', 'success');
+
+                // Автоматически переходим к следующему через 1.2 секунды
+                setTimeout(() => {
+                    if (isAllUsed()) {
+                        resetCycle(false);
+                        showToast('🎉 Все сообщения пройдены! Начинаем новый круг.', 'warning');
+                        currentIndex = 0;
+                        showMessageWithAnimation();
+                    } else {
+                        goToNext();
+                    }
+                }, 1200);
+            }
+
+            function switchMode(newMode) {
+                if (currentMode === newMode) return;
+
+                // Сохраняем текущее состояние перед переключением
+                saveState();
+
+                // Переключаем
+                currentMode = newMode;
+
+                // Загружаем состояние для нового режима
+                const usedKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_USED : STORAGE_KEY_TOUGH_USED;
+                const currentKey = currentMode === 'regular' ? STORAGE_KEY_REGULAR_CURRENT :
+                    STORAGE_KEY_TOUGH_CURRENT;
+
+                const savedUsed = localStorage.getItem(usedKey);
+                if (savedUsed) {
+                    try {
+                        usedIndexes = JSON.parse(savedUsed);
+                        if (!Array.isArray(usedIndexes)) usedIndexes = [];
+                    } catch (e) {
+                        usedIndexes = [];
+                    }
+                } else {
+                    usedIndexes = [];
+                }
+
+                const savedCurrent = localStorage.getItem(currentKey);
+                if (savedCurrent !== null) {
+                    const parsed = parseInt(savedCurrent, 10);
+                    if (!isNaN(parsed) && parsed >= 0 && parsed < getTotalMessages()) {
+                        currentIndex = parsed;
+                    } else {
+                        currentIndex = findFirstUnused();
+                    }
+                } else {
+                    currentIndex = findFirstUnused();
+                }
+
+                if (isAllUsed()) {
+                    resetCycle(false);
+                    currentIndex = 0;
+                }
+                if (currentIndex >= getTotalMessages()) {
+                    currentIndex = findFirstUnused();
+                }
+
+                saveState();
+                showMessageInstant();
+                const modeLabel = currentMode === 'regular' ? 'Обычный день' : 'Тяжёлый день';
+                showToast(`🔄 Режим: «${modeLabel}»`, 'info');
+            }
+
+            // ==================== ТОСТЫ ====================
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+
+                // Автоудаление через 2.5 секунды
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 2600);
+            }
+
+            // ==================== ОБРАБОТЧИКИ СОБЫТИЙ ====================
+            btnNext.addEventListener('click', () => {
+                goToNext();
+            });
+
+            btnCopy.addEventListener('click', () => {
+                copyCurrent();
+            });
+
+            btnReset.addEventListener('click', () => {
+                resetCycle(true);
+                currentIndex = 0;
+                showMessageWithAnimation();
+            });
+
+            btnModeRegular.addEventListener('click', () => {
+                switchMode('regular');
+            });
+
+            btnModeTough.addEventListener('click', () => {
+                switchMode('tough');
+            });
+
+            // Горячие клавиши
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+Enter или просто стрелка вправо — далее
+                if (e.key === 'ArrowRight' && !e.ctrlKey && !e.metaKey && !e.altKey &&
+                    document.activeElement === document.body) {
+                    e.preventDefault();
+                    goToNext();
+                }
+                // Ctrl+C когда фокус на карточке — копировать
+                if (e.key === 'c' && e.ctrlKey && !e.metaKey && !e.altKey &&
+                    document.activeElement === document.body) {
+                    // Не перехватываем стандартный Ctrl+C, если есть выделение
+                    const selection = window.getSelection();
+                    if (!selection || selection.toString().length === 0) {
+                        e.preventDefault();
+                        copyCurrent();
+                    }
+                }
+                // R — сброс
+                if (e.key === 'r' && e.ctrlKey && !e.metaKey && !e.altKey &&
+                    document.activeElement === document.body) {
+                    e.preventDefault();
+                    resetCycle(true);
+                    currentIndex = 0;
+                    showMessageWithAnimation();
+                }
+            });
+
+            // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+            function init() {
+                loadState();
+                // Валидация после загрузки
+                if (isAllUsed()) {
+                    resetCycle(false);
+                    currentIndex = 0;
+                }
+                if (currentIndex >= getTotalMessages() || currentIndex < 0) {
+                    currentIndex = findFirstUnused();
+                    if (currentIndex < 0) currentIndex = 0;
+                }
+                saveState();
+                showMessageInstant();
+            }
+
+            init();
+
+            console.log('🚀 Мотиватор команды готов к работе!');
+            console.log('   Режим:', currentMode === 'regular' ? 'Обычный день' : 'Тяжёлый день');
+            console.log('   Использовано:', getUsedCount(), 'из', getTotalMessages());
+            console.log('   Горячие клавиши: → (далее), Ctrl+C (копировать), Ctrl+R (сброс)');
+        })();
+    </script>
+</body>
+</html>
