@@ -23,6 +23,449 @@
     <link rel="stylesheet" href="tools/css/components/footer.css">
     <link rel="stylesheet" href="tools/css/components/background-effects.css">
     <link rel="stylesheet" href="tools/css/uuid.css">
+    
+    <!-- Дополнительные стили для конструктора адресов -->
+    <style>
+        /* ===== Стили для конструктора адресов ===== */
+        .address-section {
+            margin-bottom: 20px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 18px 16px;
+            border: 1px solid var(--border-light);
+        }
+
+        .address-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .address-section-indicator {
+            display: inline-block;
+            width: 3px;
+            height: 14px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .address-form-group {
+            margin-bottom: 12px;
+        }
+        .address-form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .address-form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            letter-spacing: 0.1px;
+        }
+
+        .address-required-mark {
+            color: #dc2626;
+            margin-left: 1px;
+        }
+
+        .address-optional-mark {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.7rem;
+            margin-left: 4px;
+        }
+
+        .address-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text);
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .address-input:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px var(--input-focus-shadow);
+        }
+
+        .address-input.input-error {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+        }
+
+        .address-input-with-button {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .address-input-group {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .address-input-group .address-input {
+            padding-right: 38px;
+        }
+
+        .address-input-icon {
+            position: absolute;
+            right: 12px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .address-row {
+            display: flex;
+            gap: 12px;
+        }
+        .address-row .address-form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .address-row-address .address-form-group:first-child {
+            flex: 2;
+        }
+        .address-row-address .address-form-group {
+            flex: 1;
+        }
+
+        .address-btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .address-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            line-height: 1.4;
+            background: none;
+            color: inherit;
+        }
+
+        .address-btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+            border: 1px solid transparent;
+        }
+        .address-btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+            transform: translateY(-1px);
+        }
+        .address-btn-primary:active {
+            background: #1e40af;
+            transform: translateY(0);
+        }
+
+        .address-btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            border: 1px solid transparent;
+            border-color: var(--border);
+        }
+        .address-btn-secondary:hover {
+            background: var(--bg-light);
+            border-color: var(--border);
+        }
+
+        .address-btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            border: 1px solid transparent;
+            border-color: var(--border);
+        }
+        .address-btn-ghost:hover {
+            background: var(--bg-light);
+            border-color: var(--border-light);
+        }
+
+        .address-btn-full {
+            width: 100%;
+            justify-content: center;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+
+        .address-output-container {
+            margin-top: 20px;
+        }
+
+        .address-output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .address-output-header span {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .address-output {
+            background: #222236;
+            border-radius: 8px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.76rem;
+            color: #e2e8f0;
+            max-height: 320px;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            line-height: 1.6;
+        }
+
+        /* Стилизация скроллбара для addressOutput */
+        .address-output::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .address-output::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 4px;
+            margin: 4px;
+        }
+
+        .address-output::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            transition: background 0.2s ease;
+        }
+
+        .address-output::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .address-output::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        /* Firefox */
+        .address-output {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 rgba(30, 41, 59, 0.4);
+        }
+
+        .address-output:empty::after {
+            content: 'JSON появится здесь после генерации...';
+            color: #64748b;
+            font-style: italic;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+        }
+
+        /* Подсветка JSON */
+        .address-json-key { color: #93c5fd; }
+        .address-json-string { color: #86efac; }
+        .address-json-number { color: #fde047; }
+        .address-json-null { color: #f87171; }
+        .address-json-bracket { color: #cbd5e1; }
+
+        /* Toast для конструктора */
+        .address-toast {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            max-width: 360px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .address-toast.show {
+            transform: translateX(0);
+        }
+
+        .address-toast.success {
+            border-left-color: #10b981;
+        }
+        .address-toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .address-toast-close {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.6;
+            font-size: 1.1rem;
+            padding: 0 4px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            transition: opacity 0.2s;
+            line-height: 1;
+        }
+        .address-toast-close:hover {
+            opacity: 1;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .address-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .address-row .address-form-group {
+                margin-bottom: 10px;
+            }
+            .address-row-address {
+                flex-direction: column;
+            }
+            .address-btn-group {
+                flex-direction: column;
+            }
+            .address-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .address-output {
+                font-size: 0.7rem;
+                padding: 10px;
+                max-height: 220px;
+            }
+            .address-toast {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                top: 70px;
+            }
+        }
+
+        input#timestampField,
+        input#changeDateField,
+        input#addressNameField,
+        input#streetField,
+        input#houseField,
+        input#flatField,
+        input#latlonField,
+        input#provinceField,
+        input#cityField
+		{
+            padding: 10px 12px 10px 10px;
+        }
+
+        /* Тёмная тема для конструктора */
+        .theme-dark .address-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .theme-dark .address-btn-primary {
+            background: #3b82f6;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        .theme-dark .address-btn-primary:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .theme-dark .address-btn-primary:active {
+            background: #1d4ed8;
+        }
+
+        .theme-dark .address-btn-secondary {
+            color: #94a3b8;
+            border-color: #334155;
+        }
+        .theme-dark .address-btn-secondary:hover {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .theme-dark .address-btn-ghost {
+            color: #94a3b8;
+            border-color: #334155;
+        }
+        .theme-dark .address-btn-ghost:hover {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .theme-dark .address-toast {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        /* Стилизация скроллбара для тёмной темы */
+        .theme-dark .address-output::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .theme-dark .address-output::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        .theme-dark .address-output::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .theme-dark .address-output {
+            scrollbar-color: #475569 rgba(15, 23, 42, 0.6);
+        }
+    </style>
 </head>
 
 <body class="theme-dark">
@@ -57,7 +500,7 @@
                             <i class="fas fa-passport"></i> Проверка паспорта
                         </button>
                         <button class="uuid-tab-btn" data-tab="utc">
-                            <i class="fas fa-clock"></i> UTC время
+                            <i class="fas fa-map-location-dot"></i> Генератор МСО запроса
                         </button>
                     </div>
                 </div>

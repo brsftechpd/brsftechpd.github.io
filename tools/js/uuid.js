@@ -129,30 +129,102 @@ class UUIDToolsApp {
                         </div>
                     </div>
 
-                    <!-- Вкладка UTC время -->
+                    <!-- Вкладка Адресный JSON (вместо UTC) -->
                     <div class="tab-content" id="tab-utc">
-                        <button class="utc-btn" id="utcTimeBtn">
-                            <i class="fas fa-clock"></i> Получить UTC время
-                        </button>
-
-                        <div class="result-container">
-                            <div class="result-label">С миллисекундами:</div>
-                            <div class="result-wrapper">
-                                <div class="result" id="utcTimeResult">Нажмите кнопку</div>
-                                <button class="copy-btn" id="utcCopyBtn" title="Копировать">
-                                    <i class="fas fa-copy"></i>
+                        <!-- Секция: Идентификаторы -->
+                        <div class="address-section">
+                            <div class="address-section-title">
+                                <span class="address-section-indicator"></span> Идентификаторы и метаданные
+                            </div>
+                            <div class="address-form-group">
+                                <label for="uuidField">UUID <span class="address-required-mark">*</span></label>
+                                <div class="address-input-with-button">
+                                    <div class="address-input-group">
+                                        <input type="tel" id="uuidField" placeholder="Введите UUID" maxlength="23" class="address-input">
+                                        <div class="input-icon">
+                                            <i class="fas fa-hashtag"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="address-row">
+                                <div class="address-form-group">
+                                    <label for="timestampField">Timestamp</label>
+                                    <input type="text" id="timestampField" placeholder="2026-06-06T12:00:00.000000Z" class="address-input">
+                                </div>
+                                <div class="address-form-group">
+                                    <label for="changeDateField">ChangeDate</label>
+                                    <input type="text" id="changeDateField" placeholder="2026-06-06T12:00:00Z" class="address-input">
+                                </div>
+                            </div>
+                            <div class="address-btn-group">
+                                <button type="button" class="address-btn address-btn-secondary" id="setCurrentTimeBtn">
+                                    <i class="fas fa-clock"></i> Текущее время
+                                </button>
+                                <button type="button" class="address-btn address-btn-ghost" id="clearTimeBtn">
+                                    <i class="fas fa-undo"></i> Очистить время
                                 </button>
                             </div>
                         </div>
 
-                        <div class="result-container">
-                            <div class="result-label">Без миллисекунд:</div>
-                            <div class="result-wrapper">
-                                <div class="result" id="utcTimeResultSimple">Нажмите кнопку</div>
-                                <button class="copy-btn" id="utcCopyBtnSimple" title="Копировать">
-                                    <i class="fas fa-copy"></i>
+                        <!-- Секция: Адрес -->
+                        <div class="address-section">
+                            <div class="address-section-title">
+                                <span class="address-section-indicator"></span> Адрес
+                            </div>
+                            <div class="address-form-group">
+                                <label for="addressNameField">Полный адрес <span class="address-required-mark">*</span></label>
+                                <input type="text" id="addressNameField" placeholder="г. Москва, ул. Тверская, д. 7, кв. 15" class="address-input">
+                            </div>
+                            <div class="address-row address-row-address">
+                                <div class="address-form-group">
+                                    <label for="streetField">Улица</label>
+                                    <input type="text" id="streetField" placeholder="Тверская" class="address-input">
+                                </div>
+                                <div class="address-form-group">
+                                    <label for="houseField">Дом</label>
+                                    <input type="text" id="houseField" placeholder="7" class="address-input">
+                                </div>
+                                <div class="address-form-group">
+                                    <label for="flatField">Квартира <span class="address-optional-mark">необяз.</span></label>
+                                    <input type="text" id="flatField" placeholder="15" class="address-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция: Геолокация -->
+                        <div class="address-section">
+                            <div class="address-section-title">
+                                <span class="address-section-indicator"></span> Геолокация и регион
+                            </div>
+                            <div class="address-form-group">
+                                <label for="latlonField">Координаты (широта, долгота) <span class="address-required-mark">*</span></label>
+                                <input type="text" id="latlonField" placeholder="55.7558, 37.6173" class="address-input">
+                            </div>
+                            <div class="address-row" style="margin-top: 12px;">
+                                <div class="address-form-group">
+                                    <label for="provinceField">Федеральный округ</label>
+                                    <input type="text" id="provinceField" value="Центральный федеральный округ" class="address-input">
+                                </div>
+                                <div class="address-form-group">
+                                    <label for="cityField">Город <span class="address-optional-mark">необяз.</span></label>
+                                    <input type="text" id="cityField" placeholder="Москва" class="address-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="address-btn address-btn-primary address-btn-full" id="generateJsonBtn">
+                            Сгенерировать JSON и скопировать в буфер обмена
+                        </button>
+
+                        <div class="address-output-container">
+                            <div class="address-output-header">
+                                <span><i class="fas fa-file-code"></i> Результат</span>
+                                <button type="button" class="address-btn address-btn-ghost" id="copyOutputBtn">
+                                    <i class="fas fa-copy"></i> Копировать
                                 </button>
                             </div>
+                            <div class="address-output" id="addressOutput"></div>
                         </div>
                     </div>
                 </div>
@@ -163,6 +235,7 @@ class UUIDToolsApp {
         this.initAppButtons();
         this.initRequestButtons();
         this.initMMCButtons();
+        this.initAddressConstructor();
     }
 
     initializeElements() {
@@ -182,11 +255,22 @@ class UUIDToolsApp {
             passportRegisteredBtn: document.getElementById('passportRegisteredBtn'),
             passportProfileBtn: document.getElementById('passportProfileBtn'),
             passportMissingBtn: document.getElementById('passportMissingBtn'),
-            utcTimeBtn: document.getElementById('utcTimeBtn'),
-            utcTimeResult: document.getElementById('utcTimeResult'),
-            utcTimeResultSimple: document.getElementById('utcTimeResultSimple'),
-            utcCopyBtn: document.getElementById('utcCopyBtn'),
-            utcCopyBtnSimple: document.getElementById('utcCopyBtnSimple')
+            // Элементы конструктора адресов
+            uuidField: document.getElementById('uuidField'),
+            timestampField: document.getElementById('timestampField'),
+            changeDateField: document.getElementById('changeDateField'),
+            addressNameField: document.getElementById('addressNameField'),
+            streetField: document.getElementById('streetField'),
+            houseField: document.getElementById('houseField'),
+            flatField: document.getElementById('flatField'),
+            latlonField: document.getElementById('latlonField'),
+            provinceField: document.getElementById('provinceField'),
+            cityField: document.getElementById('cityField'),
+            addressOutput: document.getElementById('addressOutput'),
+            generateJsonBtn: document.getElementById('generateJsonBtn'),
+            copyOutputBtn: document.getElementById('copyOutputBtn'),
+            setCurrentTimeBtn: document.getElementById('setCurrentTimeBtn'),
+            clearTimeBtn: document.getElementById('clearTimeBtn')
         };
     }
 
@@ -244,10 +328,27 @@ class UUIDToolsApp {
             }
         });
 
-        // Форматирование UUID
-        this.elements.formatBtn.addEventListener('click', () => this.formatUUID());
+        // Форматирование UUID - проверяем только numberInput
+        this.elements.formatBtn.addEventListener('click', () => {
+            // Проверяем только значение в numberInput
+            const inputValue = this.elements.numberInput.value.trim();
+            if (!this.isValidUserId(inputValue)) {
+                this.showInputError(this.elements.numberInput);
+                return;
+            }
+            this.formatUUID();
+        });
+        
         this.elements.numberInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.formatUUID();
+            if (e.key === 'Enter') {
+                // Проверяем только значение в numberInput
+                const inputValue = this.elements.numberInput.value.trim();
+                if (!this.isValidUserId(inputValue)) {
+                    this.showInputError(this.elements.numberInput);
+                    return;
+                }
+                this.formatUUID();
+            }
         });
 
         // Копирование результата
@@ -264,13 +365,6 @@ class UUIDToolsApp {
             this.validateKIGInput(e.target);
         });
 
-        // Примеры КИГ
-        document.querySelectorAll('.example-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.elements.kigInput.value = btn.dataset.kig;
-            });
-        });
-
         // Проверка паспорта
         this.elements.passportRegisteredBtn.addEventListener('click', () => this.openPassportUrl('registered'));
         this.elements.passportProfileBtn.addEventListener('click', () => this.openPassportUrl('profile'));
@@ -279,84 +373,89 @@ class UUIDToolsApp {
             if (e.key === 'Enter') this.openPassportUrl('registered');
         });
         
-        // Ввод в поле паспорта - без ограничений
         this.elements.passportInput.addEventListener('input', (e) => {
-            // Убираем любую валидацию при вводе
             e.target.classList.remove('error');
         });
 
-        // UTC время
-        this.elements.utcTimeBtn.addEventListener('click', () => this.getUTCTime());
-        this.elements.utcCopyBtn.addEventListener('click', () => {
-            this.copyToClipboard(this.elements.utcTimeResult.textContent);
-        });
-        this.elements.utcCopyBtnSimple.addEventListener('click', () => {
-            this.copyToClipboard(this.elements.utcTimeResultSimple.textContent);
-        });
-
-        // Валидация ввода UUID
+        // Валидация ввода UUID (для numberInput)
         this.elements.numberInput.addEventListener('input', (e) => {
             this.validateUUIDInput(e.target);
         });
+
+        // Валидация ввода UUID для конструктора
+        if (this.elements.uuidField) {
+            this.elements.uuidField.addEventListener('input', (e) => {
+                this.validateUUIDInput(e.target);
+            });
+        }
     }
 
     // Обработчик вставки из буфера обмена
     handlePaste(e) {
         const activeElement = document.activeElement;
         
-        // Если фокус на каком-то поле ввода, не обрабатываем
-        if (activeElement === this.elements.numberInput || 
-            activeElement === this.elements.passportInput || 
-            activeElement === this.elements.kigInput) {
+        // Список полей, которые НЕ должны обрабатываться автоматически
+        const excludedFields = [
+            this.elements.numberInput,
+            this.elements.passportInput,
+            this.elements.kigInput,
+            this.elements.uuidField
+        ];
+        
+        // Если фокус на любом из исключённых полей — пропускаем
+        if (excludedFields.includes(activeElement)) {
             return;
         }
         
-        // Получаем текст из буфера обмена
-        const text = e.clipboardData.getData('text/plain');
-        const cleanText = text.replace(/\D/g, '');
+        // Для всех остальных полей (включая поля конструктора адресов) — разрешаем стандартную вставку
+        // Ничего не делаем, браузер сам вставит данные
+        // Но нам нужно определить, если вставка была вне полей ввода, то перенаправить в UUID
+        const isInputField = activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA';
         
-        if (cleanText.length > 0) {
-            e.preventDefault();
+        if (!isInputField) {
+            // Если вставка вне полей ввода — обрабатываем как раньше
+            const text = e.clipboardData.getData('text/plain');
+            const cleanText = text.replace(/\D/g, '');
             
-            // Проверяем длину - если 23 символа, вставляем в поле UUID
-            if (cleanText.length === 23) {
-                this.elements.numberInput.value = cleanText;
-                this.elements.numberInput.focus();
-            }
-            // Если 10 символов, вставляем в поле паспорта (но не ограничиваем вводом только цифр)
-            else if (cleanText.length === 10) {
-                this.elements.passportInput.value = cleanText;
-                this.elements.passportInput.focus();
-            }
-            // Если 9 символов и соответствует формату КИГ, вставляем в поле КИГ
-            else if (cleanText.length === 9 && /^(AA|AB)\d{7}$/.test(cleanText.toUpperCase())) {
-                this.elements.kigInput.value = cleanText.toUpperCase();
-                this.elements.kigInput.focus();
-            }
-            // Во всех остальных случаях вставляем в поле UUID (обрезаем до 23 символов)
-            else {
-                this.elements.numberInput.value = cleanText.slice(0, 23);
-                this.elements.numberInput.focus();
+            if (cleanText.length > 0) {
+                e.preventDefault();
+                
+                if (cleanText.length === 23) {
+                    this.elements.numberInput.value = cleanText;
+                    this.elements.numberInput.focus();
+                }
+                else if (cleanText.length === 10) {
+                    this.elements.passportInput.value = cleanText;
+                    this.elements.passportInput.focus();
+                }
+                else if (cleanText.length === 9 && /^(AA|AB)\d{7}$/.test(cleanText.toUpperCase())) {
+                    this.elements.kigInput.value = cleanText.toUpperCase();
+                    this.elements.kigInput.focus();
+                }
+                else {
+                    this.elements.numberInput.value = cleanText.slice(0, 23);
+                    this.elements.numberInput.focus();
+                }
             }
         }
+        // Если фокус на любом другом поле ввода (включая поля конструктора) — разрешаем стандартную вставку
+        // Ничего не делаем, браузер обработает сам
     }
 
-    // Метод для показа ошибки с анимацией (только при нажатии на кнопки)
     showInputError(inputElement) {
-        // Очищаем предыдущий таймер для этого элемента
+        // Сначала очищаем предыдущие таймеры для этого элемента
         if (this.state.errorTimers[inputElement.id]) {
             clearTimeout(this.state.errorTimers[inputElement.id]);
+            delete this.state.errorTimers[inputElement.id];
         }
         
-        // Убираем предыдущий класс ошибки
+        // Убираем класс ошибки, чтобы перезапустить анимацию
         inputElement.classList.remove('error');
         
-        // Небольшая задержка для сброса анимации
+        // Небольшая задержка для перезапуска анимации
         setTimeout(() => {
-            // Добавляем класс ошибки
             inputElement.classList.add('error');
-            
-            // Устанавливаем таймер для удаления класса ошибки через 2 секунды
+            // Устанавливаем таймер для автоматического снятия ошибки через 2 секунды
             this.state.errorTimers[inputElement.id] = setTimeout(() => {
                 inputElement.classList.remove('error');
                 delete this.state.errorTimers[inputElement.id];
@@ -364,7 +463,6 @@ class UUIDToolsApp {
         }, 10);
     }
 
-    // Вспомогательные методы
     cleanNumber(number) {
         return number.replace(/\D/g, '');
     }
@@ -381,6 +479,7 @@ class UUIDToolsApp {
     formatUUID() {
         const inputValue = this.elements.numberInput.value.trim();
         
+        // Дополнительная проверка на случай, если вызвали без предварительной проверки
         if (!this.isValidUserId(inputValue)) {
             this.showInputError(this.elements.numberInput);
             return;
@@ -450,26 +549,15 @@ class UUIDToolsApp {
         window.open(url, '_blank');
     }
 
-    getUTCTime() {
-        const now = new Date();
-        const utcTimeWithMs = now.toISOString();
-        const utcTimeSimple = now.toISOString().split('.')[0] + 'Z';
-        
-        this.elements.utcTimeResult.textContent = utcTimeWithMs;
-        this.elements.utcTimeResultSimple.textContent = utcTimeSimple;
-        this.copyToClipboard(utcTimeWithMs);
-    }
-
-    copyToClipboard(text) {
-        if (!text || text.includes('Нажмите кнопку') || text === '/s3b-pudsmmu-prod/') {
-            return;
-        }
-
-        navigator.clipboard.writeText(text).catch(console.error);
-    }
-
     validateUUIDInput(input) {
-        input.value = input.value.replace(/\D/g, '').slice(0, 23);
+        // Очищаем от нецифровых символов и обрезаем до 23 символов
+        const cleaned = input.value.replace(/\D/g, '');
+        if (cleaned !== input.value) {
+            input.value = cleaned;
+        }
+        if (input.value.length > 23) {
+            input.value = input.value.slice(0, 23);
+        }
     }
 
     validateKIGInput(input) {
@@ -477,7 +565,6 @@ class UUIDToolsApp {
         input.value = value;
     }
 
-    // Работа с вкладками
     switchTab(tabId) {
         document.querySelectorAll('.uuid-tab-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -495,4 +582,215 @@ class UUIDToolsApp {
         this.state.activeTab = tabId;
     }
 
+    // ============= Методы для конструктора адресов =============
+
+    initAddressConstructor() {
+        // Кнопки времени
+        if (this.elements.setCurrentTimeBtn) {
+            this.elements.setCurrentTimeBtn.addEventListener('click', () => this.setCurrentTimeAddress());
+        }
+        if (this.elements.clearTimeBtn) {
+            this.elements.clearTimeBtn.addEventListener('click', () => this.clearTimeFieldsAddress());
+        }
+
+        // Генерация и копирование
+        if (this.elements.generateJsonBtn) {
+            this.elements.generateJsonBtn.addEventListener('click', () => this.generateAndCopyAddress());
+        }
+        if (this.elements.copyOutputBtn) {
+            this.elements.copyOutputBtn.addEventListener('click', () => this.copyOutputDirectlyAddress());
+        }
+
+        // Автоустановка времени (без уведомления)
+        this.setCurrentTimeAddressSilent();
+
+        // Фокус на UUID
+        if (this.elements.uuidField) this.elements.uuidField.focus();
+    }
+
+    setCurrentTimeAddressSilent() {
+        const now = new Date();
+        const isoWithMs = now.toISOString();
+        const timestamp = isoWithMs.slice(0, -1) + '000Z';
+        const changeDate = isoWithMs.split('.')[0] + 'Z';
+        if (this.elements.timestampField) this.elements.timestampField.value = timestamp;
+        if (this.elements.changeDateField) this.elements.changeDateField.value = changeDate;
+    }
+
+    showToastAddress(message, type = 'success') {
+        let toast = document.querySelector('.address-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'address-toast';
+            toast.innerHTML = `
+                <span class="address-toast-icon"></span>
+                <span class="address-toast-message"></span>
+                <button class="address-toast-close">&times;</button>
+            `;
+            const container = document.querySelector('#tab-utc');
+            if (container) container.appendChild(toast);
+            else document.body.appendChild(toast);
+        }
+        
+        const toastIcon = toast.querySelector('.address-toast-icon');
+        const toastMessage = toast.querySelector('.address-toast-message');
+        const closeBtn = toast.querySelector('.address-toast-close');
+
+        toast.className = 'address-toast';
+        toast.classList.add(type);
+        toastIcon.textContent = type === 'success' ? '✓' : '⚠';
+        toastMessage.textContent = message;
+
+        clearTimeout(toast._timeout);
+        toast.classList.add('show');
+        toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+
+        closeBtn.onclick = () => toast.classList.remove('show');
+    }
+
+    setCurrentTimeAddress() {
+        this.setCurrentTimeAddressSilent();
+        this.showToastAddress('Установлено текущее время', 'success');
+    }
+
+    clearTimeFieldsAddress() {
+        if (this.elements.timestampField) this.elements.timestampField.value = '';
+        if (this.elements.changeDateField) this.elements.changeDateField.value = '';
+        this.showToastAddress('Поля времени очищены', 'success');
+    }
+
+    highlightJSON(jsonString) {
+        return jsonString
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(
+                /("(\\u[a-fA-F0-9]{4}|\\[^u]|[^"\\])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+                function(match) {
+                    let cls = 'address-json-number';
+                    if (/^"/.test(match)) {
+                        if (/:$/.test(match)) cls = 'address-json-key';
+                        else cls = 'address-json-string';
+                    } else if (/true|false/.test(match)) {
+                        cls = 'address-json-number';
+                    } else if (/null/.test(match)) {
+                        cls = 'address-json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                }
+            )
+            .replace(/[{}[\]]/g, '<span class="address-json-bracket">$&</span>');
+    }
+
+    generateAndCopyAddress() {
+        // Сброс ошибок
+        document.querySelectorAll('.address-input.input-error').forEach(el => el.classList.remove('input-error'));
+
+        const uuid = this.elements.uuidField.value.trim();
+        const timestamp = this.elements.timestampField.value.trim();
+        const changeDate = this.elements.changeDateField.value.trim();
+        const addressName = this.elements.addressNameField.value.trim();
+        const flatInput = this.elements.flatField.value.trim();
+        const flat = flatInput === '' ? null : flatInput;
+        const street = this.elements.streetField.value.trim();
+        const house = this.elements.houseField.value.trim();
+        const latlonStr = this.elements.latlonField.value.trim();
+        const province = this.elements.provinceField.value.trim();
+        const cityInput = this.elements.cityField.value.trim();
+        const city = cityInput === '' ? null : cityInput;
+
+        let hasError = false;
+        const required = [
+            { id: 'uuidField', value: uuid, name: 'UUID' },
+            { id: 'addressNameField', value: addressName, name: 'Полный адрес' },
+            { id: 'latlonField', value: latlonStr, name: 'Координаты' }
+        ];
+        required.forEach(f => {
+            if (!f.value) {
+                document.getElementById(f.id).classList.add('input-error');
+                if (!hasError) this.showToastAddress('Заполните обязательное поле: ' + f.name, 'error');
+                hasError = true;
+            }
+        });
+        if (hasError) return;
+
+        // Проверка длины UUID
+        if (uuid.length !== 23) {
+            document.getElementById('uuidField').classList.add('input-error');
+            this.showToastAddress('UUID должен содержать ровно 23 цифры', 'error');
+            return;
+        }
+
+        const parts = latlonStr.split(',').map(s => s.trim());
+        if (parts.length !== 2) {
+            document.getElementById('latlonField').classList.add('input-error');
+            this.showToastAddress('Координаты должны быть в формате "широта, долгота"', 'error');
+            return;
+        }
+        const lat = parseFloat(parts[0]);
+        const lon = parseFloat(parts[1]);
+        if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            document.getElementById('latlonField').classList.add('input-error');
+            this.showToastAddress('Некорректные координаты', 'error');
+            return;
+        }
+
+        const jsonObj = {
+            locality: null,
+            vegetation: null,
+            addressName: addressName,
+            flat: flat,
+            street: street,
+            house: house,
+            province: province,
+            city: city,
+            point: { lat: lat, lon: lon },
+            timestamp: timestamp || null,
+            district: null,
+            changeDate: changeDate || null,
+            savedToDbTimestamp: null,
+            isOtherSpace: null,
+            uuid: uuid
+        };
+
+        const jsonString = JSON.stringify(jsonObj, null, 2);
+        this.elements.addressOutput.innerHTML = this.highlightJSON(jsonString);
+
+        navigator.clipboard.writeText(jsonString).then(() => {
+            this.showToastAddress('JSON скопирован в буфер обмена', 'success');
+        }).catch(() => {
+            this.showToastAddress('Не удалось скопировать автоматически', 'error');
+        });
+    }
+
+    copyOutputDirectlyAddress() {
+        const text = this.elements.addressOutput.textContent || '';
+        if (!text.trim()) {
+            this.showToastAddress('Сначала сгенерируйте JSON', 'error');
+            return;
+        }
+        navigator.clipboard.writeText(text).then(() => {
+            this.showToastAddress('JSON скопирован', 'success');
+        }).catch(() => {
+            this.showToastAddress('Ошибка копирования', 'error');
+        });
+    }
+
+    // Вспомогательный метод для копирования в буфер обмена
+    copyToClipboard(text) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).catch(() => {
+            // Запасной вариант через execCommand
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            } catch (err) {
+                // Игнорируем ошибку
+            }
+        });
+    }
 }
