@@ -1093,7 +1093,7 @@ const defaultTemplates = [
     },
     {
       "id": "temp1782384726284",
-      "title": "В заявлении отсутствует информация о фамилии [lastName] и отчестве [middleName]",
+      "title": "В заявлении отсутствует информация о фамилии и отчестве",
       "categoryId": "cat3",
       "type": "information",
       "kbMatch": "true",
