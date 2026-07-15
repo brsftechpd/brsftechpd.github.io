@@ -197,6 +197,63 @@
         #sidebarStatsContainer {
             display: none !important;
         }
+        
+        /* Стили для примеров генератора МСО */
+        .address-form-group-example {
+            margin-bottom: 10px;
+        }
+        .address-form-group-example label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .address-form-group-example .address-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .address-row-example {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .address-row-example .address-form-group-example {
+            flex: 1;
+            min-width: 120px;
+        }
+        .address-btn-primary-example {
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: default;
+            font-family: 'Inter', sans-serif;
+        }
+        .address-output-example {
+            background: #222236;
+            border-radius: 8px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.76rem;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -235,7 +292,7 @@
                             <i class="fas fa-passport"></i> Проверка паспорта
                         </button>
                         <button class="uuid-tab-btn" data-tab="utc">
-                            <i class="fas fa-clock"></i> UTC время
+                            <i class="fas fa-map-location-dot"></i> Генератор МСО запроса
                         </button>
                         <button class="uuid-tab-btn" data-tab="tips">
                             <i class="fas fa-lightbulb"></i> Советы
@@ -272,7 +329,7 @@
                                 <li><strong>Форматирование UUID</strong> для S3-путей</li>
                                 <li><strong>Аналитические запросы</strong> в OpenSearch</li>
                                 <li><strong>Поиск профилей</strong> по паспорту и КИГ</li>
-                                <li><strong>Служебные функции</strong> (UTC время, статистика)</li>
+                                <li><strong>Генератор МСО запроса</strong> — конструктор адреса для Многофункционального Сервисного Офиса</li>
                             </ul>
                         </div>
                         
@@ -522,64 +579,76 @@
                     </div>
                 </div>
 
-                <!-- Раздел: UTC время -->
+                <!-- Раздел: Генератор МСО запроса (заменяет UTC время) -->
                 <div class="tab-content instruction-content" id="tab-utc">
                     <div class="section-header">
-                        <h2>UTC время</h2>
-                        <p>Получение текущего времени в формате UTC.</p>
+                        <h2>Генератор МСО запроса</h2>
+                        <p>Конструктор для формирования JSON-запроса МСО.</p>
                     </div>
 
                     <div class="instruction-step">
                         <div class="step-header">
                             <div class="step-number">1</div>
-                            <h3 class="step-title">Получение времени</h3>
+                            <h3 class="step-title">Заполнение полей</h3>
                         </div>
                         <div class="step-description">
-                            <p>Нажмите кнопку для получения текущего UTC времени.</p>
-                        </div>
-                        
-                        <div class="ui-example">
-                            <div class="example-label">Кнопка получения времени:</div>
-                            <button class="utc-btn static-example">
-                                <i class="fas fa-clock"></i> Получить UTC время
-                            </button>
+                            <p>Введите данные в соответствующие поля:</p>
+                            <ul>
+                                <li><strong>timestamp</strong> — дата и время</li>
+                                <li><strong>changeDate</strong> — дата изменения</li>
+                                <li><strong>addressName</strong> — название адреса</li>
+                                <li><strong>street</strong> — улица</li>
+                                <li><strong>house</strong> — номер дома</li>
+                                <li><strong>flat</strong> — номер квартиры</li>
+                                <li><strong>latlon</strong> — координаты в формате <code>широта, долгота</code></li>
+                                <li><strong>province</strong> — регион/область</li>
+                                <li><strong>city</strong> — город</li>
+                            </ul>
                         </div>
                     </div>
 
                     <div class="instruction-step">
                         <div class="step-header">
                             <div class="step-number">2</div>
-                            <h3 class="step-title">Результаты</h3>
+                            <h3 class="step-title">Генерация и копирование результата</h3>
                         </div>
                         <div class="step-description">
-                            <p>После нажатия кнопки появятся два формата времени:</p>
-                            <ul>
-                                <li><strong>С миллисекундами</strong> — автоматически копируется в буфер</li>
-                                <li><strong>Без миллисекунд</strong> — упрощенный формат</li>
-                            </ul>
+                            <p>Нажмите кнопку <strong>«Сгенерировать JSON»</strong>. Сформированный JSON-объект появится в поле вывода и автоматически скопируется в буфер обмена.</p>
+                            <p>Вы также можете скопировать результат вручную, кликнув по кнопке копирования.</p>
                         </div>
                         
                         <div class="ui-example">
-                            <div class="example-label">Результаты времени:</div>
-                            <div class="result-container static-example">
-                                <div class="result-label">С миллисекундами:</div>
-                                <div class="result-wrapper">
-                                    <div class="result">2023-12-01T14:30:45.123456Z</div>
-                                    <button class="copy-btn" title="Копировать">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="result-container static-example">
-                                <div class="result-label">Без миллисекунд:</div>
-                                <div class="result-wrapper">
-                                    <div class="result">2023-12-01T14:30:45Z</div>
-                                    <button class="copy-btn" title="Копировать">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
+                            <div class="example-label">Пример результата:</div>
+                            <div class="address-output-example static-example" style="pointer-events: none;">
+{
+  "locality": null,
+  "vegetation": null,
+  "addressName": "Москва, улица Ленина, дом 22, квартира 33",
+  "flat": "33",
+  "street": "Ленина",
+  "house": "22",
+  "province": "Центральный федеральный округ",
+  "city": "Москва",
+  "point": {
+    "lat": 55.947878,
+    "lon": 37.932549
+  },
+  "timestamp": "2026-07-15T06:52:51.653000Z",
+  "district": null,
+  "changeDate": "2026-07-15T06:52:51Z",
+  "savedToDbTimestamp": null,
+  "isOtherSpace": null,
+  "uuid": "01234567890123456789012"
+}
                             </div>
                         </div>
+                    </div>
+
+                    <div class="important-note">
+                        <p><i class="fas fa-exclamation-circle"></i> <strong>Важно:</strong> Убедитесь, что все обязательные поля заполнены корректно, иначе генерация будет заблокирована (поля с ошибками подсветятся красным).</p>
+                    </div>
+                    <div class="tip-note">
+                        <p><i class="fas fa-lightbulb"></i> После генерации JSON автоматически копируется — вы можете сразу вставить его в нужное место (например, в тело запроса).</p>
                     </div>
                 </div>
 
@@ -610,6 +679,7 @@
                                 <li><strong>Enter</strong> в поле UUID — форматирование</li>
                                 <li><strong>Enter</strong> в поле паспорта — проверка регистрации</li>
                                 <li><strong>Enter</strong> в поле КИГ — поиск</li>
+                                <li><strong>Enter</strong> в любом поле генератора МСО — генерация JSON</li>
                             </ul>
                         </div>
                     </div>
